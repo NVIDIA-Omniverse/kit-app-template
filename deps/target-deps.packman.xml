@@ -1,0 +1,17 @@
+<project toolsVersion="5.0">
+  <!-- Import Python dependencies from Kit SDK to ensure we're using the same version. -->
+  <import path="../_build/${platform}/${config}/kit/dev/deps/target-deps.packman.xml">
+    <filter include="pybind11" />
+    <filter include="python" />
+  </import>
+
+  <!-- Override the link path to point to the correct location. -->
+  <dependency name="pybind11" linkPath="../_build/target-deps/pybind11"/>
+  <dependency name="python" linkPath="../_build/target-deps/python"/>
+
+  <!-- Ideally carb should also be imported from Kit SDK to ensure we're using the same version,
+       but doing so requires pulling another large package that is unnecessary for this purpose. -->
+  <dependency name="carb_sdk_plugins" linkPath="../_build/target-deps/carb_sdk_plugins">
+    <package name="carb_sdk+plugins.${platform}" version="125.0" platforms="windows-x86_64 linux-x86_64 linux-aarch64"/>
+  </dependency>
+</project>

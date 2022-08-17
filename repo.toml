@@ -1,0 +1,17 @@
+########################################################################################################################
+# Repo tool base settings
+########################################################################################################################
+
+[repo]
+
+# Use the Kit Template repo configuration as a base. Only override things specific to the repo.
+import_configs = ["${root}/_repo/deps/repo_kit_tools/kit-template/repo.toml"]
+
+# Repository Name
+name = "kit-app-template-cpp"
+
+[repo_build.licensing]
+enabled = false
+
+[repo_build.msbuild]
+vs_version = "vs2019"

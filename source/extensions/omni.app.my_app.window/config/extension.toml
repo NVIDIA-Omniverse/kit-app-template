@@ -1,0 +1,33 @@
+[package]
+# Semantic Versionning is used: https://semver.org/
+version = "1.0.0"
+
+# The title and description fields are primarily for displaying extension info in UI
+title = "My Application Main Window"
+description = "A Window for my Application"
+
+# Path (relative to the root) or content of readme markdown file for UI.
+readme  = "docs/README.md"
+
+# URL of the extension source repository.
+repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"
+
+# One of categories for UI.
+category = "window"
+
+# Keywords for the extension
+keywords = ["kit", "window"]
+
+# Icon to show in the extension manager
+icon = "data/icon.png"
+
+# Preview to show in the extension manager
+preview_image = "data/preview.png"
+
+# Use omni.ui to build simple UI
+[dependencies]
+"omni.ui" = {}
+
+# Main python module this extension provides, it will be publicly available as "import omni.hello.world".
+[[python.module]]
+name = "omni.app.my_app.window"

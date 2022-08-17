@@ -1,0 +1,3 @@
+﻿# Ignore everything in this directory, except this file to ensure the folder is created.
+*
+!.gitignore

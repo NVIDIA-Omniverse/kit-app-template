@@ -1,0 +1,15 @@
+﻿# All folders starting with _ are local.
+_*/
+
+# Compiled python files.
+*.py[cod]
+
+# Visual Studio files.
+/.vs
+**/.vscode/ipch
+
+# macOS files.
+.DS_Store
+
+# Generated license file.
+PACKAGE-DEPS.yaml

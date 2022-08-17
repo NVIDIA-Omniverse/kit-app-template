@@ -1,0 +1,317 @@
+[
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "dock_id": 5,
+                "position": "LEFT"
+              },
+              {
+                "children": [],
+                "dock_id": 6,
+                "position": "RIGHT"
+              }
+            ],
+            "dock_id": 9,
+            "position": "LEFT"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "dock_id": 15,
+                            "height": 438.3999938964844,
+                            "position_x": 0.0,
+                            "position_y": 24.0,
+                            "selected_in_dock": false,
+                            "title": "Main ToolBar",
+                            "visible": true,
+                            "width": 42.400001525878906
+                          }
+                        ],
+                        "dock_id": 15,
+                        "position": "LEFT"
+                      },
+                      {
+                        "children": [
+                          {
+                            "dock_id": 16,
+                            "dock_tab_bar_enabled": true,
+                            "dock_tab_bar_visible": true,
+                            "height": 438.3999938964844,
+                            "position_x": 44.0,
+                            "position_y": 24.0,
+                            "selected_in_dock": true,
+                            "title": "Viewport",
+                            "visible": true,
+                            "width": 989.6000366210938
+                          }
+                        ],
+                        "dock_id": 16,
+                        "position": "RIGHT"
+                      }
+                    ],
+                    "dock_id": 8,
+                    "position": "TOP"
+                  },
+                  {
+                    "children": [
+                      {
+                        "dock_id": 12,
+                        "height": 436.0,
+                        "position_x": 48.0,
+                        "position_y": 48.0,
+                        "selected_in_dock": false,
+                        "title": "Content",
+                        "visible": true,
+                        "width": 1034.4000244140625
+                      },
+                      {
+                        "dock_id": 12,
+                        "dock_tab_bar_enabled": true,
+                        "dock_tab_bar_visible": true,
+                        "height": 436.0,
+                        "position_x": 0.0,
+                        "position_y": 464.0,
+                        "selected_in_dock": true,
+                        "title": "My Window",
+                        "visible": true,
+                        "width": 1034.4000244140625
+                      }
+                    ],
+                    "dock_id": 12,
+                    "position": "BOTTOM"
+                  }
+                ],
+                "dock_id": 14,
+                "position": "LEFT"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "dock_id": 7,
+                        "dock_tab_bar_enabled": true,
+                        "dock_tab_bar_visible": true,
+                        "height": 438.3999938964844,
+                        "position_x": 1036.0,
+                        "position_y": 24.0,
+                        "selected_in_dock": true,
+                        "title": "Stage",
+                        "visible": true,
+                        "width": 437.6000061035156
+                      },
+                      {
+                        "dock_id": 7,
+                        "height": 438.3999938964844,
+                        "position_x": 48.0,
+                        "position_y": 48.0,
+                        "selected_in_dock": false,
+                        "title": "Layer",
+                        "visible": true,
+                        "width": 437.6000061035156
+                      },
+                      {
+                        "dock_id": 7,
+                        "height": 438.3999938964844,
+                        "position_x": 48.0,
+                        "position_y": 48.0,
+                        "selected_in_dock": false,
+                        "title": "Render Settings",
+                        "visible": true,
+                        "width": 437.6000061035156
+                      }
+                    ],
+                    "dock_id": 7,
+                    "position": "TOP"
+                  },
+                  {
+                    "children": [
+                      {
+                        "dock_id": 11,
+                        "dock_tab_bar_enabled": true,
+                        "dock_tab_bar_visible": true,
+                        "height": 436.0,
+                        "position_x": 1036.0,
+                        "position_y": 464.0,
+                        "selected_in_dock": true,
+                        "title": "Property",
+                        "visible": true,
+                        "width": 437.6000061035156
+                      }
+                    ],
+                    "dock_id": 11,
+                    "position": "BOTTOM"
+                  }
+                ],
+                "dock_id": 13,
+                "position": "RIGHT"
+              }
+            ],
+            "dock_id": 10,
+            "position": "RIGHT"
+          }
+        ],
+        "dock_id": 1,
+        "position": "LEFT"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "dock_id": 3,
+            "position": "TOP"
+          },
+          {
+            "children": [],
+            "dock_id": 4,
+            "position": "BOTTOM"
+          }
+        ],
+        "dock_id": 2,
+        "position": "RIGHT"
+      }
+    ],
+    "dock_id": 3358485147
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Preferences",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Screenshot Directory",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Options",
+    "visible": false,
+    "width": 220.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Form Dialog",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Template",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Filename (Local Files Only)",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Snap Increment Settings Menu",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Filter",
+    "visible": false,
+    "width": 150.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Add Attribute...",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Reference...",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Payload...",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Asset...",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 44.0,
+    "position_x": 287.20001220703125,
+    "position_y": 180.0,
+    "selected_in_dock": false,
+    "title": "0",
+    "visible": false,
+    "width": 563.2000122070312
+  }
+]

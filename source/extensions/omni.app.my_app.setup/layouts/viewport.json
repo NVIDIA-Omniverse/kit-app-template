@@ -1,0 +1,143 @@
+[
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "dock_id": 1,
+            "dock_tab_bar_enabled": true,
+            "dock_tab_bar_visible": false,
+            "height": 876.0,
+            "position_x": 0.0,
+            "position_y": 24.0,
+            "selected_in_dock": true,
+            "title": "Viewport",
+            "visible": true,
+            "width": 1144.800048828125
+          }
+        ],
+        "dock_id": 1,
+        "position": "LEFT"
+      },
+      {
+        "children": [
+          {
+            "dock_id": 2,
+            "dock_tab_bar_enabled": true,
+            "dock_tab_bar_visible": false,
+            "height": 876.0,
+            "position_x": 1146.4000244140625,
+            "position_y": 24.0,
+            "selected_in_dock": true,
+            "title": "My Window",
+            "visible": true,
+            "width": 553.6000366210938
+          }
+        ],
+        "dock_id": 2,
+        "position": "RIGHT"
+      }
+    ],
+    "dock_id": 3358485147
+  },
+  {
+    "dock_id": 0,
+    "height": 876.0,
+    "position_x": 0.0,
+    "position_y": 24.0,
+    "selected_in_dock": false,
+    "title": "Main ToolBar",
+    "visible": false,
+    "width": 848.7999877929688
+  },
+  {
+    "dock_id": 0,
+    "height": 110.4000015258789,
+    "position_x": 48.0,
+    "position_y": 48.0,
+    "selected_in_dock": false,
+    "title": "Render Settings",
+    "visible": false,
+    "width": 332.8000183105469
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Preferences",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Screenshot Directory",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Options",
+    "visible": false,
+    "width": 220.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Form Dialog",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Template",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Filename (Local Files Only)",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Snap Increment Settings Menu",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 44.0,
+    "position_x": 400.0,
+    "position_y": 180.0,
+    "selected_in_dock": false,
+    "title": "0",
+    "visible": false,
+    "width": 563.2000122070312
+  }
+]

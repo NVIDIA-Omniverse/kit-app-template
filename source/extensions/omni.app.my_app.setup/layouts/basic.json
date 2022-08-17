@@ -1,0 +1,49 @@
+[
+  {
+    "children": [
+      {
+        "dock_id": 3358485147,
+        "dock_tab_bar_enabled": true,
+        "dock_tab_bar_visible": false,
+        "height": 876.7999877929688,
+        "position_x": 0.0,
+        "position_y": 23.200000762939453,
+        "selected_in_dock": true,
+        "title": "My Window",
+        "visible": true,
+        "width": 1700.0
+      }
+    ],
+    "dock_id": 3358485147
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Options",
+    "visible": false,
+    "width": 220.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Form Dialog",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 41.60000228881836,
+    "position_x": 400.0,
+    "position_y": 177.60000610351562,
+    "selected_in_dock": false,
+    "title": "0",
+    "visible": false,
+    "width": 565.6000366210938
+  }
+]
