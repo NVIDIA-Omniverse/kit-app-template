@@ -73,6 +73,12 @@ keywords = ["app"]
 # The toolbar
 "omni.kit.window.toolbar" = {}
 
+# Extensions window
+"omni.kit.window.extensions" = {}
+
+# Profiler
+"omni.kit.profiler.window" = {}
+
 
 [settings.app.window]
 title = "My First Viewport App"
@@ -130,7 +136,7 @@ size = 16
 # Here they are setup into a single folder "exts" but you can have you own structure if you need
 # see we also dd the Extension from the Base application using their extscache
 [settings.app.exts]
-folders.'++' = ["${app}/../exts", "${app}/../extscache/"]
+folders.'++' = ["${app}/../exts", "${app}/../extscache/", "${app}/../baseapp/exts", "${app}/../baseapp/extscache", "${app}/../baseapp/apps"]
 
 # Extension registry is not yet enabled for public apps
 [settings.app.extensions]

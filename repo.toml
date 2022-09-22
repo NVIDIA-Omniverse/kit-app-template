@@ -5,13 +5,14 @@
 [repo]
 
 # Use the Kit Template repo configuration as a base. Only override things specific to the repo.
-import_configs = ["${root}/_repo/deps/repo_kit_tools/kit-template/repo.toml"]
+import_configs = [
+    "${root}/_repo/deps/repo_kit_tools/kit-template/repo.toml",
+    "${root}/_repo/deps/repo_kit_tools/kit-template/repo-app.toml"
+]
 
 # Repository Name
 name = "kit-app-template-cpp"
 
-[repo_build.licensing]
-enabled = false
-
-[repo_build.msbuild]
-vs_version = "vs2019"
+[repo_kit_link_app]
+app_name = "code"   # App name.
+app_version = ""    # App version. Empty means latest. Specify to lock version, e.g. "2022.2.0-rc.3"
