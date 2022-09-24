@@ -11,8 +11,8 @@ import_configs = [
 ]
 
 # Repository Name
-name = "kit-app-template-cpp"
+name = "kit-app-template"
 
 [repo_kit_link_app]
-app_name = "code"   # App name.
+app_name = "create"   # App name.
 app_version = ""    # App version. Empty means latest. Specify to lock version, e.g. "2022.2.0-rc.3"

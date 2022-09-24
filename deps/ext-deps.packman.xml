@@ -1,0 +1,4 @@
+<project toolsVersion="5.0">
+  <!-- Use this file to include any dependencies for your extension beyond those in `kit-sdk-deps.packman.xml`. -->
+
+</project>

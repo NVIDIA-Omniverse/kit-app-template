@@ -23,6 +23,14 @@ Extensive documentation detailing what extensions are and how they work can be f
 3. Run `build.bat` to bootstrap your dev environment and build an example app.
 4. Run `_build\windows-x86_64\release\omni.app.example.extension_browser.bat` to open an example kit application.
 
+### Package
+
+To package run `package.bat`. Package will be created in `_build/packages` folder.
+
+To use package - unzip and run `link_app.bat` inside the package once before running.
+
+Packaging just zips everything in `_build/[platform]/release` folder, using it as a root. Linked app (`baseapp`) and kit (`kit`) folders are skipped.
+
 ### Changing an App
 
 When building 2 folder links are created:
