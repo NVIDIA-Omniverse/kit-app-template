@@ -21,7 +21,7 @@ Extensive documentation detailing what extensions are and how they work can be f
 1. Clone this repo to your local machine.
 2. Open a command prompt and navigate to the root of your cloned repo.
 3. Run `build.bat` to bootstrap your dev environment and build an example app.
-4. Run `_build\windows-x86_64\release\omni.app.example.extension_browser.bat` to open an example kit application.
+4. Run `_build\windows-x86_64\release\omni.app.my_app.bat` to open an example kit application.
 
 ### Package
 
@@ -35,7 +35,7 @@ Packaging just zips everything in `_build/[platform]/release` folder, using it a
 
 When building 2 folder links are created:
     * `_build/[platform]/release/baseapp` link to Omniverse App (e.g. Code)
-    * `_build/[platform]/release/kit` link to kit inside of the app above (same as ``_build/[platform]/release/baseapp/kit`)
+    * `_build/[platform]/release/kit` link to kit inside of the app above (same as `_build/[platform]/release/baseapp/kit`)
 
 In `repo.toml` app name and version are specified and can be changed:
 

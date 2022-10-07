@@ -12,7 +12,7 @@
     <package name="repo_docs" version="0.9.17"/>
   </dependency>
   <dependency name="repo_kit_tools" linkPath="../_repo/deps/repo_kit_tools">
-    <package name="repo_kit_tools" version="0.8.1"/>
+    <package name="repo_kit_tools" version="0.8.4"/>
   </dependency>
   <dependency name="repo_source" linkPath="../_repo/deps/repo_source">
     <package name="repo_source" version="0.3.0" />
