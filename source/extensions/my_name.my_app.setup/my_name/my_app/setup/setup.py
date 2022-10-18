@@ -44,7 +44,7 @@ class SetupExtension(omni.ext.IExt):
 
         settings = carb.settings.get_settings()
         # setup the Layout for your app
-        layouts_path = carb.tokens.get_tokens_interface().resolve("${omni.app.my_app.setup}/layouts")
+        layouts_path = carb.tokens.get_tokens_interface().resolve("${my_name.my_app.setup}/layouts")
         layout_file = Path(layouts_path).joinpath(f"{settings.get('/app/layout/name')}.json")
         asyncio.ensure_future(_load_layout(f"{layout_file}"))
 

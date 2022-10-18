@@ -1,0 +1,371 @@
+[package]
+title = "My USD Editor Application"
+
+version = "1.0.0"
+
+# That makes it browsable in UI with "experience" filter
+keywords = ["app", "usd"]
+
+[dependencies]
+# Create Kit UI Based applications
+"omni.kit.uiapp" = {}
+"omni.kit.renderer.core" = {}
+
+# This is your application setup Extensions
+# Where you layout the various Window, arrange you menu etc
+# order = 1000 make it run last
+"my_name.my_app.setup" = { order = 1000 }
+
+# This is an window for your application
+# just as an example you can have many of them or none depanding on what you are doing
+"my_name.my_app.window" = {}
+
+# Enable the content Browser to navigate nucleus and the file system
+"omni.kit.window.content_browser" = {}
+
+# Property Window and basic Property Widget for USD
+"omni.kit.property.bundle" = {}
+
+# Useful Menus for File and Edit
+"omni.kit.menu.file" = {}
+"omni.kit.menu.edit" = {}
+
+"omni.kit.window.file" = {}
+"omni.kit.context_menu" = {}
+
+# this will be deprecated for omni.activity.ui
+"omni.kit.activity.progress.bundle" = {}
+
+"omni.kit.selection" = {}
+"omni.kit.stage_templates" = {}
+
+## PhysX Disabled here but for reference
+# "omni.physx.bundle" = {}
+# "omni.physx.zerogravity" = {}
+
+# the Create Nenu is also brought by other extensions
+# if you want to NOT have it you will need to exclude it (see in the settings sections)
+"omni.kit.menu.create" = {}
+
+# Add the ability to create mesh
+"omni.kit.primitive.mesh" = {}
+
+# Create Windows
+"omni.kit.window.title" = {}
+
+# Viewport Extensions
+#############################################
+# The Main Viewport Window
+"omni.kit.viewport.window" = {}
+
+# Selection of Viewport Menu subMenus
+"omni.kit.viewport.menubar.core" = {}
+"omni.kit.viewport.menubar.settings" = {}
+"omni.kit.viewport.menubar.display" = {}
+"omni.kit.viewport.menubar.render" = {}
+"omni.kit.viewport.menubar.camera" = {}
+
+# Viewport Manipulator
+"omni.kit.manipulator.prim" = {}
+"omni.kit.manipulator.transform" = {}
+"omni.kit.manipulator.viewport" = {}
+
+# Additional Viewport features (legacy grid etc, HUD GPU stats)
+"omni.kit.viewport.legacy_gizmos" = {}
+"omni.hydra.engine.stats" = {}
+
+# enable RTX Renderer for your viewport
+"omni.hydra.rtx" = {}
+# here you could shose to enable omni.hydra.pxr to have Pixar Storm for example
+# "omni.hydra.pxr" = {}
+# or Iray
+# "omni.hydra.iray" = {}
+
+# RTX render setings window
+"omni.rtx.settings.core" = {}
+
+# show when the RTX engine finished loading
+"omni.kit.viewport.ready" = {}
+
+# Set of USD Related Extensions
+#############################################
+# The Stage Window showing the usd Prims
+"omni.kit.window.stage" = {}
+
+# The Layer Window showing the usd layers
+"omni.kit.widget.layers" = {}
+
+# The toolbar
+"omni.kit.window.toolbar" = {}
+
+# those are extra stage window columns that are not enabled by default
+# "omni.kit.stage_column.variant" = {}
+# "omni.kit.stage_column.payload" = {}
+
+# this enable the creation of material can be disabled
+"omni.kit.material.library" = {}
+
+# enable to preview images on the content browser disable by default
+# "omni.kit.window.imageviewer" = {}
+
+# general purpose widgets to browser and select fles
+"omni.kit.widget.filebrowser" = {}
+"omni.kit.window.filepicker" = {}
+
+# show the stats of the renderer, disable by default
+# "omni.kit.window.stats" = { order = 1000 }
+
+# enaable to write some python script, disable by default
+# "omni.kit.window.script_editor" = {}
+"omni.kit.window.console" = {}
+
+# enable the users to interact with the Extensions in the app
+# disable to make the app more locked down
+"omni.kit.window.extensions" = {}
+
+# browsers of example, material assets etc
+# "omni.kit.browser.sample" = {}
+# enable the NVIDIA asset Browsing only
+"omni.kit.browser.asset" = {}
+# "omni.kit.browser.asset_store" = {}
+# "omni.kit.browser.asset_provider.local" = {}
+# "omni.kit.browser.asset_provider.s3" = {}
+# "omni.kit.browser.asset_provider.sketchfab" = {}
+# "omni.kit.browser.asset_provider.turbosquid" = {}
+# "omni.kit.browser.asset_provider.actorcore" = {}
+
+# enable to browser Sky and environment assets
+"omni.kit.window.environment" = {}
+
+# Material Management and browsing
+"omni.kit.window.material" = { }
+
+# Here we disable the material editor
+# "omni.kit.graph.delegate.default" = { }
+# "omni.kit.window.material_graph" = { }
+
+# managed usd reference in the stages
+# "omni.kit.window.usd_paths" = {}
+
+# show the preferences window, can be disable but would limit greatly customization
+"omni.kit.window.preferences" = { order = 1000 } # so the menu is in the correct place
+
+# those enable some working around thumbnail generation disable by default
+# "omni.kit.thumbnails.usd" = {}
+# "omni.kit.thumbnails.images" = {}
+
+# bring all the property Widgets and Window
+"omni.kit.window.property" = {}
+"omni.kit.property.layer" = {}
+
+# tool for the application , those are all disabled by default
+# "omni.kit.asset_converter" = {}
+# "omni.kit.tool.asset_importer" = {}
+# "omni.kit.tool.asset_exporter" = {}
+# "omni.kit.tool.collect" = {}
+# "omni.kit.tool.remove_unused.core" = {}
+# "omni.kit.tool.remove_unused.controller" = {}
+
+# Section Tool
+# "omni.kit.window.section" = {}
+
+# Array Tool
+# "omni.tools.array" = {}
+# "omni.tools.pivot" = {}
+
+# Randomizer
+# "omni.tools.randomizer" = {}
+
+
+# Iray is disabled by default
+# "omni.iray.settings.core" = {}
+# "omni.hydra.iray" = { order = -1000 }
+
+# Particle/PointCloud FileFormat Disable in the Light Template
+# "omni.usd.fileformat.e57" = { }
+# "omni.kit.pointclouds" = {}
+
+
+# # All QuickSearch related extensions, Disable by default
+# "omni.kit.window.quicksearch" = {}
+
+# "omni.kit.quicksearch.actions" = {}
+# "omni.kit.quicksearch.settings" = {}
+
+# "omni.kit.quicksearch.select" = {}
+# "omni.kit.quicksearch.commands" = {}
+# "omni.kit.quicksearch.menu" = {}
+# "omni.kit.quicksearch.material" = {}
+# "omni.kit.quicksearch.hdri" = {}
+# "omni.kit.quicksearch.props" = {}
+
+"omni.kit.search.files" = {}
+
+# Compatibility Checker
+"omni.kit.compatibility_checker" = {}
+
+# VERSIONING, for Nucleus disable by default
+# "omni.kit.widget.versioning" = {}
+
+# Paint Default disabled
+# "omni.paint.system.bundle" = {}
+
+
+# Destruction schema off by default
+# "omni.usd.schema.destruction" = {}
+
+# Animation
+"omni.anim.skelJoint" = { }
+"omni.kit.widget.timeline" = { }
+"omni.anim.shared" = {}
+
+# AnimGraph , Off by default
+# "omni.anim.graph.bundle" = {}
+# "omni.anim.graph.core" = {}
+# "omni.anim.graph.ui" = {}
+# "omni.anim.retarget.bundle" = {}
+# "omni.anim.retarget.core" = {}
+# "omni.anim.retarget.ui" = {}
+
+# animation camera tools off by default
+# "omni.anim.camera_tool" = { }
+
+
+# OmniGraph and ActionGraph Editor off by default
+# "omni.graph.bundle.action" = {}
+# "omni.graph.window.action" = {}
+# "omni.graph.window.generic" = {}
+# "omni.graph.visualization.nodes" = {}
+
+# Python Scripting Component
+# "omni.kit.scripting" = {}
+
+# Curves Manipulator , off by default
+# "omni.curve.manipulator" = {}
+
+# Sequencer Off by Defeault
+# "omni.kit.window.sequencer" = {}
+
+
+# "omni.services.usd" = {}
+
+# # Thumbnails services for USD
+# "omni.kit.thumbnails.mdl" = {}
+# "omni.services.thumbnails.mdl" = {}
+
+# Quicklayout is on enabling custom layouts
+"omni.kit.quicklayout" = {}
+
+# AOV and Render Passes creation , off by default
+# "omni.kit.menu.aov" = {}
+# "omni.graph.examples.cpp" = {}
+
+# USD Collections Widget and workflow: off by default
+# "omni.kit.window.collection" = {}
+# "omni.kit.widget.collection" = {}
+# "omni.kit.property.collection" = {}
+
+# Particle are off by default
+# "omni.particle.system.bundle" = {}
+
+
+# startfleet auth enabled for cloud_share to work on the receiver
+# "omni.services.starfleet.auth" = {}
+
+# Deepsearch Widget : off by default
+# "omni.kit.browser.deepsearch" = {}
+
+# Tagging
+# "omni.kit.tagging" = {}
+# "omni.kit.property.tagging" = {}
+
+# Actions Window enable to see all the actions availble in the application
+# "omni.kit.actions.window" = {}
+
+# Data Adapter
+# "omni.data.adapter.core" = {}
+# "omni.data.adapter.bundle" = {}
+# "omni.data.adapter.ui" = {}
+
+
+[settings.app.window]
+title = "My First Editor"
+
+# Width and Height of your Main Window at startup
+width = 1700
+height = 900
+
+# this is a custom setting used in our app setup to choose the Layout
+[settings.app.layout]
+name = "editor"
+
+[settings]
+# Basic Kit App
+################################
+# the app.name is used in Telemetry events and crash report
+# try to keep it using using reverse dns, generally match your kit file name
+app.name = "my_name.my_app.editor"
+
+# this is used in our setup file to display some Version to the user in the title bar
+app.titleVersion = "1.0.0"
+
+# this will create a stage during the statup process
+# you don't have too, but be aware the the RTX engine only start
+# when there is something to render, so use if false you might want ore adjust the use of
+# omni.kit.viewport.ready
+app.content.emptyStageOnStart = true
+
+# Fast shutdown
+app.fastShutdown = true
+
+# Eco Mode
+# rtx.ecoMode.enabled = true
+
+# deprecate support for old kit.ui.menu
+# (support legacy_mode will probably be removed for Kit 104)
+app.menu.legacy_mode = false
+
+# force new viewport name @roman I think we need to figure out so we don't need that?
+exts."omni.kit.viewport.window".startup.windowName = "Viewport"
+
+# default viewport resolutions settings
+# those are driving the resolution of the renderer
+renderer.resolution.width = 1280
+renderer.resolution.height = 720
+
+# here you can choose what renderer are enabled
+# if you use other hydra delegate like Iray or pxr you can add them here like so
+# renderer.enabled = "rtx,iray,pxr" (that is what Omniverse Code does for example)
+renderer.enabled = "rtx"
+
+# By default rtx is setup to be mgpu but in some context you might want to run on
+# a single gpu if so set this setting to false
+renderer.multiGpu.enabled = true
+
+# Fonts
+# You can change the font files here and also adjust its size
+# Although most ui have dynamic layout your milage may vary.
+# there might be few issue are too low or too high sizes
+[settings.app.font]
+file = "${fonts}/OpenSans-SemiBold.ttf"
+size = 16
+
+# Register extension folder from this repo in kit
+# Your application is using Extensions from your applications
+# Here they are setup into a single folder "exts" but you can have you own structure if you need
+# see we also dd the Extension from the Base application using their extscache
+[settings.app.exts]
+folders.'++' = ["${app}/../exts", "${app}/../extscache/", "${app}/../baseapp/exts", "${app}/../baseapp/extscache", "${app}/../baseapp/apps"]
+
+# Extension registry is not yet enabled for public apps
+[settings.app.extensions]
+registryEnabled = false
+
+# those will be for showing how to write tests for your application.
+# And yes you absolutely should
+[[test]]
+args = [
+	"--/app/window/width=480",
+    "--/app/window/height=480",
+    "--/app/extensions/registryEnabled=0", # Make sure we can run without registry and everything is precached
+]
