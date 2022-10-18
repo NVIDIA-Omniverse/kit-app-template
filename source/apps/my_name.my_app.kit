@@ -3,24 +3,24 @@ title = "My Simple Application"
 
 version = "1.0.0"
 
-description = """This Simple application show you how to make an application that doesn't use USD
-or RTX but simply omniverse kit and its ui framework to build some window and functions
-it is compatible with any where kit can run its ui that is most computer with a GPU (of any brand)
+description = """This Simple application shows you how to make an application that doesn't use USD
+or RTX but simply Omniverse Kit and its UI framework to build a window and some functions.
+It is compatible with anywhere kit can run its UI (i.e. most computers with any GPU)
 """
-# That makes it browsable in UI with "experience" filter
+# Keywords make  it browseable in UI using the "experience" filter
 keywords = ["app"]
 
 [dependencies]
 # Create Kit UI Based applications
 "omni.kit.uiapp" = {}
 
-# This is your application setup Extensions
-# Where you layout the various Window, arrange you menu etc
-# order = 1000 make it run last
-"my_name.my_app.setup" = {order=1000}
+# This is your application setup Extension
+# where you layout the various Windows, arrange your menu, etc.
+# order = 1000 makes it run last
+"my_name.my_app.setup" = { order = 1000 }
 
-# This is an window for your application
-# just as an example you can have many of them or none depanding on what you are doing
+# This is a window for your application just as an example.
+# You can have many of them or none depending on what you are doing.
 "my_name.my_app.window" = {}
 
 [settings]
@@ -31,7 +31,7 @@ exts."omni.kit.renderer.core".compatibilityMode = true
 # (support legacy_mode will probably be removed for Kit 104)
 app.menu.legacy_mode = false
 
-# this is used in our setup file to display some Version to the user in the title bar
+# this is used in our setup file to display the Version to the user in the title bar
 app.titleVersion = "1.0"
 
 # Skip long full shutdown and exit quickly
@@ -48,10 +48,11 @@ height = 500
 [settings.app.layout]
 name = "basic"
 
-# Register extension folder from this repo in kit
-# Your application is using Extensions from your applications
+# Register extension folders from this repo in kit
+# These are the paths where Kit looks for extensions
+# Your application is using Extensions from your application
 # Here they are setup into a single folder "exts" but you can have you own structure if you need
-# see we also dd the Extension from the Base application using their extscache
+# see we also add the Extension from the Base application using their extscache
 [settings.app.exts]
 folders.'++' = ["${app}/../exts", "${app}/../extscache/", "${app}/../baseapp/exts", "${app}/../baseapp/extscache", "${app}/../baseapp/apps"]
 
@@ -59,7 +60,7 @@ folders.'++' = ["${app}/../exts", "${app}/../extscache/", "${app}/../baseapp/ext
 [settings.app.extensions]
 registryEnabled = false
 
-# those will be for showing how to write tests for your application.
+# these will be for showing how to write tests for your application.
 # And yes you absolutely should
 [[test]]
 args = [

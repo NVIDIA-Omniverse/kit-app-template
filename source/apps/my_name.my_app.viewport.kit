@@ -3,12 +3,12 @@ title = "My Simple Viewport Application"
 
 version = "1.0.0"
 
-description = """This application show you how to make an application that enable a viewport with RTX,
+description = """This application shows you how to make an application that enables a viewport with RTX,
 This is a base for Mostly Viewport Application or a starting point for you if you want to build something
 quite different from the regular kit editor based applications
 """
 
-# That makes it browsable in UI with "experience" filter
+# Keywords make it browsable in UI using the "experience" filter
 keywords = ["app"]
 
 [dependencies]
@@ -16,13 +16,13 @@ keywords = ["app"]
 "omni.kit.uiapp" = {}
 "omni.kit.renderer.core" = {}
 
-# This is your application setup Extensions
-# Where you layout the various Window, arrange you menu etc
-# order = 1000 make it run last
+# This is your application setup Extension
+# where you layout the various Windows, arrange your menu, etc.
+# order = 1000 makes it run last
 "my_name.my_app.setup" = { order = 1000 }
 
 # This is an window for your application
-# just as an example you can have many of them or none depanding on what you are doing
+# You can have many of them or none depending on what you are doing.
 "my_name.my_app.window" = {}
 
 # Useful Menus for File and Edit
@@ -57,12 +57,12 @@ keywords = ["app"]
 
 # Enable RTX Renderer for your viewport
 "omni.hydra.rtx" = {}
-# here you could shose to enable omni.hydra.pxr to have Pixar Storm for example
+# here you could choose to enable omni.hydra.pxr to have Pixar Storm for example
 # "omni.hydra.pxr" = {}
 # or Iray
 # "omni.hydra.iray" = {}
 
-# if you want to exppose the RTX render setings window
+# if you want to expose the RTX render settings window
 # but you can disable that and control it all in code if you don't want the user to see/change that
 "omni.rtx.settings.core" = {}
 
@@ -94,12 +94,12 @@ name = "viewport"
 [settings]
 # Basic Kit App
 ################################
-# this is used in our setup file to display some Version to the user in the title bar
+# this is used in our setup file to display the Version to the user in the title bar
 app.titleVersion = "1.0.0"
 
 # this will create a stage during the statup process
-# you don't have too, but be aware the the RTX engine only start
-# when there is something to render, so use if false you might want ore adjust the use of
+# you don't have to, but be aware the the RTX engine only starts
+# when there is something to render, so use if false you might want or adjust the use of
 # omni.kit.viewport.ready
 app.content.emptyStageOnStart = true
 
@@ -107,10 +107,10 @@ app.content.emptyStageOnStart = true
 # (support legacy_mode will probably be removed for Kit 104)
 app.menu.legacy_mode = false
 
-# force new viewport name @roman I think we need to figure out so we don't need that?
+# force new viewport name
 exts."omni.kit.viewport.window".startup.windowName = "Viewport"
 
-# here you can choose what renderer are enabled
+# here you can choose what renderers are enabled
 renderer.enabled = "rtx"
 # if you use other hydra delegate like Iray or pxr you can add them here like so
 # renderer.enabled = "rtx,iray,pxr" # (that is what Omniverse Code does for example)
@@ -124,16 +124,17 @@ app.fastShutdown = true
 
 # Fonts
 # You can change the font files here and also adjust its size
-# Although most ui have dynamic layout your milage may vary.
-# there might be few issue are too low or too high sizes
+# Although most ui have dynamic layout your mileage may vary.
+# there might be a few issues with very low or very high font sizes
 [settings.app.font]
 file = "${fonts}/OpenSans-SemiBold.ttf"
 size = 16
 
-# Register extension folder from this repo in kit
-# Your application is using Extensions from your applications
+# Register extension folders from this repo in kit
+# These are the paths where Kit looks for extensions
+# Your application is using Extensions from your application
 # Here they are setup into a single folder "exts" but you can have you own structure if you need
-# see we also dd the Extension from the Base application using their extscache
+# see we also add the Extension from the Base application using their extscache
 [settings.app.exts]
 folders.'++' = ["${app}/../exts", "${app}/../extscache/", "${app}/../baseapp/exts", "${app}/../baseapp/extscache", "${app}/../baseapp/apps"]
 
@@ -141,7 +142,7 @@ folders.'++' = ["${app}/../exts", "${app}/../extscache/", "${app}/../baseapp/ext
 [settings.app.extensions]
 registryEnabled = false
 
-# those will be for showing how to write tests for your application.
+# these will be for showing how to write tests for your application.
 # And yes you absolutely should
 [[test]]
 args = [
