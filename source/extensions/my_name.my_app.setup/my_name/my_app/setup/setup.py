@@ -1,16 +1,14 @@
-import omni.ext
-import omni.ui as ui
-from omni.kit.quicklayout import QuickLayout
-import carb.settings
-import carb.tokens
-import omni.kit.menu.utils
-from omni.kit.menu.utils import MenuLayout
-from omni.kit.window.title import get_main_window_title
+import asyncio
+from pathlib import Path
 
 import carb.imgui as _imgui
-
-from pathlib import Path
-import asyncio
+import carb.settings
+import carb.tokens
+import omni.ext
+import omni.kit.menu.utils
+from omni.kit.menu.utils import MenuLayout
+from omni.kit.quicklayout import QuickLayout
+from omni.kit.window.title import get_main_window_title
 
 
 async def _load_layout(layout_file: str):
@@ -77,4 +75,4 @@ class SetupExtension(omni.ext.IExt):
         print("Open the File you want")
 
     def on_shutdown(self):
-        print("[omni.hello.world] MyExtension shutdown")
+        pass

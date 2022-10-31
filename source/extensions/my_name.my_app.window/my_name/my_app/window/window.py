@@ -29,3 +29,9 @@ class MyWindow(ui.Window):
                 with ui.HStack(height=50, style={"font_size": 24}):
                     ui.Button("Add")
                     ui.Button("Reset")
+
+    def show(self):
+        self.visible = True
+
+    def hide(self):
+        self.visible = False

@@ -55,20 +55,29 @@ keywords = ["app", "usd"]
 
 # Viewport Extensions
 #############################################
-# The Main Viewport Window
-"omni.kit.viewport.window" = {}
+# The omni.kit.viewport.bundle extension declares a number
+# viewport extensions as depenencies so you only have
+# to activate the bundle to get the rest. You can
+# comment out the bundle and pick and choose individual
+# viewport extensions.
+"omni.kit.viewport.bundle" = {}
 
-# Selection of Viewport Menu subMenus
-"omni.kit.viewport.menubar.core" = {}
-"omni.kit.viewport.menubar.settings" = {}
-"omni.kit.viewport.menubar.display" = {}
-"omni.kit.viewport.menubar.render" = {}
-"omni.kit.viewport.menubar.camera" = {}
+# The Main Viewport Window (brought in by omni.kit.viewport.bundle)
+# "omni.kit.viewport.window" = {}
 
-# Viewport Manipulator
-"omni.kit.manipulator.prim" = {}
-"omni.kit.manipulator.transform" = {}
-"omni.kit.manipulator.viewport" = {}
+
+# Selection of Viewport Menu subMenus (brought in by omni.kit.viewport.bundle)
+# "omni.kit.viewport.menubar.core" = {}
+# "omni.kit.viewport.menubar.settings" = {}
+# "omni.kit.viewport.menubar.display" = {}
+# "omni.kit.viewport.menubar.render" = {}
+# "omni.kit.viewport.menubar.camera" = {}
+
+# Viewport Manipulator (brought in by omni.kit.viewport.bundle)
+# "omni.kit.manipulator.prim" = {}
+# "omni.kit.manipulator.transform" = {}
+# "omni.kit.manipulator.camera" = {}
+# "omni.kit.manipulator.viewport" = {}
 
 # Additional Viewport features (legacy grid etc, HUD GPU stats)
 "omni.kit.viewport.legacy_gizmos" = {}
