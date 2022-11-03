@@ -13,3 +13,9 @@ _*/
 
 # Generated license file.
 PACKAGE-DEPS.yaml
+
+# packman .user config
+*.packman.xml.user
+
+# kit user config
+deps/**/user.toml

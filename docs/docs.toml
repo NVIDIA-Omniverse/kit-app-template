@@ -1,0 +1,14 @@
+# this config makes kit kernel pretend to be an extension for the purpose of building docs.
+# format is exactly like extension.toml, but only what is required to build docs
+[package]
+version = "104.0"
+keywords = ["omniverse", "kit", "manual", "developer", "start"]
+
+[documentation]
+title = "Omniverse Kit App Template"
+
+[documentation.pages]
+"Getting Started" = "docs/overview.md"
+"Example Apps" = "docs/apps.md"
+"Shared Extensions" = "docs/extensions.md"
+"Choosing Names" = "docs/names.md"
