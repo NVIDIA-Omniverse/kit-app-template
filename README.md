@@ -6,7 +6,7 @@ This project contains everything necessary to develop and package an Omniverse A
 ## Links
 
 * [Repository](https://github.com/NVIDIA-Omniverse/kit-app-template)
-* [Full Documentation](https://docs.omniverse.nvidia.com/docs/kit/docs/kit-app-template/latest)
+* [Full Documentation](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template)
 
 ## What Is an App?
 
