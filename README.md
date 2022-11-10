@@ -19,7 +19,7 @@ Extensive documentation detailing what extensions are and how they work can be f
 ### Install Omniverse and some Apps
 
 1. Install *Omniverse Launcher*: [download](https://www.nvidia.com/en-us/omniverse/download)
-2. Install and launch one of *Omniverse* apps in the Launcher. This repo requires *Code* installed.
+2. Install and launch one of *Omniverse* apps in the Launcher. This repo requires the latest *Create* installed.
 
 ### Build
 
@@ -41,14 +41,14 @@ Packaging just zips everything in the `_build/[platform]/release` folder, using 
 ### Changing a Base App
 
 When building 2 folder links are created:
-    * `_build/[platform]/release/baseapp` link to Omniverse App (e.g. Code)
+    * `_build/[platform]/release/baseapp` link to Omniverse App (e.g. Create)
     * `_build/[platform]/release/kit` links to kit inside of the app above (same as `_build/[platform]/release/baseapp/kit`)
 
 In `repo.toml`, the baseapp name and version are specified and can be changed:
 
 ```toml
 [repo_kit_link_app]
-app_name = "code"   # App name.
+app_name = "create"   # App name.
 app_version = ""    # App version. Empty means latest. Specify to lock version, e.g. "2022.2.0-rc.3"
 ```
 
@@ -57,7 +57,7 @@ After editing `repo.toml`, run `build.bat` again to create new app links.
 ## Keep Learning: Launching Apps
 
 If you look inside the `bat`/`sh` app script runner file it just launches kit and passes a kit file (`my_name.my_app.kit`).
-Application kit files define app configuration. *Omniverse Kit* is the core application runtime for Omniverse Applications. Think of it as `python.exe`. It is a small runtime, that enables all the basics like settings, python, logging and searches for extensions. **Everything else is an extension.** You can run only this new extension without running any big *App* like *Code*:
+Application kit files define app configuration. *Omniverse Kit* is the core application runtime for Omniverse Applications. Think of it as `python.exe`. It is a small runtime, that enables all the basics like settings, python, logging and searches for extensions. **Everything else is an extension.** You can run only this new extension without running any big *App* like *Create*:
 
 There are 2 other app examples: `my_name.my_app.viewport.kit` and `my_name.my_app.editor.kit`. Try running them.
 

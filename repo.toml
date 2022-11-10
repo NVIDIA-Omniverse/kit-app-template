@@ -36,4 +36,3 @@ config_path = "${root}/docs/docs.toml"
 extensions = [
 ]
 
-# AUTOREMOVE: END
