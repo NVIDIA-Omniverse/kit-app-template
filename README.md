@@ -23,7 +23,7 @@ Extensive documentation detailing what extensions are and how they work can be f
 
 ### Build
 
-1. Clone this repo to your local machine.
+1. Clone [this repo](https://github.com/NVIDIA-Omniverse/kit-app-template) to your local machine.
 2. Open a command prompt and navigate to the root of your cloned repo.
 3. Run `build.bat` to bootstrap your dev environment and build an example app.
 4. Run `_build\windows-x86_64\release\my_name.my_app.bat` (or other apps) to open an example kit application.
