@@ -3,68 +3,58 @@ title = "My Simple Application"
 
 version = "1.0.0"
 
-description = """This Simple application shows you how to make an application that doesn't use USD
-or RTX but simply Omniverse Kit and its UI framework to build a window and some functions.
-It is compatible with anywhere kit can run its UI (i.e. most computers with any GPU)
-"""
+description = """This Simple application shows you how to make an application"""
+
 # Keywords make  it browseable in UI using the "experience" filter
 keywords = ["app"]
 
 [dependencies]
 # Create Kit UI Based applications
-"omni.kit.uiapp" = {}
+"omni.app.editor.base" = {}
 
-# This is your application setup Extension
-# where you layout the various Windows, arrange your menu, etc.
-# order = 1000 makes it run last
-"my_name.my_app.setup" = { order = 1000 }
+"omni.hello.world" = {}
 
-# This is a window for your application just as an example.
-# You can have many of them or none depending on what you are doing.
-"my_name.my_app.window" = {}
+"omni.kit.window.extensions" = {}
 
-[settings]
-# when you don't need RTX you can use the compatibility mode, faster load and work on "any" GPU
-exts."omni.kit.renderer.core".compatibilityMode = true
+# Vulkan shader caches
+"omni.rtx.shadercache.vulkan" = {}
 
-# deprecate support for old kit.ui.menu
-# (support legacy_mode will probably be removed for Kit 104)
-app.menu.legacy_mode = false
+# DX shader caches (windows only)
+[dependencies."filter:platform"."windows-x86_64"]
+"omni.rtx.shadercache.d3d12" = {}
 
-# this is used in our setup file to display the Version to the user in the title bar
-app.titleVersion = "1.0"
-
-# Skip long full shutdown and exit quickly
-app.fastShutdown = true
-
-[settings.app.window]
-title = "My First App"
-
-# Width and Height of your Main Window at startup
-width = 1000
-height = 500
-
-# this is a custom setting used in our app setup to choose the Layout
-[settings.app.layout]
-name = "basic"
+[settings.app]
+fastShutdown = true
 
 # Register extension folders from this repo in kit
 # These are the paths where Kit looks for extensions
 # Your application is using Extensions from your application
-# Here they are setup into a single folder "exts" but you can have you own structure if you need
+# Here they are setup into a single folder "source/extensions" but you can have you own structure if you need
 # see we also add the Extension from the Base application using their extscache
 [settings.app.exts]
-folders.'++' = ["${app}/../exts", "${app}/../extscache/", "${app}/../baseapp/exts", "${app}/../baseapp/extscache", "${app}/../baseapp/apps"]
+folders.'++' = ["${app}/../exts", "${app}/../extscache/"]
 
-# Extension registry is not yet enabled for public apps
-[settings.app.extensions]
-registryEnabled = false
-
-# these will be for showing how to write tests for your application.
-# And yes you absolutely should
-[[test]]
-args = [
-	"--/app/window/width=480",
-    "--/app/window/height=480",
-    "--/app/extensions/registryEnabled=0", # Make sure we can run without registry and everything is precached
+# Extension Registries
+[settings.exts."omni.kit.registry.nucleus"]
+registries = [
+	{ name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/shared" },
+	{ name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+	{ name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
 ]
+
+########################################################################################################################
+# BEGIN GENERATED PART (Remove from 'BEGIN' to 'END' to regenerate)
+########################################################################################################################
+
+# Kit SDK Version: 105.1+release.130672.8d4ad19f.tc
+
+# Version lock for all dependencies:
+[settings.app.exts]
+enabled = [
+	"omni.hello.world-1.0.0",
+	"omni.kit.viewport.registry-104.0.4",
+]
+
+########################################################################################################################
+# END GENERATED PART
+########################################################################################################################

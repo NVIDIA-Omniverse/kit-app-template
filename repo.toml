@@ -7,32 +7,26 @@
 # Use the Kit Template repo configuration as a base. Only override things specific to the repo.
 import_configs = [
     "${root}/_repo/deps/repo_kit_tools/kit-template/repo.toml",
-    "${root}/_repo/deps/repo_kit_tools/kit-template/repo-app.toml"
+    "${root}/_repo/deps/repo_kit_tools/kit-template/repo-external-app.toml",
 ]
 
 # Repository Name
 name = "kit-app-template"
 
-[repo_kit_link_app]
-app_name = "create"   # App name.
-app_version = ""    # App version. Empty means latest. Specify to lock version, e.g. "2022.2.0-rc.3"
-
 
 ########################################################################################################################
-# Documentation building
+# Extensions precacher
 ########################################################################################################################
 
-[repo_docs]
-#name = "Kit App Template"
+[repo_precache_exts]
+# Apps to run and precache
+apps = [
+    "${root}/source/apps/omni.usd_explorer.kit",
+    "${root}/source/apps/my_name.my_app.kit",
+]
 
-# kit-manual doc
-[[repo_docs.kit.custom_project]]
-name = "kit-app-template"
-root = "${root}"
-config_path = "${root}/docs/docs.toml"
-
-
-[repo_docs.kit]
-extensions = [
+registries = [
+    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/shared" },
+    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
 ]
 

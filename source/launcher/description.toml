@@ -1,0 +1,49 @@
+name = "USD Explorer"               # displayed application name
+shortName = "USD Explorer"          # displayed application name in smaller card and library view
+version = "${version}"              # version must be semantic
+kind = "app"                        # enum of "app", "connector", and "experience" for now
+latest = true                       # boolean for if this version is the latest version
+slug = "my_company.usd_explorer"    # unique identifier for component, all lower case, persists between versions
+productArea = "My Company"          # displayed before application name in launcher
+category = "Apps"                   # category of content
+channel = "beta"                    # 3 filter types [ "alpha", "beta", "release "]
+enterpriseStatus = false            # set true if you want this package to show in enterprise launcher
+
+#values for filtering content, not implemented yet
+tags = [
+  "Manufacturing",
+  "Product Design",
+  "Scene Composition",
+  "Visualization",
+  "Rendering"
+]
+
+#string array, each line is a new line, keep lines under 256 char and keep lines under 4
+description = [
+"My Company USD Explorer is an Omniverse app for Reviewing and Constructing large facilities such as factories, warehouses and more. It is built using NVIDIA Omniverse™ Kit. The Scene Description and in-memory model is based on Pixar's USD. Omniverse USD Composer takes advantage of the advanced workflows of USD like Layers, Variants, Instancing and much more.",
+"When connected to a Omniverse Nucleus server, worlds can be authored LIVE across multiple Omniverse applications, machines and users for advanced collaborative workflows."
+]
+
+#array of links for more info on product
+[[links]]
+title = "Tutorials"
+url = "http://omniverse.nvidia.com/tutorials"
+[[links]]
+title = "Forums"
+url = "https://forums.developer.nvidia.com/c/omniverse/300"
+
+[developer]
+#name of developer
+name = 'My Company'
+# hyperlink on developer name (can be left as empty string)
+url = 'https://www.my-company.com/'
+
+[publisher]
+#name of publisher
+name = 'My Company'
+# hyperlink on publisher name (can be left as empty string)
+url = 'https://www.my-company.com/'
+
+[url]
+windows-x86_64 = 'windows-x86_64/package.zip'
+linux-x86_64 = 'linux-x86_64/package.zip'

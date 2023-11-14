@@ -1,0 +1,32 @@
+<project toolsVersion="5.0">
+  <!-- Only edit this file to pull kit depedencies. -->
+  <!-- Put all extension-specific dependencies in `ext-deps.packman.xml`. -->
+  <!-- This file contains shared Kit SDK dependencies used by most kit extensions. -->
+
+  <!-- Import Kit SDK all-deps xml file to steal some deps from it: -->
+  <import path="../../_build/${platform}/${config}/kit/dev/all-deps.packman.xml">
+    <filter include="pybind11" />
+    <filter include="fmt" />
+    <filter include="python" />
+    <filter include="carb_sdk_plugins" />
+    <filter include="winsdk" />
+  </import>
+
+  <!-- Pull those deps of the same version as in Kit SDK. Override linkPath to point correctly, other properties can also be override, including version. -->
+  <dependency name="carb_sdk_plugins" linkPath="../../_build/target-deps/carb_sdk_plugins" tags="non-redist" />
+  <dependency name="pybind11" linkPath="../../_build/target-deps/pybind11" />
+  <dependency name="fmt" linkPath="../../_build/target-deps/fmt" />
+  <dependency name="python" linkPath="../../_build/target-deps/python" />
+
+  <!-- Import host deps from Kit SDK to keep in sync -->
+  <import path="../../_build/${platform}/${config}/kit/dev/deps/host-deps.packman.xml">
+    <filter include="premake" />
+    <filter include="msvc" />
+    <filter include="linbuild" />
+  </import>
+
+  <dependency name="premake" linkPath="../../_build/host-deps/premake" />
+  <dependency name="msvc" linkPath="../../_build/host-deps/msvc" />
+  <dependency name="winsdk" linkPath="../../_build/host-deps/winsdk" />
+  <dependency name="linbuild" linkPath="../../_build/host-deps/linbuild" tags="non-redist"/>
+</project>

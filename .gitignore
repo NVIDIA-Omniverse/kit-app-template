@@ -19,3 +19,9 @@ PACKAGE-DEPS.yaml
 
 # kit user config
 deps/**/user.toml
+
+# vscode settings are copied and filled in from 'settings.json.template'
+.vscode/settings.json
+
+# PyCharm files.
+/.idea/

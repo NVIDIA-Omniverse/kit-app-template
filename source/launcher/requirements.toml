@@ -1,0 +1,20 @@
+# Optional note that will be shown below system requirements.
+# Supports markdown.
+note = "Note: Omniverse is built to run on any RTX-powered machine. For ideal performance, we recommend using GeForce RTX™ 2080, Quadro RTX™ 5000, or higher. For latest drivers, visit [NVIDIA Driver Downloads](https://www.nvidia.com/Download/index.aspx). For Quadro, select 'Quadro New Feature Driver (QNF)."
+# System requirements specs.
+# Supports line breaks.
+[minimum]
+cpuNames = "Intel I7\nAMD Ryzen"
+cpuCores = "4"
+ram = "16 GB"
+storage = "512 GB SSD"
+vram = "6 GB"
+gpu = "Any RTX GPU"
+
+[recommended]
+cpuNames = "Intel I7\nAMD Ryzen"
+cpuCores = "8"
+ram = "32 GB"
+storage = "512 GB M.2 SSD"
+vram = "8 GB"
+gpu = "GeForce RTX 2080\nQuadro RTX 5000"

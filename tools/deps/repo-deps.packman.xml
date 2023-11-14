@@ -1,0 +1,35 @@
+<project toolsVersion="5.0">
+  <dependency name="repo_man" linkPath="../../_repo/deps/repo_man">
+    <package name="repo_man" version="1.46.2"/>
+  </dependency>
+  <dependency name="repo_build" linkPath="../../_repo/deps/repo_build">
+    <package name="repo_build" version="0.52.0"/>
+  </dependency>
+  <dependency name="repo_ci" linkPath="../../_repo/deps/repo_ci">
+    <package name="repo_ci" version="0.6.0" />
+  </dependency>
+  <dependency name="repo_changelog" linkPath="../../_repo/deps/repo_changelog">
+    <package name="repo_changelog" version="0.3.13"/>
+  </dependency>
+  <dependency name="repo_docs" linkPath="../../_repo/deps/repo_docs">
+    <package name="repo_docs" version="0.39.2"/>
+  </dependency>
+  <dependency name="repo_kit_tools" linkPath="../../_repo/deps/repo_kit_tools">
+    <package name="repo_kit_tools" version="0.14.2"/>
+  </dependency>
+  <dependency name="repo_test" linkPath="../_repo/deps/repo_test">
+    <package name="repo_test" version="2.16.1" />
+  </dependency>
+  <dependency name="repo_source" linkPath="../../_repo/deps/repo_source">
+    <package name="repo_source" version="0.4.3" />
+  </dependency>
+  <dependency name="repo_package" linkPath="../../_repo/deps/repo_package">
+    <package name="repo_package" version="5.9.3" />
+  </dependency>
+  <dependency name="repo_format" linkPath="../../_repo/deps/repo_format">
+    <package name="repo_format" version="2.8.0" />
+  </dependency>
+  <dependency name="repo_kit_template" linkPath="../../_repo/deps/repo_kit_template">
+    <package name="repo_kit_template" version="0.1.9" />
+  </dependency>
+</project>
