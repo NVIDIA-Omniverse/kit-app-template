@@ -1,7 +1,7 @@
 [package]
 title = "USD Explorer"
-description = "OV app for interacting with large stages."
-version = "2023.2.0"
+version = "2023.2.1"
+description = "A foundation application for reviewing and constructing large facilities such as factories, warehouses and more."
 
 # That makes it browsable in UI with "experience" filter
 keywords = ["app", "usd", "explore"]
@@ -47,8 +47,7 @@ keywords = ["app", "usd", "explore"]
 # File format conversion
 "omni.kit.asset_converter" = {}
 "omni.kit.tool.asset_importer" = {}
-"omni.kit.converter.cad" = { version = "200.1.0-rc.18", exact = true }
-"omni.kit.converter.cad_core" = { version = "200.1.0-rc.22", exact = true }
+"omni.kit.converter.cad" = { version = "200.1.1" }
 
 # Particle/PointCloud File Format
 # "omni.usd.fileformat.e57" = {}
@@ -247,6 +246,8 @@ viewport.boundingBoxes.hideWhenManipulating = true
 viewport.offsets.navBottom = 0
 
 "omni.usd".loadRenderSettingsFromUsdStage = false # ensure consistent settings across all USD stages independently of what was saved to them
+# Enable parallel mode for selection performance
+"omni.usd".getRenderablePaths.parallel = 4
 
 # default to fill viewport
 viewport.defaults.fillViewport = false
@@ -307,7 +308,7 @@ primCreation.enableMenuAudio = false
 primCreation.enableMenuCamera = false
 liveSession.enableMenuFollowUser = false
 
-# Don't expand viewport
+# Expand viewport
 startup.expandViewport = true
 
 
@@ -330,6 +331,11 @@ newStage.defaultTemplate = "SunnySky"
 
 viewport.camVelocityMin = 0.01
 viewport.camVelocityMax = 50
+
+[settings.app.viewport.defaultCamera.target.distance]
+enabled = true
+value = 5
+units = "meters"
 
 # Disable all HUD items by default
 [settings.app.viewport.defaults.hud]
@@ -483,10 +489,6 @@ foundation.verifyOsVersion.enabled = false
 "omni.kit.viewport.navigation.markup".visible = false
 "omni.kit.viewport.navigation.waypoint".visible = false
 
-# From omni.kit.viewport.bundle
-"omni.kit.viewport.window".startup.windowName = "Viewport"
-"omni.kit.viewport.window".startup.disableWindowOnLoad = false
-
 "omni.kit.timeline.minibar".stay_on_playing = true
 
 [settings]
@@ -506,7 +508,6 @@ telemetry.enableSentry = true
 persistent.exts."omni.kit.manipulator.camera".tumbleSpeed = 720
 persistent.exts."omni.kit.manipulator.camera".inertiaDecay = 3
 persistent.exts."omni.kit.manipulator.prim".manipulator.placement = "Bounding Box Base"
-persistent.exts."omni.kit.viewport.window".cameraSpeedMessage.showFlyViewLock = true
 
 # renderer.enabled = "rtx,iray,pxr"
 # only enable rtx renderer by default
@@ -552,6 +553,16 @@ registries = [
 	{ name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/shared" },
 	{ name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
 ]
+# Viewport Window
+###############################
+[settings.exts."omni.kit.viewport.window"]
+startup.windowName = "Viewport"
+hud.hostMemory.perProcess = true
+# Change "Host Memory" labeling to "Process Memory"
+# hud.hostMemory.label = "Process"
+
+[settings.persistent.exts."omni.kit.viewport.window"]
+cameraSpeedMessage.showFlyViewLock = true
 
 # Content Browser
 ###############################
@@ -689,6 +700,10 @@ dependencies = [
     "omni.kit.test_suite.helpers",
 	"omni.kit.ui_test",
 	"omni.kit.core.tests",
+    #"omni.hydra.pxr",
+    # NOTE: test_extensions.py (with imports from omni.kit.core.tests) need dependencies from some extensions
+    "omni.kit.test_helpers_gfx",       # test dependency from omni.renderer.core
+    "omni.rtx.tests", 					# test dependency from omni.hydra.scene_api
 ]
 
 
@@ -726,15 +741,14 @@ timeout = 600
 
 
 
+
 ########################################################################################################################
 # BEGIN GENERATED PART (Remove from 'BEGIN' to 'END' to regenerate)
 ########################################################################################################################
 
-# Kit SDK Version: 105.1.0+release.51.a7407fb5.tc
+# Kit SDK Version: 105.1.2+release.134727.de96b556.tc
 
 # Exact Version dependencies:
-# 	omni.kit.converter.cad-200.1.0-rc.18
-# 	omni.kit.converter.cad_core-200.1.0-rc.22
 # 	omni.kit.window.modifier.titlebar-105.1.15
 # 	omni.scene.optimizer.core-105.1.15
 # 	omni.scene.optimizer.ui-105.1.9
@@ -748,24 +762,26 @@ enabled = [
 	"omni.kit.browser.folder.core-1.9.8",
 	"omni.kit.browser.material-1.4.5",
 	"omni.kit.browser.sample-1.4.6",
-	"omni.kit.converter.common-200.1.0-rc.4",
-	"omni.kit.converter.jt_core-200.1.0-rc.14",
-	"omni.kit.markup.core-1.2.6",
+	"omni.kit.converter.cad-200.1.1-rc.8",
+	"omni.kit.converter.cad_core-200.1.1-rc.10",
+	"omni.kit.converter.common-200.1.1-rc.4",
+	"omni.kit.converter.jt_core-200.1.1-rc.6",
+	"omni.kit.markup.core-1.2.15",
 	"omni.kit.markup.playlist-0.0.4",
 	"omni.kit.ngsearch-0.3.3",
 	"omni.kit.playlist.core-1.3.1",
 	"omni.kit.prim.icon-1.0.12",
 	"omni.kit.search.service-0.1.12",
-	"omni.kit.stage_column.payload-1.0.12",
+	"omni.kit.stage_column.payload-1.0.13",
 	"omni.kit.thumbnails.usd-1.0.4",
 	"omni.kit.timeline.minibar-1.2.9",
-	"omni.kit.tool.asset_importer-2.5.0",
+	"omni.kit.tool.asset_importer-2.5.1",
 	"omni.kit.tool.camera_playlist-1.3.1",
-	"omni.kit.tool.markup-1.2.65",
-	"omni.kit.tool.measure-105.1.74",
+	"omni.kit.tool.markup-1.2.68",
+	"omni.kit.tool.measure-105.1.77",
 	"omni.kit.tool.remove_unused.controller-0.1.3",
 	"omni.kit.tool.remove_unused.core-0.1.2",
-	"omni.kit.tool.teleport-104.2.11",
+	"omni.kit.tool.teleport-104.2.15",
 	"omni.kit.usd_presenter.conn.manager-0.1.4",
 	"omni.kit.usd_presenter.main.menubar-1.0.34",
 	"omni.kit.usd_presenter.render-0.1.1",
@@ -778,7 +794,7 @@ enabled = [
 	"omni.kit.viewport.menubar.nav_bar_toggle-1.0.3",
 	"omni.kit.viewport.menubar.timeline-1.0.2",
 	"omni.kit.viewport.menubar.waypoint-104.2.16",
-	"omni.kit.viewport.navigation.camera_manipulator-1.0.51",
+	"omni.kit.viewport.navigation.camera_manipulator-1.0.52",
 	"omni.kit.viewport.navigation.capture_no_ansel-1.0.16",
 	"omni.kit.viewport.navigation.core-1.0.29",
 	"omni.kit.viewport.navigation.markup-1.0.30",
@@ -788,19 +804,19 @@ enabled = [
 	"omni.kit.viewport.navigation.usd_explorer.bundle-1.0.13",
 	"omni.kit.viewport.navigation.walk-1.0.4",
 	"omni.kit.viewport.navigation.waypoint-1.0.22",
-	"omni.kit.waypoint.core-1.4.41",
+	"omni.kit.waypoint.core-1.4.49",
 	"omni.kit.waypoint.playlist-1.0.7",
-	"omni.kit.widget.material_preview-1.0.11",
+	"omni.kit.widget.material_preview-1.0.13",
 	"omni.kit.widget.zoombar-1.0.5",
 	"omni.kit.widgets.custom-1.0.7",
 	"omni.kit.window.material-1.4.6",
-	"omni.kit.window.section-105.1.9",
+	"omni.kit.window.section-105.1.10",
 	"omni.scene.optimizer.bundle-105.1.15",
 	"omni.services.pip_archive-0.13.2",
 	"omni.usd.metrics.assembler-105.1.8",
 	"omni.usd.metrics.assembler.ui-105.1.19",
 	"omni.usd.schema.metrics.assembler-105.1.2",
-	"omni.usd_explorer.setup-1.0.0",
+	"omni.usd_explorer.setup-1.0.32",
 	"omni.warp.core-1.0.0-beta.3",
 ]
 

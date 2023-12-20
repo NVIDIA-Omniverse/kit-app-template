@@ -1,6 +1,6 @@
 [package]
 # Semantic Versionning is used: https://semver.org/
-version = "1.0.0"
+version = "1.0.32"
 
 # The title and description fields are primarily for displaying extension info in UI
 title = "Setup Extension for USD Explorer"
