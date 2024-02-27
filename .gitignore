@@ -25,3 +25,8 @@ deps/**/user.toml
 
 # PyCharm files.
 /.idea/
+
+# Linux in docker build $HOME dirs
+/.nvidia-omniverse
+/.local
+/.cache
