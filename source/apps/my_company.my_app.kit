@@ -1,0 +1,54 @@
+[package]
+title = "My App"
+description = "An Application created from a tutorial."
+version = "2024.0.0"
+
+[dependencies]
+"omni.kit.uiapp" = {}
+# Viewport
+"omni.kit.viewport.bundle" = {}
+# Render Settings
+"omni.rtx.window.settings" = {}
+# Content Browser
+"omni.kit.window.content_browser" = {}
+# Stage Inspector
+"omni.kit.window.stage" = {}
+# Layer Inspector
+"omni.kit.widget.layers" = {}
+# Toolbar. Setting load order so that it loads last.
+"omni.kit.window.toolbar" = { order = 1000 }
+# Properties Inspector
+"omni.kit.property.bundle" = {}
+
+# Layout capabilities
+"omni.app.setup" = {}
+# App resources
+"my_company.my_app.resources" = {}
+"my_company.my_window" = {}
+
+# DX shader caches (windows only)
+[dependencies."filter:platform"."windows-x86_64"]
+"omni.rtx.shadercache.d3d12" = {}
+
+[settings]
+app.window.title = "My App"
+app.extensions.installUntrustedExtensions = true
+app.content.emptyStageOnStart = true
+app.kit.editor.setup = true
+app.layout.default = "${my_company.my_app.resources}/layouts/default.json"
+
+[settings.app.exts]
+# Add additional search paths for dependencies.
+folders.'++' = ["${app}/../exts", "${app}/../extscache/"]
+
+[settings.exts."omni.kit.registry.nucleus"]
+registries = [
+    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/shared" },
+    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
+]
+
+[[test]]
+args = [
+    "--/app/window/title=My Test App",
+]

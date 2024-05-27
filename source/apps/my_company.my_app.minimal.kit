@@ -1,0 +1,21 @@
+[package]
+title = "My App (minimal)"
+description = "An Application created from a tutorial."
+version = "2024.0.0"
+
+[dependencies]
+"omni.kit.uiapp" = {}
+
+[settings]
+app.window.title = "My App"
+
+[settings.exts."omni.kit.registry.nucleus"]
+registries = [
+    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/shared" },
+    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+]
+
+[[test]]
+args = [
+    "--/app/window/title=My Test App",
+]

@@ -1,0 +1,46 @@
+[package]
+# Semantic Versionning is used: https://semver.org/
+version = "0.1.0"
+
+# Lists people or organizations that are considered the "authors" of the package.
+authors = [""]
+
+# The title and description fields are primarly for displaying extension info in UI
+title = "Python Extension Example"
+description="The simplest python extension example. Use it as a starting point for your extensions."
+
+# Path (relative to the root) or content of readme markdown file for UI.
+readme  = "docs/README.md"
+
+# URL of the extension source repository.
+repository=""
+
+# One of categories for UI.
+category = "Example"
+
+# Keywords for the extension
+keywords = ["kit", "example"]
+
+# Location of change log file in target (final) folder of extension, relative to the root.
+# More info on writing changelog: https://keepachangelog.com/en/1.0.0/
+changelog="docs/CHANGELOG.md"
+
+# Preview image and icon. Folder named "data" automatically goes in git lfs (see .gitattributes file).
+# Preview image is shown in "Overview" of Extensions window. Screenshot of an extension might be a good preview image.
+preview_image = "data/preview.png"
+
+# Icon is shown in Extensions window, it is recommended to be square, of size 256x256.
+icon = "data/icon.png"
+
+[dependencies]
+# none
+
+# Main python module this extension provides, it will be publicly available as "import omni.example.hello".
+[[python.module]]
+name = "my_company.my_app.resources"
+
+[documentation]
+pages = [
+    "docs/Overview.md",
+    "docs/CHANGELOG.md",
+]
