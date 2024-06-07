@@ -27,7 +27,7 @@ The kit-app-template enables developers to create cross-platform (Windows and Li
 
 ### A Deeper Understanding
 
-The `kit-app-template` repository is designed to abstract complexity, jumpstarting your development with pre-configured templates, tools, and essential boilerplate. For those seeking a deeper understanding of the application and extension creation process, we've provided a companion tutorial. **[Explore the tutorial here](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/intro.html)**—it offers detailed insights into the underlying structure and mechanisms, enabling a thorough grasp of both Kit and the development process.
+The `kit-app-template` repository is designed to abstract complexity, jumpstarting your development with pre-configured templates, tools, and essential boilerplate. For those seeking a deeper understanding of the application and extension creation process, we've provided a companion tutorial. **[Explore the tutorial here](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)**—it offers detailed insights into the underlying structure and mechanisms, enabling a thorough grasp of both Kit and the development process.
 
 
 ## Table of Contents
@@ -78,7 +78,7 @@ To kickstart your development journey with Omniverse Applications and Extensions
 
 ## Quick Start
 
-This section guides you through creating your first Kit SDK-based Application using the `kit-app-template` repository. For a more comprehensive explanation of functionality previewed here, reference the following [Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/intro.html) for an in-depth exploration.
+This section guides you through creating your first Kit SDK-based Application using the `kit-app-template` repository. For a more comprehensive explanation of functionality previewed here, reference the following [Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html) for an in-depth exploration.
 
 ### 1. Clone the Repository
 
@@ -210,7 +210,7 @@ To learn more about what data is collected, how we use it and how you can change
 
 ## Additional Resources
 
-- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/intro.html)
+- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)
 
 - [Usage and Troubleshooting](readme-assets/additional-docs/usage_and_troubleshooting.md)
 

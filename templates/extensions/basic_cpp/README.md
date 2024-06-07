@@ -87,4 +87,4 @@ As is the case with Applications, extensions can also depend on and be depended 
 ## Additional Learning
 - [Kit Manual Extension Docs](https://docs.omniverse.nvidia.com/kit/docs/kit-manual)
 - [C++ Extension Examples](https://github.com/NVIDIA-Omniverse/kit-extension-template-cpp)
-- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/intro.html)
+- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)

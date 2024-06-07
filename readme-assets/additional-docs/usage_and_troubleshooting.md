@@ -12,7 +12,7 @@ For purposes of experimentation and initial development, housing all working ass
 ### Applications and Extensions
 From the perspective of the Omniverse Kit SDK, everything is considered an extension. The `.kit` files that define applications are simply a convenient method to assemble and configure a set of extensions for specific functionalities, while extensions (and combinations thereof) can act as modular components fulfilling particular tasks.
 
-For additional information on the Kit SDK and how to create applications and extensions, refer to the [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/intro.html).
+For additional information on the Kit SDK and how to create applications and extensions, refer to the [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html).
 
 ### Extendable Templates and Tools
 The templates and tools provided in this repository are designed to be extendable.

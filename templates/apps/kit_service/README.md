@@ -165,4 +165,4 @@ This will bundle your application into a distributable format, ready for deploym
 
 ## Additional Learning
 
-- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/intro.html)
+- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)

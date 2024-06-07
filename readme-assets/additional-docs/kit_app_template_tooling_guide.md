@@ -159,4 +159,4 @@ By default, the `package` tool creates a `.zip` file named `kit-app-template` in
 Packages can be either 'fat' (including all dependencies) or 'thin' (including only custom extensions and configurations for required registry extensions). Thin packages are created using the `--thin` flag. A fat package is created by default to facilitate ease of use and testing, whereas **thin package distribution is required for broader dissemination.**
 
 ## Additional Resources
-- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/intro.html)
+- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)
