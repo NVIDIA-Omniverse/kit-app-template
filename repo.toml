@@ -13,6 +13,21 @@ import_configs = [
 # Repository Name
 name = "kit-app-template"
 
+# Disable linbuild until we know what we want to do with this.
+[repo_build.docker]
+enabled = false
+
+[repo_build.fetch.pip]
+# List of pip files to pip install from (in order)
+files_to_pull = [
+    "${root}/tools/deps/pip.toml"
+]
+
+# Do not gather Python dependency licenses
+licensing_enabled = false
+
+# Do not try to publish a pip cache to S3
+publish_pip_cache = false
 
 ########################################################################################################################
 # Extensions precacher
@@ -20,13 +35,85 @@ name = "kit-app-template"
 
 [repo_precache_exts]
 # Apps to run and precache
-apps = [
-    "${root}/source/apps/omni.usd_explorer.kit",
-    "${root}/source/apps/my_name.my_app.kit",
-]
+apps = []
 
 registries = [
     { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/shared" },
     { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
 ]
+
+########################################################################################################################
+# Packaging
+########################################################################################################################
+
+[repo_package.packages.fat_package]
+root = "_build/$${platform}/$${config}"
+archive_name = "${conf:repo.name}-fat"
+omniverse_flow_version_scheme=false
+package_per_config = true                   # By default we only build + package release.
+append_config = false                       # Set to true to append release/debug config to package name.
+archive_format = "zip"                      # We support "7z", "zip", "tar.gz", "tar.bz2"
+build_version = "${file:${config_root}/tools/VERSION.md}"
+
+# omniverse_flow_version_scheme sets package name to the format:
+# archive_name@{build_version}+{gitbranch}.{builder_id}.{githash}.{build_environment}.{host_platform}.{archive_format}
+# e.g. kit-app-template-thin@2024.1.0+custom-app-stuff.0.12345678.local.linux-x86_64.zip
+# omniverse_flow_version_scheme=true
+
+files = [
+    ["**"],
+]
+files_exclude = [
+    ["_*/**"],
+    [".*/**"],
+    ["**/*.pdb"],
+    ["**/*.exp"],
+    ["baseapp/**"],
+    ["extsbuild/**"],
+    ["cache/**"],
+    ["data/**"],
+    ["logs/**"],
+    ["apps/kit.portable"],
+    ["**/__pycache__"],
+]
+"linux-x86_64".files_strip = []
+
+
+[repo_package.packages.thin_package]
+root = "_build/$${platform}/$${config}"
+archive_name = "${conf:repo.name}-thin"
+omniverse_flow_version_scheme=false
+package_per_config = true
+append_config = false
+archive_format = "zip"
+build_version = "${file:${config_root}/tools/VERSION.md}"
+
+files = [
+    ["**"],
+]
+files_exclude = [
+    ["_*/**"],
+    [".*/**"],
+    ["**/*.pdb"],
+    ["**/*.exp"],
+    ["kit/**"],
+    ["extscache/**"],
+    ["extsbuild/**"],
+    ["baseapp/**"],
+    ["cache/**"],
+    ["data/**"],
+    ["logs/**"],
+    ["apps/kit.portable"],
+    ["**/__pycache__"],
+]
+"linux-x86_64".files_strip = []
+
+
+########################################################################################################################
+# Template tool configuration
+########################################################################################################################
+[repo_kit_template]
+extension_templates_config = "templates/templates.toml"
+
 

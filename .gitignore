@@ -30,3 +30,6 @@ deps/**/user.toml
 /.nvidia-omniverse
 /.local
 /.cache
+
+# Omniverse EULA breadcrumb
+/.omniverse_eula_accepted.txt

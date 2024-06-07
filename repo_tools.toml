@@ -1,0 +1,17 @@
+#######################################################################################################################
+# [repo_launcher] Simple tool to launch Kit applications
+#######################################################################################################################
+
+[repo_launch]
+command = "launch"
+entry_point = "${root}/tools/repoman/launch.py:setup_repo_tool"
+
+[repo_package]
+# Hide default repo_package under internal command to be used by `repo_package_app`
+command = "_package"
+
+[repo_package_app]
+# Replace regular repo_package with our guided packaging tool
+command = "package"
+entry_point = "${root}/tools/repoman/package.py:setup_repo_tool"
+enabled = true

@@ -12,3 +12,4 @@
 # All files under data go into Git LFS
 data/** filter=lfs diff=lfs merge=lfs -text
 source/extensions/**/data/** filter=lfs diff=lfs merge=lfs -text
+templates/extensions/**/data/** filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,88 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+# -- Application templates --
+
+[templates."kit_service"]
+class = "ApplicationTemplate"
+name = "Kit Service"
+url = "."
+subpath = "apps/kit_service/kit_service.kit"
+setup_extension = "kit_service_setup"
+variables.application_name = "my_company.my_service"
+variables.application_display_name = "My Service"
+variables.version = "0.1.0"
+
+[templates."kit_base_editor"]
+class = "ApplicationTemplate"
+name = "Kit Base Editor"
+url = "."
+subpath = "apps/kit_base_editor/kit_base_editor.kit"
+variables.application_name = "my_company.my_editor"
+variables.application_display_name = "My Editor"
+variables.version = "0.1.0"
+
+[templates."omni_usd_explorer"]
+class = "ApplicationTemplate"
+name = "USD Explorer"
+url = "."
+subpath = "apps/usd_explorer/omni.usd_explorer.kit"
+setup_extension = "omni_usd_explorer_setup"
+variables.application_name = "my_company.my_usd_explorer"
+variables.application_display_name = "My USD Explorer"
+variables.version = "0.1.0"
+
+
+# -- Extension templates --
+
+[templates."basic_python_extension"]
+class = "ExtensionTemplate"
+name = "Basic Python Extension"
+url = "."
+subpath = "extensions/basic_python/template"
+variables.extension_name = "my_company.my_python_extension"
+variables.extension_display_name = "My Python Extension"
+variables.version = "0.1.0"
+
+[templates."basic_cpp_extension"]
+class = "ExtensionTemplate"
+name = "Basic C++ Extension"
+url = "."
+subpath = "extensions/basic_cpp/template"
+variables.extension_name = "my_company.my_cpp_extension"
+variables.extension_display_name = "My C++ Extension"
+variables.version = "0.1.0"
+
+[templates."basic_python_ui_extension"]
+class = "ExtensionTemplate"
+name = "Python UI Extension"
+url = "."
+subpath = "extensions/python_ui/template"
+variables.extension_name = "my_company.my_python_ui_extension"
+variables.extension_display_name = "My Python UI Extension"
+variables.version = "0.1.0"
+
+[templates."kit_service_setup"]
+class = "SetupExtensionTemplate"
+name = "Service Setup"
+url = "."
+subpath = "extensions/service.setup/template"
+variables.extension_name = "my_company.my_service_setup_extension"
+variables.extension_display_name = "My Service Setup Extension"
+variables.version = "0.1.0"
+
+[templates."omni_usd_explorer_setup"]
+class = "SetupExtensionTemplate"
+name = "Omni USD Explorer Setup"
+url = "."
+subpath = "extensions/usd_explorer.setup/template"
+variables.extension_name = "my_company.my_usd_explorer_setup_extension"
+variables.extension_display_name = "My USD Explorer Setup Extension"
+variables.version = "0.1.0"

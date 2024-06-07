@@ -22,11 +22,9 @@
   <import path="../../_build/${platform}/${config}/kit/dev/deps/host-deps.packman.xml">
     <filter include="premake" />
     <filter include="msvc" />
-    <filter include="linbuild" />
   </import>
 
   <dependency name="premake" linkPath="../../_build/host-deps/premake" />
   <dependency name="msvc" linkPath="../../_build/host-deps/msvc" />
   <dependency name="winsdk" linkPath="../../_build/host-deps/winsdk" />
-  <dependency name="linbuild" linkPath="../../_build/host-deps/linbuild" tags="non-redist"/>
 </project>
