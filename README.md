@@ -30,6 +30,10 @@ The kit-app-template enables developers to create cross-platform (Windows and Li
 The `kit-app-template` repository is designed to abstract complexity, jumpstarting your development with pre-configured templates, tools, and essential boilerplate. For those seeking a deeper understanding of the application and extension creation process, we've provided a companion tutorial. **[Explore the tutorial here](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)**—it offers detailed insights into the underlying structure and mechanisms, enabling a thorough grasp of both Kit and the development process.
 
 
+### New Developers
+For a beginner-friendly introduction to application development using the Omniverse Kit SDK, see the NVIDIA DLI course [Developing an Omniverse Kit-Based Application](https://learn.nvidia.com/courses/course-detail?course_id=course-v1:DLI+S-OV-11+V1) (account and login required)
+
+
 ## Table of Contents
 - [Overview](#overview)
 - [Prerequisites and Environment Setup](#prerequisites-and-environment-setup)
