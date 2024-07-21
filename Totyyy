@@ -1,0 +1,31 @@
+openscad
+// تصميم لجهاز كمبيوتر برج
+
+// إعدادات الأبعاد
+tower_width = 100;  // عرض البرج
+tower_depth = 50;   // عمق البرج
+tower_height = 200; // ارتفاع البرج
+front_panel_thickness = 5; // سمك اللوحة الأمامية
+
+// وظيفة لإنشاء البرج
+module computer_tower() {
+    // جسم البرج
+    color("blue")
+    cube([tower_width, tower_depth, tower_height]);
+
+    // اللوحة الأمامية
+    translate([0, -front_panel_thickness, (tower_height - front_panel_thickness) / 2])
+    color("black")
+    cube([tower_width, front_panel_thickness, tower_height]);
+
+    // فتحات التهوية
+    translate([10, -front_panel_thickness, tower_height - 20])
+    color("gray")
+    cube([tower_width - 20, front_panel_thickness, 10]);
+
+    translate([10, -front_panel_thickness, tower_height - 50])
+    cube([tower_width - 20, front_panel_thickness, 10]);
+}
+
+// استدعاء وظيفة البرج
+computer_tower();
