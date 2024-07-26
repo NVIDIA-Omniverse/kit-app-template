@@ -13,41 +13,15 @@ import sys
 import carb.settings
 import omni.kit.app
 import omni.kit.actions.core
+from omni.kit.core.tests import validate_extensions_load, validate_extensions_tests
 from omni.kit.test import AsyncTestCase
 from pxr import Usd, UsdGeom, Gf
 
 
 class TestUSDExplorerExtensions(AsyncTestCase):
-    # NOTE: Function pulled to remove dependency from omni.kit.core.tests
-    def _validate_extensions_load(self):
-        failures = []
-        manager = omni.kit.app.get_app().get_extension_manager()
-        for ext in manager.get_extensions():
-            ext_id = ext["id"]
-            ext_name = ext["name"]
-            info = manager.get_extension_dict(ext_id)
-
-            enabled = ext.get("enabled", False)
-            if not enabled:
-                continue
-
-            failed = info.get("state/failed", False)
-            if failed:
-                failures.append(ext_name)
-
-        if len(failures) == 0:
-            print("\n[success] All extensions loaded successfully!\n")
-        else:
-            print("")
-            print(f"[error] Found {len(failures)} extensions that could not load:")
-            for count, ext in enumerate(failures):
-                print(f"  {count+1}: {ext}")
-            print("")
-        return len(failures)
-
     async def test_l1_extensions_load(self):
         """Loop all enabled extensions to see if they loaded correctly"""
-        self.assertEqual(self._validate_extensions_load(), 0)
+        self.assertEqual(validate_extensions_load(), 0)
 
     async def test_regression_omfp_2304(self):
         loaded_omni_kit_collaboration_selection_outline = False

@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: Remote Attach",
-            "type": "debugpy",
+            "type": "python",
             "request": "attach",
             "connect": {
                 "host": "localhost",

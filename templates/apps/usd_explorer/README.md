@@ -35,9 +35,7 @@ This template stands out by providing specialized tools for handling large scene
 
 ### Getting Started
 
-To get started with the USD Explorer Template, ensure your development environment meets the prerequisites outlined in the top-level [**README**](../../../README.md#prerequisites-and-environment-setup).
-
-> **NOTE:** Example commands should be executed in **powershell** in Windows and **terminal** in Linux.
+To get started with the Kit Base Editor, ensure your development environment meets the prerequisites outlined in the top-level README.
 
 #### Cloning the Repository
 
@@ -50,8 +48,6 @@ cd kit-app-template
 
 **Note for USD Explorer** : Some applications require setup extensions to function as intended. In the case of USD Explorer, the setup extension controls the configuration of the extensions within the application, their layout, and other settings. During Application configuration, you will be prompted for information about this extension.
 
-> **NOTE:** Feel free to use default values for testing purposes.
-
 **Linux:**
 ```bash
 ./repo.sh template new
@@ -61,8 +57,6 @@ cd kit-app-template
 ```powershell
 .\repo.bat template new
 ```
-
-> **Note:** If this is your first time running the `template new` tool, you'll be prompted to accept the Omniverse Licensing Terms.
 
 Follow the prompt instructions:
 - **? Select with arrow keys what you want to create:** Application
@@ -106,17 +100,12 @@ Note that the build step will build all applications contained in the `source` d
 
 **? Select with arrow keys which App would you like to launch:** [Select the desired explorer application]
 
-> **NOTE:** The initial startup may take a 5 to 8 minutes as shaders compile for the first time. After initial shader compilation, startup time will reduce dramatically.
-
-![Launched USD Explorer](../../../readme-assets/usd_explorer_default_launch.png)
-
-### Where to Go From Here
-For more guidance on modifying the USD Explorer Template, visit the [Kit App Template Companion Tutorial - Extending Reference Applications](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/customize_reference_apps.html). This tutorial offers a step-by-step guide to help you understand the template's structure and customize it to suit your needs.
+***NOTE:* The initial startup may take 5 to 8 minutes as shaders compile for the first time. After initial shader compilation, startup time will reduce dramatically**
 
 ### Testing
 Applications and their associated extensions can be tested using the `repo test` tooling provided. Each application template includes an initial test suite that can be run to verify the application's functionality.
 
-> **NOTE:** Testing will only be run on applications and extensions within the build directory. **A successful build is required before testing.**
+**Note:** Testing will only be run on applications and extensions within the build directory. **A successful build is required before testing.**
 
 **Linux:**
 ```bash
@@ -141,14 +130,14 @@ Applications and their associated extensions can be tested using the `repo test`
     ```powershell
     .\repo.bat launch --dev-bundle
     ```
-- From the running application select `Developer` > `Extensions`
+- From the running application select `Developer` > `Utilities` > `Extensions`
 
 - Browse and enable extensions of interest from the Extension Manager.
     - Enabling the extensions within the Extension Manager UI will allow you to try out the features of the extension in the currently running application.
 
     - To permanently add the extension to the application, you will need to add the extension to the `.kit` file. For example, adding the Layer View extension would require adding `omni.kit.widget.layers` to the dependencies section of the `.kit` file.
 
-- For additional information on the Developer Bundle Extensions, refer to the [Developer Bundle Extensions](../../../readme-assets/additional-docs/developer_bundle_extensions.md) documentation.
+- For additional information on the Developer Bundle Extensions, refer to the [BETA - Developer Bundle Extensions](readme-assets/additional-docs/developer_bundle_extensions.md) documentation.
 
 
 #### Create Custom Extension
@@ -188,19 +177,6 @@ For deploying your application, create a deployable package using the `package` 
 
 **Linux:**
 ```bash
-./repo.sh package
-```
-**Windows:**
-```powershell
-.\repo.bat package
-```
-
-By default, the `package` command will name the package based on the `name` value contained in the repo.toml file at the root of the repository. **By default, this value is set to `kit-app-template`.** Modify this value to set a persistent package name for your application.
-
-Alternatively, you can specify a package name using the `--name` flag:
-
-**Linux:**
-```bash
 ./repo.sh package --name [package_name]
 ```
 **Windows:**
@@ -211,58 +187,6 @@ Alternatively, you can specify a package name using the `--name` flag:
 This will bundle your application into a distributable format, ready for deployment on compatible platforms.
 
 :warning: **Important Note for Packaging:** Because the packaging operation will package everything within the `source/` directory the package version will need to be set independently of a given `kit` file.  **The version is set within the `tools/VERSION.md` file.**
-
-
-### Local Streaming
-
-> **NOTE:** Local streaming is currently supported on Windows 10/11 and Ubuntu 22.04. Ubuntu 20.04 is not currently supported by the web viewer sample
-
-The UI-based template applications in this repository produce more than a single `.kit` file. For the USD Explorer template application, this includes `{your-app-name}_streaming.kit` which we will use for local streaming. This file inherits from the base application and adds necessary streaming components like `omni.kit.livestream.webrtc`. To try local streaming, you need a web client to connect to the streaming server.
-
-#### 1. Clone Web Viewer Sample
-
-The web viewer sample can be found [here](https://github.com/NVIDIA-Omniverse/web-viewer-sample)
-
-```base
-git clone https://github.com/NVIDIA-Omniverse/web-viewer-sample.git
-```
-
-Follow the instructions in the README to install the necessary dependencies.
-
-#### 2. Modify the Web Viewer Sample
-
-The Web Viewer Sample is configured by default to connect to the USD Viewer application template and includes web UI elements for sending API calls to a running Kit application. This is necessary for the Viewer template, which has limited functionality for driving application behavior directly. However, for the USD Explorer template, this messaging UI functionality isn't needed as the USD Explorer Template includes menus and other UI elements that can be interacted with directly.
-
-When connecting the Web Viewer Sample to the USD Explorer application template, it is recommended to modify the source code. Make the following change to the web viewer sample:
-
-**In `web-viewer-sample/src/App.tsx`**
-
-- Change:
-```typescript
-import Window from './Window';
-```
-
-- To:
-```typescript
-import Window from './WindowNoUI';
-```
-
-#### 3. Start the streaming Kit Application
-
-```bash
-./repo.sh launch
-```
-
-Select the `{your-app-name}_streaming.kit` and wait for the application to start
-
-#### 4. Start the Streaming Client
-```bash
-npm run dev
-```
-
-In a Chromium-based browser, navigate to [http://localhost:5173/](http://localhost:5173/) and you should see the streaming client connect to the running Kit application.
-
-![Streaming Explorer Image](../../../readme-assets/streaming_explorer.png)
 
 ## Additional Learning
 

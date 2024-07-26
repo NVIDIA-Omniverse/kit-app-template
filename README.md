@@ -4,42 +4,35 @@
   <img src="readme-assets/kit_app_template_banner.png" width=100% />
 </p>
 
+## :warning: BETA Release Information
 
-**This branch branch is based on Omniverse Kit SDK 106.0**
+**This branch is for the Omniverse Kit 106 BETA. It includes BETA versions of the Kit SDK, associated development tools, and templates. For the latest stable release, see the `105.1` branch.**
 
 ## Overview
 
-Welcome to `kit-app-template`, a toolkit designed for developers interested in GPU-accelerated application development within the NVIDIA Omniverse ecosystem. This repository offers streamlined tools and templates to simplify creating high-performance, OpenUSD-based desktop or cloud streaming applications using the Omniverse Kit SDK.
+Welcome to `kit-app-template`, an essential toolkit for developers diving into GPU-accelerated application development within the NVIDIA Omniverse ecosystem. This repository provides streamlined templates and tools designed to simplify the creation of high-performance OpenUSD-based applications powered by the Omniverse Kit SDK.
+
 
 ### About Omniverse Kit SDK
 
-The Omniverse Kit SDK enables developers to build immersive 3D applications. Key features include:
-- **Language Support:** Develop with either Python or C++, offering flexibility for various developer preferences.
-- **OpenUSD Foundation:** Utilize the robust Open Universal Scene Description (OpenUSD) for creating, manipulating, and rendering rich 3D content.
+The Omniverse Kit SDK empowers developers to build immersive 3D applications with ease. Key features include:
+- **Language Support:** Develop in Python or C++, offering flexibility and power to a wide range of developers.
+- **OpenUSD Foundation:** Utilize Open Universal Scene Description (OpenUSD) for creating, manipulating, and rendering rich 3D content.
 - **GPU Acceleration:** Leverage GPU-accelerated capabilities for high-fidelity visualization and simulation.
-- **Extensibility:** Create specialized extensions that provide dynamic user interfaces, integrate with various systems, and offer direct control over OpenUSD data, making the Omniverse Kit SDK versatile for numerous applications.
+- **Extensibility:**  Easily build specialized Extensions that provide dynamic user interfaces, integration with various systems, and provide direct control over OpenUSD data, making it versatile for numerous applications.
 
 ### Applications and Use Cases
 
-The `kit-app-template` repository enables developers to create cross-platform applications (Windows and Linux) optimized for desktop use and cloud streaming. Potential use cases include designing and simulating expansive virtual environments, producing high-quality synthetic data for AI training, and building advanced tools for technical analysis and insights. Whether you're crafting engaging virtual worlds, developing comprehensive analysis tools, or creating simulations, this repository, along with the Kit SDK, provides the foundational components required to begin development.
+The kit-app-template enables developers to create cross-platform (Windows and Linux) accelerated applications, equipped with tooling to streamline packaging for easier deployment. This covers a broad range of use cases, from simulating real-world systems to generating photorealistic synthetic data for AI training. Whether your focus is on creating engaging virtual worlds, developing tools for data analysis, or crafting simulations, the combination of this repository and the Kit SDK provides the foundation you need.
 
 ### A Deeper Understanding
 
-The `kit-app-template` repository is designed to abstract complexity, jumpstarting your development with pre-configured templates, tools, and essential boilerplate. For those seeking a deeper understanding of the application and extension creation process, we have provided the following resources:
+The `kit-app-template` repository is designed to abstract complexity, jumpstarting your development with pre-configured templates, tools, and essential boilerplate. For those seeking a deeper understanding of the application and extension creation process, we've provided a companion tutorial. **[Explore the tutorial here](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)**—it offers detailed insights into the underlying structure and mechanisms, enabling a thorough grasp of both Kit and the development process.
 
-#### Companion Tutorial
-
-**[Explore the Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)**: This tutorial offers detailed insights into the underlying structure and mechanisms, providing a thorough grasp of both the Kit SDK and the development process.
 
 ### New Developers
+For a beginner-friendly introduction to application development using the Omniverse Kit SDK, see the NVIDIA DLI course [Developing an Omniverse Kit-Based Application](https://learn.nvidia.com/courses/course-detail?course_id=course-v1:DLI+S-OV-11+V1) (account and login required)
 
-For a beginner-friendly introduction to application development using the Omniverse Kit SDK, see the NVIDIA DLI course:
-
-#### Beginner Tutorial
-
-**[Developing an Omniverse Kit-Based Application](https://learn.nvidia.com/courses/course-detail?course_id=course-v1:DLI+S-OV-11+V1)**: This course offers an accessible introduction to application development (account and login required).
-
-These resources empower developers at all experience levels to fully utilize the `kit-app-template` repository and the Omniverse Kit SDK.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -56,24 +49,16 @@ These resources empower developers at all experience levels to fully utilize the
 
 ## Prerequisites and Environment Setup
 
-Ensure your system is set up with the following to work with Omniverse Applications and Extensions:
+To kickstart your development journey with Omniverse Applications and Extensions, your system should adhere to the following specifications:
 
 - **Operating System**: Windows 10/11 or Linux (Ubuntu 20.04/22.04 recommended)
 - **GPU**: NVIDIA RTX capable GPU (Turing or newer recommended)
 - **Driver**: Latest NVIDIA driver compatible with your GPU
 - **Internet Access**: Required for downloading the Omniverse Kit SDK, extensions, and tools.
-
-### Required Software Dependencies
-
-- **Git**: For version control and repository management
-- **Git LFS**: For managing large files within the repository
-- **(Windows) Microsoft Visual C++ Redistributable**: Many Windows systems will already have this, but if not, it can be obtained from [latest-supported-vc-redist](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-microsoft-visual-c-redistributable-version)
-- **(Linux) build-essentials**: A package that includes `make` and other essential tools for building applications.  For Ubuntu, install with `sudo apt-get install build-essential`
-
-### Recommended Software
-
-- **(Linux) Docker**: For containerized development and deployment.
-- **VSCode (or your preferred IDE)**: For code editing and development
+- **Software Dependencies**:
+  - Required : Git
+  - Recommended : Docker
+  - Recommended : VSCode (or your preferred IDE)
 
 
 ## Repository Structure
@@ -153,12 +138,6 @@ Build your new application with the following command:
 .\repo.bat build
  ```
 
-A successful build will result in the following message:
-
-```text
-BUILD (RELEASE) SUCCEEDED (Took XX.XX seconds)
-```
-
  If you experience issues related to build, please see the [Usage and Troubleshooting](readme-assets/additional-docs/usage_and_troubleshooting.md) section for additional information.
 
 
@@ -177,9 +156,6 @@ Initiate your newly created application using:
 
 **? Select with arrow keys which App would you like to launch:** [Select the created editor application]
 
-![Kit Base Editor Image](readme-assets/kit_base_editor.png)
-
-
 ***NOTE:* The initial startup may take 5 to 8 minutes as shaders compile for the first time. After initial shader compilation, startup time will reduce dramatically**
 
 
@@ -191,15 +167,11 @@ Initiate your newly created application using:
 
 Begin constructing Omniverse Applications using these templates
 
-- **[Kit Service](./templates/apps/kit_service)**: The minimal definition of an Omniverse Kit SDK based service. This template is useful for creating headless services leveraging Omniverse Kit functionality.
+- **[Kit Service](./templates/apps/kit_service)**: The minimal definition of an Omniverse Kit Service Application. This template is useful for creating headless services leveraging Omniverse Kit functionality.
 
-- **[Kit Base Editor](./templates/apps/kit_base_editor/)**: A minimal template application for loading, manipulating and rendering OpenUSD content from a graphical interface.
+- **[Kit Base Editor](./templates/apps/kit_base_editor/)**: A simple application for loading, manipulating and rendering OpenUSD content from a graphical interface.
 
-- **[USD Composer](./templates/apps/usd_composer)**: A template application for authoring complex OpenUSD scenes, such as configurators.
-
-- **[USD Explorer](./templates/apps/usd_explorer)**: A template application for exploring and collaborating on large Open USD scenes.
-
-- **[USD Viewer](./templates/apps/usd_viewer)**: A viewport-only template application that can be easily streamed and interacted with remotely, well-suited for streaming content to web pages.
+- **[USD Explorer](./templates/apps/usd_explorer)**: A full featured application for managing, collaborating on, and exploring large Open USD scenes.
 
 ### Extensions
 
@@ -213,9 +185,7 @@ Enhance Omniverse capabilities with extension templates:
 
 ## Tools
 
-The `kit-app-template` includes a suite of tools to aid in the development, testing, and deployment of your projects. For a more detailed overview of available tooling, see the [Kit App Template Tooling Guide](readme-assets/additional-docs/kit_app_template_tooling_guide.md).
-
-Here's a brief overview of some key tools:
+The `kit-app-template` includes a suite of tools to aid in the development, testing, and deployment of your projects. A brief overview of some key tools:
 
 - **Help (`./repo.sh -h` or `.\repo.bat -h`):** Provides a list of available tools and their descriptions.
 
@@ -229,6 +199,8 @@ Here's a brief overview of some key tools:
 
 - **Packaging (`./repo.sh package` or `.\repo.bat package`):** Aids in packaging your application for distribution, making it easier to share or deploy in cloud environments.
 
+
+For a more detailed overview of available tooling see the [Kit App Template Tooling Guide](readme-assets/additional-docs/kit_app_template_tooling_guide.md) or execute the help command specific to the tool your are interested in (e.g. `./repo.sh template -h` or `.\repo.bat template -h`).
 
 ## License
 
