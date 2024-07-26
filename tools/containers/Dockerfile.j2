@@ -1,0 +1,54 @@
+# This Dockerfile is used as the base for containerizing applications rendered out via repo_kit_template.
+
+# Utilize Kit Kernel 106.0.0
+FROM nvcr.io/nvidia/omniverse/ov-kit-kernel:106.0.1-ga.126909.3a7abd1c
+
+# root user to bootstrap the container
+USER root
+# install curl
+RUN apt update \
+    && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+        curl \
+    && apt -y autoremove \
+    && apt clean autoclean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create local user
+RUN useradd --create-home --shell /bin/bash ubuntu || echo "User already exists."
+# Create the 'ubuntu' user and add it to the 'sudo' group
+RUN usermod -aG sudo ubuntu
+# nopasswd sudo
+RUN mkdir -p /etc/sudoers.d/
+RUN echo "ubuntu ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/ubuntu
+
+# Copy the staged fat package into the /app directory
+COPY --chown=ubuntu:ubuntu package /app/
+
+USER ubuntu
+WORKDIR /app
+
+# Copy the startup.sh scripts
+COPY --chown=ubuntu:ubuntu entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+COPY --chown=ubuntu:ubuntu entrypoint_memcached.sh /entrypoint_memcached.sh
+RUN chmod +x /entrypoint_memcached.sh
+
+# Create Kit expected caching directories that we'll map a volume onto.
+RUN mkdir -p /home/ubuntu/.cache/ov
+RUN mkdir -p /home/ubuntu/.local/share/ov
+
+# Sneaky label for discovering kit_app_template built images within the docker registry.
+LABEL kit_app_template=$KIT_FILE_NAME_BREADCRUMB
+
+# Open ports for live streaming
+EXPOSE 47995-48012/udp \
+       47995-48012/tcp \
+       49000-49007/udp \
+       49000-49007/tcp \
+       8011/tcp \
+       8111/tcp \
+       49100/tcp
+
+
+# This specifies the container's default entrypoint that will be called by "> docker run".
+ENTRYPOINT [ "/entrypoint.sh" ]
