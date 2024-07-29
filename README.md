@@ -7,6 +7,8 @@
 
 **This branch branch is based on Omniverse Kit SDK 106.0**
 
+This repository is branched by the minor (or major) version of Kit SDK. Check other branches from previous versions of the Kit SDK. The main branch will continue to receive patch updates as they become available..
+
 ## Overview
 
 Welcome to `kit-app-template`, a toolkit designed for developers interested in GPU-accelerated application development within the NVIDIA Omniverse ecosystem. This repository offers streamlined tools and templates to simplify creating high-performance, OpenUSD-based desktop or cloud streaming applications using the Omniverse Kit SDK.
