@@ -10,7 +10,7 @@
 
 [package]
 title = "{{ application_display_name }}"
-version = "{{ version | default("0.0.1") }}"
+version = "{{ version }}"
 description = "A reference application for reviewing and constructing large facilities such as factories, warehouses and more."
 keywords = ["app", "usd", "explore"]  # That makes it browsable in UI with "experience" filter
 template_name = "omni.usd_explorer"
@@ -31,10 +31,6 @@ template_name = "omni.usd_explorer"
 "omni.kit.collaboration.viewport.camera" = {}
 "omni.kit.context_menu" = {}
 "omni.kit.converter.cad" = {}
-"omni.kit.converter.cad_core" = {}
-"omni.kit.converter.jt_core" = {}
-"omni.kit.converter.dgn_core" = {}
-"omni.kit.converter.common" = {}
 "omni.kit.manipulator.camera" = {} # Manipulator for the Viewport
 "omni.kit.manipulator.prim" = {}
 "omni.kit.manipulator.selection" = {}
@@ -102,7 +98,7 @@ template_name = "omni.usd_explorer"
 "omni.usd.schema.metrics.assembler" = {}
 "omni.warp.core" = {}
 "usdrt.scenegraph" = {}
-"{{ extension_name }}" = { order = 10000 }  # This is your application setup Extensions. order = 10000 makes it run last
+"{{ setup_extension_name }}" = { order = 10000 }  # This is your application setup Extensions. order = 10000 makes it run last
 
 [dependencies."filter:platform"."windows-x86_64"]
 "omni.kit.window.modifier.titlebar" = {version = "=105.2.16"}  # Use exact version to avoid supported target platform check
@@ -128,8 +124,7 @@ excluded = [
 	"omni.kit.viewport.menubar.settings",
 ]
 generatedVersionLockExclude = [
-	"omni.app.usd_explorer",
-	"{{ extension_name }}",
+	"{{ setup_extension_name }}",
 ]
 registryEnabled = true
 skipPublishVerification = false
@@ -142,7 +137,9 @@ excluded = [
 ]
 
 [settings.app.exts]
-folders.'++' = ["${app}/../exts", "${app}/../extscache/"] # Search paths for extensions.
+folders.'++' = [   # Search paths for extensions.
+	"${app}/../exts",
+	"${app}/../extscache/"]
 
 [settings.app.font]
 file = "${fonts}/OpenSans-SemiBold.ttf"
@@ -189,19 +186,6 @@ modal_tool_active = false  # Tool State Management
 
 [settings.app.usdrt.population.utils]
 mergeInstances = false # When populating Fabric from USD, merge meshes under scene graph instances.
-
-[settings.app.usdrt.scene_delegate]
-enableProxyCubes = false
-numFramesBetweenLoadBatches = 1
-timeSampledDataStatic = true
-
-[settings.app.usdrt.scene_delegate.geometryStreaming]
-# 0: Display everything
-# 0.0005: Display all geometry down to around the size of a pixel
-# 0.001: Display all geometry bigger than a few pixels
-enabled = false  # Disabling FSD geometry streaming
-numberOfVerticesToLoadPerChunk = 800000
-solidAngleLimit = 0
 
 [settings.app.viewport]
 boundingBoxes.hideWhenManipulating = true
@@ -272,8 +256,8 @@ lights = false
 displayModeLock = false
 fullscreen = false
 height = 1010
-iconPath = "${% raw %}{{% endraw %}{{ extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-usd_explorer.ico"
-imagePath = "${% raw %}{{% endraw %}{{ extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-usd_explorer_about.png"
+iconPath = "${% raw %}{{% endraw %}{{ setup_extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-usd_explorer.ico"
+imagePath = "${% raw %}{{% endraw %}{{ setup_extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-usd_explorer_about.png"
 minimalPanelsOnStartup = true
 showStartup = true
 showStatusBar = false
@@ -462,7 +446,7 @@ colors.caption = 0x0F0F0F
 colors.client = 0x0F0F0F
 defaultFont.color = 0xD0D0D0
 defaultFont.size = 18
-icon.file = "${% raw %}{{% endraw %}{{ extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-usd_explorer.ico"
+icon.file = "${% raw %}{{% endraw %}{{ setup_extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-usd_explorer.ico"
 icon.size = 18
 icon.use_size = false
 respondOnMouseUp = true
@@ -498,7 +482,7 @@ visible = false
 autoLightRig.enableWithoutMenu = true  # Enable adding a light rig whether menu item is loaded/visible or not
 defaultRig = "Sunny Sky"  # Set the default light-rig to apply for a stage opened without any lights in it
 rigImport.lightRemovalLimit = 3
-rigs = "${% raw %}{{% endraw %}{{ extension_name }}{% raw %}}{% endraw %}/data/light_rigs"  # Setup path to the light-rig items in the lighting menu
+rigs = "${% raw %}{{% endraw %}{{ setup_extension_name }}{% raw %}}{% endraw %}/data/light_rigs"  # Setup path to the light-rig items in the lighting menu
 
 [settings.exts."omni.kit.viewport.navigation.camera_manipulator"]
 orbitAutoFrameSelected = true
@@ -644,6 +628,7 @@ enable = true
 [settings.telemetry]
 # Anonymous Kit application usage telemetry
 enableAnonymousData = true
+enableAnonymousAppName = true
 
 
 [[test]]
@@ -652,7 +637,6 @@ samplingFactor = 1.0  # No test sampling for these tests
 dependencies = [
     "omni.kit.test_suite.helpers",
 	"omni.kit.ui_test",
-	"omni.kit.core.tests",
     #"omni.hydra.pxr",
     # NOTE: test_extensions.py (with imports from omni.kit.core.tests) need dependencies from some extensions
     "omni.kit.test_helpers_gfx",  # test dependency from omni.renderer.core
@@ -661,7 +645,7 @@ dependencies = [
 
 
 pythonTests.include = [
-    "{{ extension_name }}.tests.*",
+    "{{ setup_extension_name }}.tests.*",
 ]
 args = [
 	"--portable",

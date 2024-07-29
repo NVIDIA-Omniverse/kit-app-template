@@ -33,3 +33,6 @@ deps/**/user.toml
 
 # Omniverse EULA breadcrumb
 /.omniverse_eula_accepted.txt
+
+# Streaming EventTrace
+*.etli

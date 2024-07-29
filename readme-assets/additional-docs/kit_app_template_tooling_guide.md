@@ -104,6 +104,18 @@ Additional launch options:
 .\repo.bat launch -p C:\path\to\package.zip
 ```
 
+Passing args to launched Kit executable:
+You can pass through arguments to your targeted Kit executable by appending `--` to your launch command. Anything after `--` will be passed through to Kit. The following examples will pass the `--clear-cache` flag to Kit.
+
+**Linux:**
+```bash
+./repo.sh launch -- --clear-cache
+```
+**Windows:**
+```powershell
+.\repo.bat launch -- --clear-cache
+```
+
 ## Test Tool
 
 **Command:** `./repo.sh test` or `.\repo.bat test`

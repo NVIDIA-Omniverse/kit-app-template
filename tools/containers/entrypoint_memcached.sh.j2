@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -e
+set -u
+
+USER_ID="$${USER_ID:-""}"
+if [ -z "$${USER_ID}" ]; then
+  echo "User id is not set"
+fi
+
+# INSERT FANCY DRIVER + SHADER CACHE MEMACHED ENVIRONMENT PREP
+# PROBABLY NEED TO REFERENCE ENVVAR FOR MEMCACHED SERVER ADDRESS
+
+CMD="/app/kit/kit"
+ARGS=(
+"/app/apps/$KIT_FILE_NAME_BREADCRUMB"
+$KIT_ARGS_BREADCRUMB
+)
+
+# Emit the .kit file to be executed if kit_verbose is set
+# This prevents potentially dumping a sensitive file to a logfile
+if [ $${OM_KIT_VERBOSE:-0} = "1" ]; then
+  export KIT_FILE=/app/apps/$KIT_FILE_NAME_BREADCRUMB
+  echo "==== Print out kit config $${KIT_FILE} for debugging ===="
+  cat $${KIT_FILE}
+  echo "==== End of kit config $${KIT_FILE} ===="
+fi
+
+echo "Starting Kit with $$CMD $${ARGS[@]} $$@"
+
+# Chown the Kit caching directories to avoid permissions
+# issues between root and ubuntu user.
+chown -R ubuntu:ubuntu /home/ubuntu/.cache/ov
+chown -R ubuntu:ubuntu /home/ubuntu/.local/share/ov
+
+exec "$$CMD" "$${ARGS[@]}" "$$@"

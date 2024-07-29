@@ -8,60 +8,44 @@
 # without an express license agreement from NVIDIA CORPORATION or
 # its affiliates is strictly prohibited.
 
+
 [package]
-# Semantic Versionning is used: https://semver.org/
-version = '{{ version }}'
-
-# Lists people or organizations that are considered the "authors" of the package.
-authors = [
-    "Author Name <author_name@example.com>",
-]
-
-# The title and description fields are primarily for displaying extension info in the UI
-title = '{{ extension_display_name }}'
+title = "{{ extension_display_name }}"
+version = "{{ version }}"  # Semantic Versionning is used: https://semver.org/
 description = "The simplest python service example extension. Use it as a starting point for your extensions."
-
-# Path (relative to the root) or content of readme markdown file for UI.
-readme = "docs/README.md"
-
-# Path (relative to the root) of changelog
-# More info on writing changelog: https://keepachangelog.com/en/1.0.0/
+category = "Example"  # How to categorize this in the Extension Manager
 changelog = "docs/CHANGELOG.md"
+icon = "data/icon.png"  # Icon to show in the Extension Manager
+keywords = ["kit", "extension", "setup"]  # Search keywords for the Extension Manager
+preview_image = "data/preview.png"  # Preview to show in the Extension Manager
+readme = "docs/README.md" # Path (relative to the root) or content of readme markdown file for UI
+repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of the extension source repository
 
-# URL of the extension source repository.
-# repository = "https://github.com/example/repository_name"
-
-# One of categories for the UI.
-category = "Example"
-
-# Keywords for the extension
-keywords = ["kit", "example"]
-
-# Preview image and icon. Folder named "data" automatically goes in git lfs (see .gitattributes file).
-# Preview image is shown in "Overview" of Extension manager. Screenshot of an extension might be a good preview image.
-preview_image = "data/preview.png"
-
-# Icon is shown in the Extension manager. It is recommended to be square, of size 256x256.
-icon = "data/icon.png"
 
 [dependencies]
+"omni.kit.commands" = {}
 "omni.services.core" = {}
 "omni.services.transport.server.http" = {}
 "omni.usd" = {}
-"omni.kit.commands" = {}
 
-# Main python module this extension provides, it will be publicly available as "import {{python_module}}".
-[[python.module]]
+
+[settings]
+
+
+[[python.module]]  # Main python module this extension provides, it will be publicly available as "import {{python_module}}"
 name = '{{ extension_name }}'
 
-[[test]]
-# Extra dependencies only to be used during test run
-dependencies = [
-    # none
-]
 
 [documentation]
 pages = [
     "docs/Overview.md",
     "docs/CHANGELOG.md",
+]
+
+
+[[test]]
+dependencies = [
+]
+
+args = [
 ]

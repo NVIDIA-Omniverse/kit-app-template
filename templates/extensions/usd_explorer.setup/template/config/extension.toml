@@ -9,99 +9,86 @@
 # its affiliates is strictly prohibited.
 
 [package]
-# Semantic Versionning is used: https://semver.org/
-version = "{{ version }}"
-
-# The title and description fields are primarily for displaying extension info in UI
 title = "{{ extension_display_name }}"
+version = "{{ version }}"  # Semantic Versionning is used: https://semver.org/
 description = "A setup extension for a USD Explorer based template applicaiton"
+category = "Setup"  # How to categorize this in the Extension Manager
+changelog = "docs/CHANGELOG.md"
+icon = "data/icon.png"  # Icon to show in the Extension Manager
+keywords = ["kit", "extension", "setup"]  # Search keywords for the Extension Manager
+preview_image = "data/preview.png"  # Preview to show in the Extension Manager
+readme  = "docs/README.md"  # Path (relative to the root) or content of readme markdown file for UI
+repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of the extension source repository
 
-# Path (relative to the root) or content of readme markdown file for UI.
-readme = "docs/README.md"
 
-# URL of the extension source repository.
-# repository = "https://github.com/example/repository_name"
-
-# One of categories for UI.
-category = "setup"
-
-# Keywords for the extension
-keywords = ["kit", "app", "setup"]
-
-# Icon to show in the extension manager
-icon = "data/icon.png"
-
-# Preview to show in the extension manager
-preview_image = "data/preview.png"
-
-# Use omni.ui to build simple UI
 [dependencies]
-"omni.kit.quicklayout" = {}
-"omni.kit.window.title" = {}
 "omni.kit.browser.asset" = {}
-"omni.kit.window.console" = {}
-"omni.kit.window.content_browser" = {}
-"omni.kit.window.material" = {}
-"omni.kit.window.toolbar" = {}
 "omni.kit.property.bundle" = {}
 "omni.kit.property.layer" = {}
+"omni.kit.quicklayout" = {}
 "omni.kit.stage_templates" = {}
-"omni.kit.viewport.navigation.usd_explorer.bundle" = {}
-"omni.kit.window.preferences" = {}
-
-# from omni.view.app.setup
-"omni.kit.viewport.menubar.camera" = { optional=true }
-"omni.kit.widget.layers" = { optional=true }
 "omni.kit.widgets.custom" = {}
+"omni.kit.widget.layers" = { optional=true }
+"omni.kit.window.console" = {}
+"omni.kit.window.content_browser" = {}
 "omni.kit.window.file" = {}
+"omni.kit.window.material" = {}
+"omni.kit.window.preferences" = {}
+"omni.kit.window.title" = {}
+"omni.kit.window.toolbar" = {}
+"omni.kit.viewport.menubar.camera" = { optional=true }
+"omni.kit.viewport.navigation.usd_explorer.bundle" = {}
 
-# Main python module this extension provides, it will be publicly available as "import omni.hello.world".
-[[python.module]]
+
+[settings.app]
+application_mode = "review"
+content.emptyStageOnStart = true
+layout.name = "viewport_only"
+viewport.createCameraModelRep = false # Disable creation of camera meshes in USD
+
+
+[settings.exts]
+"omni.kit.browser.material".enabled = false
+"omni.kit.mesh.raycast".bvhBuildOnFirstRequired = true # Avoids mesh raycast to initialize during stage open
+"omni.kit.renderer.core".imgui.enableMips = true
+"omni.kit.tool.asset_importer".useNewFilePicker = true
+"omni.kit.tool.collect".useNewFilePicker = true
+"omni.kit.viewport.menubar.camera".expand = true # Expand the extra-camera settings by default
+"omni.kit.widget.cloud_share".require_access_code = false
+"omni.kit.widget.layers".useNewFilePicker = true
+"omni.kit.window.file".useNewFilePicker = true
+"omni.kit.window.material".load_after_startup = true
+"omni.kit.viewport.navigation.camera_manipulator".defaultOperation = ""
+
+
+[[python.module]]  # Main python module this extension provides, it will be publicly available as "import omni.hello.world"
 name = "{{ extension_name }}"
 
-[settings]
-app.layout.name = "viewport_only"
-app.application_mode = "review"
-exts."omni.kit.viewport.menubar.camera".expand = true # Expand the extra-camera settings by default
-exts."omni.kit.window.file".useNewFilePicker = true
-exts."omni.kit.tool.asset_importer".useNewFilePicker = true
-exts."omni.kit.tool.collect".useNewFilePicker = true
-exts."omni.kit.widget.layers".useNewFilePicker = true
-exts."omni.kit.renderer.core".imgui.enableMips = true
-exts."omni.kit.browser.material".enabled = false
-exts."omni.kit.window.material".load_after_startup = true
-exts."omni.kit.widget.cloud_share".require_access_code = false
-exts."omni.kit.mesh.raycast".bvhBuildOnFirstRequired = true # Avoids mesh raycast to initialize during stage open
-app.content.emptyStageOnStart = true
-app.viewport.createCameraModelRep = false # Disable creation of camera meshes in USD
 
-# USDRT
-app.usdrt.scene_delegate.enableProxyCubes = false
-app.usdrt.scene_delegate.geometryStreaming.enabled = true
-app.usdrt.scene_delegate.numFramesBetweenLoadBatches = 2
-app.usdrt.scene_delegate.geometryStreaming.numberOfVerticesToLoadPerChunk = 600000
+[documentation]
+pages = [
+    "docs/Overview.md",
+    "docs/CHANGELOG.md",
+]
 
-exts."omni.kit.viewport.navigation.camera_manipulator".defaultOperation = ""
 
 [[test]]
 dependencies = [
-    "omni.kit.core.tests",
-    "omni.kit.ui_test",
     "omni.kit.mainwindow",
     "omni.kit.stage_templates",
+    "omni.kit.ui_test",
     "omni.kit.viewport.window",
     "omni.kit.viewport.utility",
 ]
+
 args = [
+    "--/app/fastShutdown=1",
     "--/app/file/ignoreUnsavedOnExit=true",
-    # "--/renderer/enabled=pxr",
-    # "--/renderer/active=pxr",
-    "--/app/window/width=1280",
-    "--/app/window/height=720",
     "--/app/window/dpiScaleOverride=1.0",
+    "--/app/window/height=720",
     "--/app/window/scaleToMonitor=false",
+    "--/app/window/width=1280",
     "--/exts/omni.kit.viewport.window/startup/windowName=Viewport",
-    "--reset-user",
     "--no-window",
-    "--/app/fastShutdown=1"
+    "--reset-user"
 ]

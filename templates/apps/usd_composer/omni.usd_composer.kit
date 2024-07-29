@@ -1,0 +1,341 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = "{{ application_display_name }}"
+version = "{{ version }}"
+description = "An Authoring application for USD and Omniverse Content"
+keywords = ["experience", "app", "usd"]  # That makes it browsable in UI with "experience" filter
+template_name = "omni.usd_composer"
+
+
+[dependencies]
+"omni.activity.ui" = {}
+"omni.activity.usd_resolver" = {}
+"omni.anim.curve.bundle" = {}
+"omni.anim.curve_editor" = {}
+"omni.anim.shared.core" = {}
+"omni.anim.time_samples_player" = {}
+"omni.anim.timeline" = {}
+"omni.anim.window.timeline" = {}
+"omni.asset_validator.core" = {}
+"omni.asset_validator.ui" = {}
+"omni.configurator_publisher" = {}
+"omni.curve.manipulator" = {}
+"omni.genproc.bundle" = {}
+"omni.graph.bundle.action" = {}
+"omni.graph.examples.cpp" = {}
+"omni.graph.scriptnode" = {}
+"omni.graph.window.action" = {}
+"omni.graph.window.generic" = {}
+"omni.graph.telemetry" = {}
+"omni.hsscclient" = {}
+"omni.hydra.engine.stats" = {}
+"omni.kit.actions.window" = {}
+"omni.kit.asset_converter" = {}
+"omni.kit.browser.configurator_samples" = {}
+"omni.kit.browser.material" = {}
+"omni.kit.capture.viewport" = {}
+"omni.kit.collaboration.channel_manager" = {}
+"omni.kit.collaboration.presence_layer" = {}
+"omni.kit.collaboration.selection_outline" = {}
+"omni.kit.collaboration.telemetry" = {}
+"omni.kit.collaboration.viewport.camera" = {}
+"omni.kit.context_menu" = {}
+"omni.kit.converter.cad" = {}
+"omni.kit.graph.delegate.default" = {}
+"omni.kit.hotkeys.window" = {}
+"omni.kit.manipulator.prim" = {}
+"omni.kit.manipulator.tool.mesh_snap" = {}
+"omni.kit.manipulator.transform" = {}
+"omni.kit.manipulator.viewport" = {}
+"omni.kit.material.library" = {}
+"omni.kit.menu.aov" = {}
+"omni.kit.menu.create" = {}
+"omni.kit.menu.edit" = {}
+"omni.kit.menu.file" = {}
+"omni.kit.menu.stage" = {}
+"omni.kit.menu.utils" = {}
+"omni.kit.preferences.animation" = {}
+"omni.kit.primitive.mesh" = {}
+"omni.kit.property.bundle" = {}
+"omni.kit.property.collection" = {}
+"omni.kit.property.layer" = {}
+"omni.kit.property.sbsar" = {}
+"omni.kit.quicklayout" = { order = 1000 }
+"omni.kit.renderer.capture" = {}
+"omni.kit.renderer.core" = {}
+"omni.kit.search.files" = {}
+"omni.kit.search.service" = {}
+"omni.kit.selection" = {}
+"omni.kit.sequencer.core" = {}
+"omni.kit.stage.copypaste" = {}
+"omni.kit.stage.mdl_converter" = {}
+"omni.kit.stage_column.payload" = {}
+"omni.kit.stage_column.variant" = {}
+"omni.kit.stage_templates" = {}
+"omni.kit.telemetry" = {}
+"omni.kit.thumbnails.mdl" = {}
+"omni.kit.thumbnails.usd" = {}
+"omni.kit.tool.asset_exporter" = {}
+"omni.kit.tool.asset_importer" = {}
+"omni.kit.tool.collect" = {}
+"omni.kit.tool.remove_unused.controller" = {}
+"omni.kit.tool.remove_unused.core" = {}
+"omni.kit.uiapp" = {}
+"omni.kit.usd.collect" = {}
+"omni.kit.usda_edit" = {}
+"omni.kit.variant.editor" = {}
+"omni.kit.variant.presenter" = {}
+"omni.kit.viewport.ready" = {}
+"omni.kit.viewport.rtx" = {}
+"omni.kit.viewport.actions" = {}
+"omni.kit.viewport.bundle" = {}
+"omni.kit.viewport.menubar.lighting" = {}
+"omni.kit.viewport_widgets_manager" = {}
+"omni.kit.widget.collection" = {}
+"omni.kit.widget.extended_searchfield" = {}
+"omni.kit.widget.filebrowser" = {}
+"omni.kit.widget.layers" = {}
+"omni.kit.widget.live" = {}
+"omni.kit.widget.timeline" = {}
+"omni.kit.widget.versioning" = {}
+"omni.kit.widgets.custom" = {}
+"omni.kit.window.about" = {}
+"omni.kit.window.collection" = {}
+"omni.kit.window.console" = {}
+"omni.kit.window.content_browser" = {}
+"omni.kit.window.cursor" = {}
+"omni.kit.window.environment" = {}
+"omni.kit.window.file" = {}
+"omni.kit.window.filepicker" = {}
+"omni.kit.window.imageviewer" = {}
+"omni.kit.window.material" = {}
+"omni.kit.window.material_graph" = {}
+"omni.kit.window.movie_capture" = {}
+"omni.kit.window.preferences" = { order = 1000 } # so the menu is in the correct place
+"omni.kit.window.privacy" = {}
+"omni.kit.window.property" = {}
+"omni.kit.window.quicksearch" = {}
+"omni.kit.window.script_editor" = {}
+"omni.kit.window.stage" = {}
+"omni.kit.window.stats" = { order = 1000 }
+"omni.kit.window.status_bar" = {}
+"omni.kit.window.title" = {}
+"omni.kit.window.toolbar" = {}
+"omni.kit.window.usd_paths" = {}
+"omni.mdl.usd_converter" = {}
+"omni.no_code_ui.authoring" = {}
+"omni.physx.stageupdate" = {}
+"omni.resourcemonitor" = {}
+"omni.rtx.settings.core" = {} # this is the new Render Settings 2.0
+"omni.scene.optimizer.bundle" = {}
+"omni.scene.visualization.bundle" = {}
+"omni.services.starfleet.auth" = {}
+"omni.services.transport.server.http" = {}
+"omni.services.usd" = {}
+"omni.stats" = {}
+"omni.usd.fileformat.sbsar" = {}
+"omni.usd.metrics.assembler.ui" = {}
+"omni.usd.schema.metrics.assembler" = {}
+"omni.warp" = {}
+"omni.videoencoding" = {}
+"{{ setup_extension_name }}" = { order = 1000 } # we are running that at the end
+
+
+# Windows only extensions
+[dependencies."filter:platform"."windows-x86_64"]
+"omni.kit.window.modifier.titlebar" = {}
+
+
+[settings.app]
+content.emptyStageOnStart = false
+create.forceViewportSettings = true
+fastShutdown = true
+name = "{{ application_display_name }}"
+useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
+show_developer_preference_section = false
+
+[settings.app.extensions]
+skipPublishVerification = false
+registryEnabled = true
+supportedTargets.platform = []
+supportedTargets.config = []
+
+# Linux excluded extensions. For all of them set exact=true to not be included into generated version lock.
+# That will break linux otherwise, as version lock is platform agnostic currently.
+[settings.app.extensions."filter:platform"."linux-x86_64"]
+excluded = [
+	"omni.kit.window.modifier.titlebar",
+]
+
+[settings.app.exts]
+folders.'++' = [
+    "${app}/../exts",
+    "${app}/../extscache"
+]
+
+[settings.app.font]
+file = "${fonts}/OpenSans-SemiBold.ttf"
+size = 16
+
+[settings.app.hangDetector]
+enabled = false
+timeout = 120
+
+[settings.app.menu]
+compatibility_mode = false
+legacy_mode = false
+
+[settings.app.renderer]
+resolution.width = 2560
+resolution.height = 1440
+skipWhileMinimized = true
+
+[settings.app.settings]
+dev_build = false
+persistent = true
+
+[settings.app.window]
+title = "{{ application_display_name }}"
+iconPath = "${% raw %}{{% endraw %}{{ setup_extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-create.png"
+saveSizeOnExit = false
+width = 1920
+height = 1080
+x = -1
+y = -1
+
+[settings.app.viewport]
+defaults.fillViewport = true
+
+[settings.crashreporter.data]
+experience = "{{ application_display_name }}"
+
+[settings.exts]
+"omni.kit.browser.texture".folders = [
+	"http://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Vegetation",
+]
+"omni.kit.menu.utils".logDeprecated = false
+"omni.kit.mesh.raycast".bvhBuildOnFirstRequired = true
+"omni.kit.renderer.core".imgui.enableMips = true
+"omni.kit.tool.asset_importer".useNewFilePicker = true
+"omni.kit.tool.collect".useNewFilePicker = true
+"omni.kit.viewport.menubar.camera".expand = true # Expand the extra-camera settings by default
+"omni.kit.viewport.window".hud.hostMemory.label = "Process" # Change labeling from "Host Memory" to "Process Memory"
+"omni.kit.viewport.window".hud.hostMemory.perProcess = true # Enable per-process reporting
+"omni.kit.widget.graph".raster_nodes = true
+"omni.kit.widget.layers".useNewFilePicker = true
+"omni.kit.window.file".useNewFilePicker = true
+"omni.kit.window.material".load_after_startup = true
+"omni.services.transport.server.http".port = 8111
+"omni.ui".raster.default_rasterpolicy_enabled = true
+"omni.usd".enableUsdMaterialWatcherForFsd = true
+"omni.warp".enable_menu = false
+
+[settings.exts."omni.kit.browser.material"]
+enabled = false
+folders = [
+    "https://omniverse-content-production.s3.us-west-2.amazonaws.com/Materials/2023_2_1/Automotive/",
+    "https://omniverse-content-production.s3.us-west-2.amazonaws.com/Materials/2023_2_1/Base",
+    "vMaterials::https://omniverse-content-production.s3.us-west-2.amazonaws.com/Materials/vMaterials_2/",
+]
+
+
+[settings.exts."omni.kit.window.content_browser"]
+enable_thumbnail_generation_images = false # temp fix to avoid leaking python processes
+
+
+[settings.exts."omni.kit.window.environment"]
+folders = [
+    "https://omniverse-content-production.s3.us-west-2.amazonaws.com/Environments/2024_1/"
+]
+folders_hide_in_category = ["2024_1"]
+
+
+[settings.exts."omni.kit.window.modifier.titlebar"]
+changeWindowRegion = true
+colors.caption = 0x0F0F0F
+colors.client = 0x0F0F0F
+defaultFont.name = "Arial"
+defaultFont.size = 16
+defaultFont.color = 0xD0D0D0
+icon.file = "${omni.create.app.resources}/data/nvidia-omniverse-create.ico"
+icon.size = 256
+respondOnMouseUp = true
+separator.color = 0x00B976
+separator.width = 1
+showFileFullPath = true
+titleFormatString = "  {{ application_display_name }}  {verKey:/app/version,font_color=0x909090,font_size=16} {separator} {file, board=true}"
+windowBorder.color = 0x0F0F0F
+windowBorder.width = 2
+
+[settings.exts."omni.kit.material.library"]
+ui_show_list = [
+	"OmniEmissive",
+	"OmniGlass",
+	"OmniPBR",
+	"OmniPBRBase",
+	"OmniPBR ClearCoat",
+	"USD Preview Surface",
+	"USD Preview Surface Texture",
+	"Add MDL File",
+	"Create MDL Graph",
+]
+
+
+[settings.persistent.app]
+camera.controllerUseSRT = true
+file.recentFiles = []
+newStage.defaultTemplate = "default stage"
+stage.instanceableOnCreatingReference = false
+stage.materialStrength = "weakerThanDescendants"
+stage.movePrimInPlace = true
+transform.gizmoUseSRT = true
+window.uiStyle = "NvidiaDark"
+
+
+[settings.persistent.app.omniverse]
+content_browser.options_menu.show_details = true
+filepicker.options_menu.show_details = true
+
+
+[settings.persistent.app.viewport]
+camInertiaAmount = 0.55 # Current default in Kit
+camInertiaEnabled = false
+displayOptions = 32255
+previewOnPeek = false
+snapToSurface = false
+Viewport.Viewport0.fillViewport = true
+"Viewport 2".Viewport0.fillViewport = true
+
+
+[settings.persistent.rtx]
+mdltranslator.distillMaterial = true  # Render Preferences - Material Distilling ON
+
+
+[settings.rtx]
+ecoMode.enabled = true
+hydra.readTransformsFromFabricInRenderDelegate = true
+
+
+[settings]
+communityTabEnabled = true
+foundation.verifyOsVersion.enabled = false
+plugins.'carb.profiler-cpu.plugin'.filePath = "${shared_documents}/create_profile.ct.json.gz"
+privacy.externalBuild = true
+renderer.active = "rtx" # RTX As the default renderer always
+renderer.enabled = "rtx"  # iray, pxr
+structuredLog.enable = true
+
+
+[settings.telemetry]
+# Anonymous Kit application usage telemetry
+enableAnonymousAppName = true
+enableAnonymousData = true

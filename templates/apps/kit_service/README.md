@@ -27,7 +27,9 @@ This section provides comprehensive instructions to leverage the Kit Service App
 
 ### Getting Started
 
-To get started with the Kit Service Template, ensure your development environment meets the prerequisites outlined in the top-level README.
+To get started with the Kit Service Template, ensure your development environment meets the prerequisites outlined in the top-level [**README**](../../../README.md#prerequisites-and-environment-setup).
+
+> **NOTE:** Example commands should be executed in **powershell** in Windows and **terminal** in Linux.
 
 #### Cloning the Repository
 
@@ -49,6 +51,8 @@ cd kit-app-template
 ```powershell
 .\repo.bat template new
 ```
+
+> **Note:** If this is your first time running the `template new` tool, you'll be prompted to accept the Omniverse Licensing Terms.
 
 Follow the prompt instructions:
 - **? Select with arrow keys what you want to create:** Application
@@ -96,10 +100,15 @@ Note that the build step will build all applications contained in the `source` d
 - Visit `http://localhost:8011/docs` in your web browser to view the interactive documentation for the running service.
 - By default the service will have a POST endpoint which will prompt you for input to generate a simple USD scene.
 
+![Launched Service](../../../readme-assets/kit_service.png)
+
+### Where to Go From Here
+For more guidance on extending the Kit Service Template, visit the [Kit App Template Companion Tutorial - Extending Services](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/extending_services.html). This tutorial offers a step-by-step guide to help you understand the template's structure and customize it to suit your needs.
+
 ### Testing
 Applications and their associated extensions can be tested using the `repo test` tooling provided. Each application template includes an initial test suite that can be run to verify the application's functionality.
 
-**Note:** Testing will only be run on applications and extensions within the build directory. **A successful build is required before testing.**
+> **NOTE:** Testing will only be run on applications and extensions within the build directory. **A successful build is required before testing.**
 
 **Linux:**
 ```bash
@@ -149,6 +158,19 @@ After a new extension has been added to the `.kit` file, the application should 
 ### Packaging and Deployment
 
 For deploying your application, create a deployable package using the `package` command:
+
+**Linux:**
+```bash
+./repo.sh package
+```
+**Windows:**
+```powershell
+.\repo.bat package
+```
+
+By default, the `package` command will name the package based on the `name` value contained in the `repo.toml` file at the root of the repository. **By default, this value is set to `kit-app-template`.** Modify this value to set a persistent package name for your application.
+
+Alternatively, you can specify a package name using the `--name` flag:
 
 **Linux:**
 ```bash

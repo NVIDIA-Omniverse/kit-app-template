@@ -18,7 +18,7 @@ template_name = "kit_service"
 
 [dependencies]
 "omni.kit.telemetry" = {} # Telemetry
-"{{ extension_name }}" = { order = 10000 }
+"{{ setup_extension_name }}" = { order = 10000 }
 
 
 [settings.app]
@@ -26,9 +26,13 @@ name = "{{ application_display_name }}"
 
 
 [settings.app.exts]
-folders.'++' = ["${app}/../exts", "${app}/../extscache/"]  # Search paths for extensions.
+folders.'++' = [  # Search paths for extensions.
+    "${app}/../exts",
+    "${app}/../extscache/"
+]
 
 
 [settings.telemetry]
 # Anonymous Kit application usage telemetry
 enableAnonymousData = true
+enableAnonymousAppName = true

@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = "{{ application_display_name }} GDN Streaming"
+version = "{{ version }}"
+description = "Configuration for streaming GDN deployments of {{ application_display_name }}"
+keywords = ["experience", "app", "dev", "streaming", "GDN"]
+template_name = "omni.gdn_streaming_configuration"
+
+
+[dependencies]
+"{{ application_name }}" = {}  # Application Kit File
+"omni.kit.gfn" = {}  # gfn extension
+
+[settings.app]
+fastShutdown = true  # Skip long full shutdown and exit quickly
+name = "{{ application_display_name }} GDN Streaming"  # Skip checking supported platform/config when building
+titleVersion = "1.0.0"  # this is used in our setup file to display some Version to the user in the title bar
+useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
+
+
+[settings.app.content]
+# this will create a stage during the statup process you don't have too,
+# but be aware the the RTX engine only start when there is something to render,
+# so use if false you might want ore adjust the use of omni.kit.viewport.ready.
+emptyStageOnStart = false
+
+
+[settings.app.file]
+ignoreUnsavedOnExit = true  # enable quiting without confirmation
+
+
+[settings.app.window]
+title = "{{ application_display_name }} GDN Streaming"
+fullscreen = true  # fullscreen on startup
+height = 1080  # height of main window
+width = 1920  # width of main window
+
+
+[settings.app.exts.folders]
+# Register extension folder from this repo in kit
+# Your application is using Extensions from your applications
+# Here they are setup into a single folder "exts" but you can have you own structure if you need
+# see we also dd the Extension from the Base application using their extscache
+'++' = [
+	"${app}/../apps",
+	"${app}/../exts",
+	"${app}/../extscache/",
+]
+
+
+[settings.app.renderer.multiGpu]
+# By default rtx is setup to be mgpu but in some context you might want to run on
+# a single gpu if so set this setting to false
+enabled = true
+
+
+[settings.app.usdrt.population.utils]
+# When populating Fabric from USD, merge meshes under scene
+# graph instances. Helps with e.g. Tesla
+# Needs to be tested more before enabling for Runway
+mergeInstances = false
+
+[settings.app.viewport]
+forceHideFps = true  # control if performance data is shown in Viewport
+createCameraModelRep = false
+
+
+[settings.exts."omni.appwindow"]
+listenF11 = false
+listenF7 = false
+
+[settings.exts."omni.kit.gfn"]
+auto_startup_gfn = true
+
+# Tests
+################################
+[[test]]
+args = [
+	"--/app/window/width=480",
+    "--/app/window/height=480",
+    "--/app/extensions/registryEnabled=0", # Make sure we can run without registry and everything is precached
+]
