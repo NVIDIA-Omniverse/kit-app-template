@@ -212,8 +212,6 @@ This will bundle your application into a distributable format, ready for deploym
 
 ### Local Streaming
 
-> **NOTE:** Local streaming is currently supported on Windows 10/11 and Ubuntu 22.04. Ubuntu 20.04 is not currently supported by the web viewer sample
-
 The UI-based template applications in this repository produce more than a single `.kit` file. For the USD Composer template application, this includes `{your-app-name}_streaming.kit` which we will use for local streaming. This file inherits from the base application and adds necessary streaming components like `omni.kit.livestream.webrtc`. To try local streaming, you need a web client to connect to the streaming server.
 
 #### 1. Clone Web Viewer Sample
@@ -246,8 +244,15 @@ import Window from './WindowNoUI';
 
 #### 3. Start the streaming Kit Application
 
+:warning: **Important**: Launching the streaming application with `--no-window` passes an argument directly to Kit allowing it to run without the main application window to prevent conflicts with the streaming client.
+
+**Linux:**
 ```bash
-./repo.sh launch
+./repo.sh launch -- --no-window
+```
+**Windows:**
+```powershell
+.\repo.bat launch -- --no-window
 ```
 
 Select the `{your-app-name}_streaming.kit` and wait for the application to start
