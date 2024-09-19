@@ -80,6 +80,7 @@ type = "extra"
 template = "omni_usd_viewer_setup"
 type = "setup"
 
+
 [[templates."omni_usd_viewer".applications]]
 template = "omni_gdn_streaming"
 type = "gdn"
@@ -178,7 +179,7 @@ variables.version = "0.1.0"
 
 
 [templates."omni_usd_viewer_messaging"]
-class = "ExtensionTemplate"
+class = "SetupExtensionTemplate"
 name = "Omni USD Viewer Messaging"
 url = "."
 subpath = "extensions/usd_viewer.messaging/template"

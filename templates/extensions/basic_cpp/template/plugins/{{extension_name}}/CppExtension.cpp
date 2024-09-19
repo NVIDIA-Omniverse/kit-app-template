@@ -1,5 +1,6 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+ * All rights reserved.
  * SPDX-License-Identifier: LicenseRef-NvidiaProprietary
  *
  * NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
@@ -14,6 +15,7 @@
 
 #include <carb/PluginUtils.h>
 #include <carb/logging/Log.h>
+#include <carb/events/EventsUtils.h>
 
 #include <omni/ext/IExt.h>
 #include <omni/kit/IApp.h>

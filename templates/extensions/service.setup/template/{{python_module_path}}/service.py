@@ -9,11 +9,11 @@
 # its affiliates is strictly prohibited.
 
 from pathlib import Path
-import omni.usd
-import omni.kit.commands
 from pydantic import BaseModel, Field
-from omni.services.core.routers import ServiceAPIRouter
 
+import omni.kit.commands
+import omni.usd
+from omni.services.core.routers import ServiceAPIRouter
 
 router = ServiceAPIRouter(tags=["{{ extension_display_name }}"])
 
@@ -72,7 +72,9 @@ async def generate_cube(cube_data: CubeDataModel):
     )
 
     # save stage
-    asset_file_path = str(Path(cube_data.asset_write_location).joinpath(f"{cube_data.asset_name}.usda"))
+    asset_file_path = str(Path(
+        cube_data.asset_write_location).joinpath(f"{cube_data.asset_name}.usda")
+    )
     stage.GetRootLayer().Export(asset_file_path)
     msg = f"[{{ extension_name }}] Wrote a cube to this path: {asset_file_path}"
     print(msg)

@@ -56,7 +56,18 @@ pages = [
 
 [[test]]
 dependencies = [
+    "omni.kit.mainwindow",
+    "omni.kit.ui_test",
 ]
 
 args = [
+    "--/app/fastShutdown=1",
+    "--/app/file/ignoreUnsavedOnExit=true",
+    "--/app/window/dpiScaleOverride=1.0",
+    "--/app/window/height=720",
+    "--/app/window/scaleToMonitor=false",
+    "--/app/window/width=1280",
+    "--/exts/omni.kit.viewport.window/startup/windowName=Viewport",
+    "--no-window",
+    "--reset-user"
 ]

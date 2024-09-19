@@ -44,3 +44,7 @@ dependencies = [
 
 args =[
 ]
+
+cppTests.libraries = [
+    # "bin/${lib_prefix}{{ extension_name }}.tests${lib_ext}",
+]

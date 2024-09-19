@@ -1,4 +1,5 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 # SPDX-License-Identifier: LicenseRef-NvidiaProprietary
 #
 # NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
@@ -37,18 +38,23 @@ class TestBenchmarks(BenchmarkTestCase):
 
     async def benchmark_sleepy_with_custom_metrics_array(self):
         """
-        Another benchmark method using custom metrics to demonstrate setting arrays for a metric, and to show that
-        there's no crosstalk of metrics between benchmarks.
+        Another benchmark method using custom metrics to demonstrate setting
+        arrays for a metric, and to show that there's no crosstalk of metrics
+        between benchmarks.
         """
-        # array of samples for custom metric 'my_other_metric' is set to [1.2ms, 0.9ms, 1.1ms]
-        self.set_metric_sample_array(name="my_other_metric", values=[1.2, 0.9, 1.1], unit="ms")
+        # array of samples for custom metric 'my_other_metric' is set to
+        # [1.2ms, 0.9ms, 1.1ms]
+        self.set_metric_sample_array(
+            name="my_other_metric", values=[1.2, 0.9, 1.1], unit="ms"
+        )
         await asyncio.sleep(0.01)
 
 
 class TestBenchmarksNoCustomMetric(AsyncTestCase):
     """
     Example Benchmark class without custom metrics.
-    * If you are not planning to use custom metrics you can derive from `AsyncTestCase`.
+    * If you are not planning to use custom metrics you can derive from
+      `AsyncTestCase`.
     * Benchmark methods have to start with the 'benchmark' prefix.
     * The runtime of the benchmark methods and their skip state
       belong to the default metrics which are always reported.

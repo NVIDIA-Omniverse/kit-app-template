@@ -13,7 +13,18 @@ import_configs = [
 # Repository Name
 name = "kit-app-template"
 
-# Disable linbuild until we know what we want to do with this.
+[repo_build]
+# These are necessary to avoid a repo_build failure where the source/apps directory
+# is expected to always exist.
+fetch."platform:linux-x86_64".before_pull_commands = [
+    ["mkdir", "--parents", "${root}/source/apps"],
+]
+
+fetch."platform:windows-x86_64".before_pull_commands = [
+    ["powershell", "-Command", "New-Item -ItemType Directory -Path ${root}/source/apps -ErrorAction SilentlyContinue", ";", "Write-Host 'Done'"],
+]
+
+# Disable linbuild until we have a public image available.
 [repo_build.docker]
 enabled = false
 

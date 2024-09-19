@@ -27,4 +27,5 @@
   <dependency name="premake" linkPath="../../_build/host-deps/premake" />
   <dependency name="msvc" linkPath="../../_build/host-deps/msvc" />
   <dependency name="winsdk" linkPath="../../_build/host-deps/winsdk" />
+
 </project>

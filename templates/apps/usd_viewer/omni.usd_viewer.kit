@@ -23,6 +23,7 @@ template_name = "omni.usd_viewer"
 "omni.graph.scriptnode" = {}
 "omni.graph.ui_nodes" = {}
 "omni.hydra.rtx" = {}
+"omni.hydra.usdrt_delegate" = {}
 "omni.kit.manipulator.camera" = {}
 "omni.kit.manipulator.selection" = {}
 "omni.kit.renderer.core" = {}
@@ -31,18 +32,14 @@ template_name = "omni.usd_viewer"
 "omni.kit.viewport.utility" = {}
 "omni.kit.viewport.window" = {}
 "omni.no_code_ui.bundle" = {}
+"omni.ujitso.client" = {}
 "usdrt.scenegraph" = {}
 "{{ setup_extension_name }}" = { order = 1000 }
 
 
 [settings.persistent.app]
 viewport.defaults.tickRate = 60  # Lock to 60fps
-viewport.displayOptions = 32255  # Bitmask that controls which performance counters appear in the HUD.
-viewport.grid.enabled = false
 viewport.noPadding = true  # Remove default frame around viewport
-viewport.show.lights.visible = false
-viewport.Viewport.Viewport0.guide.grid.visible = false
-viewport.Viewport.Viewport0.guide.axis.visible = false
 
 [settings.persistent.exts]
 "omni.kit.window.sequencer".useSequencerCamera = true  # Sequencer Camera Sync ON
@@ -63,31 +60,19 @@ livestream.skipCapture = 1  # livestream skipCapture ON for local streaming
 name = "{{ application_display_name }}"
 renderer.resolution.width = 1920
 renderer.resolution.height = 1080
-runLoops.main.rateLimitEnabled = true  # Enable rate limiting on the main thread
-runLoops.main.rateLimitFrequency = 60  # Lock it to 60fps
-runLoops.main.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
-runLoops.main.syncToPresent = true  # Sync with the present thread, smooths UI updates
-runLoops.present.rateLimitEnabled = true  # Rate limit the present thread
-runLoops.present.rateLimitFrequency = 60  # Lock it to 60fps
-runLoops.present.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
-runLoops.rendering_0.rateLimitEnabled = true  # Enable rate limiting for the rendering thread
-runLoops.rendering_0.rateLimitFrequency = 60  # Lock it to 60fps
-runLoops.rendering_0.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
-runLoops.rendering_0.syncToPresent = true  # Sync with the present tread, smooths UI updates
-runLoops.rendering_1.rateLimitEnabled = true  # Enable rate limiting for the rendering thread
-runLoops.rendering_1.rateLimitFrequency = 60  # Lock it to 60fps
-runLoops.rendering_1.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
-runLoops.rendering_1.syncToPresent = true  # Sync with the present tread, smooths UI updates
-runLoopsGlobal.syncToPresent = true  # Sync everything with the present thread
-# When populating Fabric from USD, merge meshes under scene
-# graph instances. Helps with e.g. Tesla
-# Needs to be tested more before enabling for Runway
-usdrt.population.utils.mergeInstances = false
-useFabricSceneDelegate = true  # FSD Enabled by default
-viewport.createCameraModelRep = false
-viewport.forceHideFps = true  # Show/Hide the performance counters in the upper right corner of the viewport.
-viewport.defaults.fillViewport = true  # default to fill viewport
-vsync = true  # Enable vsync
+useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
+
+[settings.app.usdrt.population.utils]
+mergeInstances = false
+mergeMaterials = false
+
+[settings.app.viewport.defaults]
+fillViewport = true
+guide.grid.visible = false
+guide.axis.visible = false
+hud.visible = false
+scene.cameras.visible = false
+scene.lights.visible = false
 
 [settings.app.exts]
 folders.'++' = [  # Search paths for extensions.
@@ -138,10 +123,26 @@ listenF7 = false
 enableAnonymousData = true
 enableAnonymousAppName = true
 
+[settings.UJITSO]
+# UJITSO supports loading cached representations of assets.
+# These settings controls what is loaded from cache and where from.
+enabled = true	# Enable or disable the use of UJITSO cache.
+textures = true
+geometry = true
+materials = true
+datastore.localCachePath=""	# The absolute path to the root directory containing cached assets.
+readCacheWithAssetRoot=""	# The absolute path to the root directory containing the original non-cached assets.
+
+
 
 # Tests
 ################################
 [[test]]
+
+dependencies = [
+    "{{ setup_extension_name }}.tests"
+]
+
 args = [
 	"--/app/window/width=480",
     "--/app/window/height=480",

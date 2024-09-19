@@ -1,7 +1,7 @@
 # This Dockerfile is used as the base for containerizing applications rendered out via repo_kit_template.
 
 # Utilize Kit Kernel 106.0.0
-FROM nvcr.io/nvidia/omniverse/ov-kit-kernel:106.0.1-ga.126909.3a7abd1c
+FROM nvcr.io/nvidia/omniverse/ov-kit-kernel:106.1.0-ea.140981.10a4b5c0
 
 # root user to bootstrap the container
 USER root
@@ -29,9 +29,9 @@ WORKDIR /app
 
 # Copy the startup.sh scripts
 COPY --chown=ubuntu:ubuntu entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN chmod +x,-w /entrypoint.sh
 COPY --chown=ubuntu:ubuntu entrypoint_memcached.sh /entrypoint_memcached.sh
-RUN chmod +x /entrypoint_memcached.sh
+RUN chmod +x,-w /entrypoint_memcached.sh
 
 # Create Kit expected caching directories that we'll map a volume onto.
 RUN mkdir -p /home/ubuntu/.cache/ov
