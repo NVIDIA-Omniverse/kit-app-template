@@ -66,7 +66,6 @@ class StageManager:
             event_stream.create_subscription_to_pop(self._on_stage_event)
         )
 
-
     def get_children(self, prim_path, filters=None):
         """
         Collect any children of the given `prim_path`, potentially filtered by `filters`
@@ -220,17 +219,20 @@ class StageManager:
         if event.type == carb.events.type_from_string("makePrimsPickable"):
             message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
             event_type = carb.events.type_from_string("makePrimsPickableResponse")
+            # Reset the stage to not be pickable.
+            ctx = omni.usd.get_context()
+            ctx.set_pickable("/", False)
+            # Set the provided paths to be pickable.
             try:
                 paths = event.payload['paths'] or []
                 for path in paths:
-                    omni.usd.get_context().set_pickable(path, True)
+                    ctx.set_pickable(path, True)
             except Exception as e:
                 payload = {"result": "error", "error": str(e)}
             else:
                 payload = {"result": "success", "error": ""}
             message_bus.dispatch(event_type, payload=payload)
             message_bus.pump()
-
 
     def on_shutdown(self):
         # Reseting the state.

@@ -3,5 +3,5 @@
     <!-- Remember to also update the following files when updating the Kit version -->
     <!-- ./tools/VERSION.md -->
     <!-- ./launcher-configs/*/VERSION.md -->
-    <package name="kit-kernel" version="106.0.2+release.127937.36286b8b.gl.${platform}.${config}"/>  </dependency>
+    <package name="kit-kernel" version="106.0.3+release.138428.99fdfcd7.gl.${platform}.${config}"/>  </dependency>
 </project>

@@ -18,7 +18,7 @@ template_name = "omni.usd_viewer"
 [dependencies]
 "omni.anim.curve.core" = {}
 "omni.anim.timeline" = {}
-"omni.graph.action" = {}
+"omni.graph.action_nodes" = {}
 "omni.graph.nodes" = {}
 "omni.graph.scriptnode" = {}
 "omni.graph.ui_nodes" = {}
@@ -32,6 +32,7 @@ template_name = "omni.usd_viewer"
 "omni.kit.viewport.window" = {}
 "omni.no_code_ui.bundle" = {}
 "usdrt.scenegraph" = {}
+"omni.ujitso.client" = {}
 "{{ setup_extension_name }}" = { order = 1000 }
 
 
@@ -83,6 +84,7 @@ runLoopsGlobal.syncToPresent = true  # Sync everything with the present thread
 # graph instances. Helps with e.g. Tesla
 # Needs to be tested more before enabling for Runway
 usdrt.population.utils.mergeInstances = false
+usdrt.population.utils.mergeMaterials = false
 useFabricSceneDelegate = true  # FSD Enabled by default
 viewport.createCameraModelRep = false
 viewport.forceHideFps = true  # Show/Hide the performance counters in the upper right corner of the viewport.
@@ -137,6 +139,16 @@ listenF7 = false
 # Anonymous Kit application usage telemetry
 enableAnonymousData = true
 enableAnonymousAppName = true
+
+[settings.UJITSO]
+# UJITSO supports loading cached representations of assets.
+# These settings controls what is loaded from cache and where from.
+enabled = true	# Enable or disable the use of UJITSO cache.
+textures = true
+geometry = true
+materials = true
+datastore.localCachePath=""	# The absolute path to the root directory containing cached assets.
+readCacheWithAssetRoot=""	# The absolute path to the root directory containing the original non-cached assets.
 
 
 # Tests

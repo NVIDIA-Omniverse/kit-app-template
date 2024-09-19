@@ -181,9 +181,10 @@ class SetupExtension(omni.ext.IExt):
                 MenuLayout.Sort(exclude_items=["Extensions"], sort_submenus=True),
             ])
         ])
+
         def show_documentation(*x):
             import webbrowser
-            webbrowser.open("http://docs.omniverse.nvidia.com/explorer")
+            webbrowser.open("https://docs.omniverse.nvidia.com/explorer")
         self._help_menu_items = [
             omni.kit.menu.utils.MenuItemDescription(name="Documentation",
                                                     onclick_fn=show_documentation,

@@ -21,7 +21,6 @@ template_name = "omni.streaming_configuration"
 
 [settings.app]
 fastShutdown = true
-livestream.allowResize = false  # Enable or Disable SDK Scaling
 livestream.skipCapture = 1  # livestream skipCapture ON for local streaming
 livestream.webrtcEtli = true  # Only log error or critical level issues.
 name = "{{ application_display_name }} Streaming"  # Application Display Name
@@ -52,3 +51,6 @@ folders.'++' = [  # Search paths for extensions.
     "${app}/../apps",
     "${app}/../extscache"
 ]
+
+[settings.app.file]
+ignoreUnsavedOnExit = true

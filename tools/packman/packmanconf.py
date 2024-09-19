@@ -98,7 +98,7 @@ def get_module_dir(conf_dir, packages_root: str, version: str) -> str:
         tf = tempfile.NamedTemporaryFile(delete=False)
         target_name = tf.name
         tf.close()
-        url = f"http://bootstrap.packman.nvidia.com/packman-common@{version}.zip"
+        url = f"https://bootstrap.packman.nvidia.com/packman-common@{version}.zip"
         print(f"Downloading '{url}' ...")
         import urllib.request
 
