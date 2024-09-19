@@ -272,7 +272,7 @@ import Window from './Window';
 
 - To:
 ```typescript
-import Window from './WindowNoUI';
+import Window from './ViewportOnly';
 ```
 
 #### 3. Start the streaming Kit Application
