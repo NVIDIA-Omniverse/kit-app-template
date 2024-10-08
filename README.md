@@ -6,7 +6,7 @@
 
 
 ## :warning: EA Release Information
-**This branch is based on Omniverse Kit 106.1 EA. It includes EA versions of the Kit SDK, associated development tools, and templates. For the latest stable release, see the `106` branch.**
+**This branch is based on Omniverse Kit 106.2 EA. It includes EA versions of the Kit SDK, associated development tools, and templates. For the latest stable release, see the `106` branch.**
 
 ## Overview
 

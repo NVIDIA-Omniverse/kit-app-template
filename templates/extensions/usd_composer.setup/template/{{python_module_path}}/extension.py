@@ -32,7 +32,7 @@ import omni.kit.ui
 import omni.kit.window.property as property_window_ext
 import omni.ui as ui
 import omni.usd
-from omni.kit.menu.utils import MenuLayout
+from omni.kit.menu.utils import MenuLayout, MenuItemDescription
 from omni.kit.property.usd import PrimPathWidget
 from omni.kit.quicklayout import QuickLayout
 from omni.kit.window.title import get_main_window_title
@@ -213,7 +213,7 @@ class CreateSetupExtension(omni.ext.IExt):
                 "https://docs.omniverse.nvidia.com/composer/latest/index.html"
             )
         self._help_menu_items = [
-            omni.kit.menu.utils.MenuItemDescription(
+            MenuItemDescription(
                 name="Documentation",
                 onclick_fn=show_documentation,
                 appear_after=[omni.kit.menu.utils.MenuItemOrder.FIRST]
@@ -350,8 +350,6 @@ class CreateSetupExtension(omni.ext.IExt):
 
     def __menu_update(self):
         """Update the menu"""
-        editor_menu = omni.kit.ui.get_editor_menu()
-
         self._menu_layout = [
             MenuLayout.Menu(
                 "Window",
@@ -389,29 +387,6 @@ class CreateSetupExtension(omni.ext.IExt):
                             MenuLayout.Item("Movie Capture"),
                             MenuLayout.Item("MDL Material Graph"),
                             MenuLayout.Item("Tablet XR"),
-                        ],
-                    ),
-                    MenuLayout.SubMenu(
-                        "Simulation",
-                        [
-                            MenuLayout.Group("Flow", source="Window/Flow"),
-                            MenuLayout.Group(
-                                "Blast Destruction", source="Window/Blast"
-                            ),
-                            MenuLayout.Group(
-                                "Blast Destruction",
-                                source="Window/Blast Destruction"
-                            ),
-                            MenuLayout.Group(
-                                "Boom Collision Audio", source="Window/Boom"
-                            ),
-                            MenuLayout.Group(
-                                "Boom Collision Audio",
-                                source="Window/Boom Collision Audio"
-                            ),
-                            MenuLayout.Group(
-                                "Physics", source="Window/Physics"
-                            ),
                         ],
                     ),
                     MenuLayout.SubMenu(
@@ -464,21 +439,16 @@ class CreateSetupExtension(omni.ext.IExt):
         omni.kit.menu.utils.add_layout(self._menu_layout)
 
         self._layout_menu_items = []
-        self._current_layout_priority = 20
 
         def add_layout_menu_entry(name, parameter, key):
-            menu_path = f"Layout/{name}"
-            menu = editor_menu.add_item(
-                menu_path, None, False, self._current_layout_priority
-            )
-            self._current_layout_priority = self._current_layout_priority + 1
-
+            """Add a layout menu entry."""
             if inspect.isfunction(parameter):
-                menu_action = omni.kit.menu.utils.add_action_to_menu(
-                    menu_path,
-                    lambda *_: asyncio.ensure_future(parameter()),
-                    name,
-                    (carb.input.KEYBOARD_MODIFIER_FLAG_CONTROL, key),
+                menu_dict = omni.kit.menu.utils.build_submenu_dict(
+                    [
+                        MenuItemDescription(name=f"Layout/{name}",
+                                            onclick_fn=lambda: asyncio.ensure_future(parameter()),
+                                            hotkey=(carb.input.KEYBOARD_MODIFIER_FLAG_CONTROL, key)),
+                    ]
                 )
             else:
                 async def _active_layout(layout):
@@ -486,16 +456,19 @@ class CreateSetupExtension(omni.ext.IExt):
                     # load layout file again to make sure layout correct
                     await _load_layout(layout)
 
-                menu_action = omni.kit.menu.utils.add_action_to_menu(
-                    menu_path,
-                    lambda *_: asyncio.ensure_future(
-                        _active_layout(f"{DATA_PATH}/layouts/{parameter}.json")
-                    ),
-                    name,
-                    (carb.input.KEYBOARD_MODIFIER_FLAG_CONTROL, key),
+                menu_dict = omni.kit.menu.utils.build_submenu_dict(
+                    [
+                        MenuItemDescription(name=f"Layout/{name}",
+                                            onclick_fn=lambda: asyncio.ensure_future(_active_layout(f"{DATA_PATH}/layouts/{parameter}.json")),
+                                            hotkey=(carb.input.KEYBOARD_MODIFIER_FLAG_CONTROL, key)),
+                    ]
                 )
 
-            self._layout_menu_items.append((menu, menu_action))
+            # add menu
+            for group in menu_dict:
+                omni.kit.menu.utils.add_menu_items(menu_dict[group], group)
+
+            self._layout_menu_items.append(menu_dict)
 
         add_layout_menu_entry(
             "Reset Layout", "default", carb.input.KeyboardInput.KEY_1
@@ -524,6 +497,11 @@ class CreateSetupExtension(omni.ext.IExt):
 
         omni.kit.menu.utils.remove_layout(self._menu_layout)
         self._menu_layout = None
+
+        for menu_dict in self._layout_menu_items:
+            for group in menu_dict:
+                omni.kit.menu.utils.remove_menu_items(menu_dict[group], group)
+
         self._layout_menu_items = None
         self._launcher_menu = None
         self._reset_menu = None

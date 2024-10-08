@@ -27,7 +27,7 @@ import omni.kit.ui
 import omni.usd
 
 from omni.kit.quicklayout import QuickLayout
-from omni.kit.menu.utils import MenuLayout
+from omni.kit.menu.utils import MenuLayout, MenuItemDescription
 from omni.kit.window.title import get_main_window_title
 from omni.kit.viewport.menubar.core import get_instance as get_mb_inst, DEFAULT_MENUBAR_NAME
 from omni.kit.viewport.menubar.core.viewport_menu_model import ViewportMenuModel
@@ -166,7 +166,6 @@ class SetupExtension(omni.ext.IExt):
             os.remove(self.layout_user_path)
 
         # setup the menu and their layout
-        self._current_layout_priority = 0
         self._layout_menu_items = []
         self._layout_file_menu()
         self._menu_layout = []
@@ -222,7 +221,7 @@ class SetupExtension(omni.ext.IExt):
             """Open the documentation in a web browser."""
             webbrowser.open("https://docs.omniverse.nvidia.com/explorer")
         self._help_menu_items = [
-            omni.kit.menu.utils.MenuItemDescription(
+            MenuItemDescription(
                 name="Documentation",
                 onclick_fn=show_documentation,
                 appear_after=[omni.kit.menu.utils.MenuItemOrder.FIRST]
@@ -340,34 +339,32 @@ class SetupExtension(omni.ext.IExt):
         # we setup a simple ways to Load custom layout from the exts
         def add_layout_menu_entry(name, parameter, key):
             """Add a layout menu entry."""
-            editor_menu = omni.kit.ui.get_editor_menu()
-
             layouts_path = carb.tokens.get_tokens_interface().resolve("${% raw %}{{% endraw %}{{ extension_name }}{% raw %}}{% endraw %}/layouts")
 
             menu_path = f"Layout/{name}"
-            menu = editor_menu.add_item(
-                menu_path, None, False, self._current_layout_priority
-            )
-            self._current_layout_priority = self._current_layout_priority + 1
 
             if inspect.isfunction(parameter):  # pragma: no cover
-                menu_action = omni.kit.menu.utils.add_action_to_menu(
-                    menu_path,
-                    lambda *_: asyncio.ensure_future(parameter()),
-                    name,
-                    (carb.input.KEYBOARD_MODIFIER_FLAG_CONTROL, key),
+                menu_dict = omni.kit.menu.utils.build_submenu_dict(
+                    [
+                        MenuItemDescription(name=f"Layout/{name}",
+                                            onclick_fn=lambda: asyncio.ensure_future(parameter()),
+                                            hotkey=(carb.input.KEYBOARD_MODIFIER_FLAG_CONTROL, key)),
+                    ]
                 )
             else:
-                menu_action = omni.kit.menu.utils.add_action_to_menu(
-                    menu_path,
-                    lambda *_: asyncio.ensure_future(
-                        _load_layout(f"{layouts_path}/{parameter}.json")
-                    ),
-                    name,
-                    (carb.input.KEYBOARD_MODIFIER_FLAG_CONTROL, key),
+                menu_dict = omni.kit.menu.utils.build_submenu_dict(
+                    [
+                        MenuItemDescription(name=f"Layout/{name}",
+                                            onclick_fn=lambda: asyncio.ensure_future(_load_layout(f"{layouts_path}/{parameter}.json")),
+                                            hotkey=(carb.input.KEYBOARD_MODIFIER_FLAG_CONTROL, key)),
+                    ]
                 )
 
-            self._layout_menu_items.append((menu, menu_action))
+            # add menu
+            for group in menu_dict:
+                omni.kit.menu.utils.add_menu_items(menu_dict[group], group)
+
+            self._layout_menu_items.append(menu_dict)
 
         add_layout_menu_entry(
             "Reset Layout", "default", carb.input.KeyboardInput.KEY_1
@@ -587,6 +584,11 @@ class SetupExtension(omni.ext.IExt):
         if self._menu_layout:
             omni.kit.menu.utils.remove_layout(self._menu_layout)
             self._menu_layout.clear()
+
+        for menu_dict in self._layout_menu_items:
+            for group in menu_dict:
+                omni.kit.menu.utils.remove_menu_items(menu_dict[group], group)
+
         self._layout_menu_items.clear()
         self._navigation.on_shutdown()
         del self._navigation

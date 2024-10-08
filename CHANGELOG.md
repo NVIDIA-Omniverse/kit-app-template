@@ -2,6 +2,17 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+
+## [106.2.0] - 2024-10-08
+
+### Changed
+- Updated to Kit 106.2.0
+- Refactored Viewer Template default tests to avoid unnecessary dependencies
+
+### Removed
+- Unused `simulation` menu item from USD Composer Template
+
+
 ## [106.1.0] - 2024-09-17
 
 ### Added
