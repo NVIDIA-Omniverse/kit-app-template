@@ -424,6 +424,15 @@ def launch_kit(
 
     # Enable the developer bundle
     kit_cmd = [str(app_build_path)]
+    # Stealing this from the `repo_precache_exts` logic in `repo build`
+    # Ensures we're pointing at the correct registries for kit when using `repo launch`
+    registries = config.get("repo_precache_exts", {}).get("registries", [])
+    for idx, registry in enumerate(registries):
+        name = registry.get("name")
+        url = registry.get("url")
+        if name and url:
+            kit_cmd += [f'--/exts/omni.kit.registry.nucleus/registries/{idx}/name={name}',
+                        f'--/exts/omni.kit.registry.nucleus/registries/{idx}/url={url}']
     if dev_bundle:
         kit_cmd += ["--enable", "omni.kit.developer.bundle"]
 
