@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
+## [106.2.0] - 2024-10-21
+
+### Fixed
+- Updated Extension Registry location to prod/106/shared when launching Developer Bundle
+
+
 ## [106.2.0] - 2024-10-08
 
 ### Changed
