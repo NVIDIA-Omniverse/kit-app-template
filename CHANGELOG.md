@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [106.2.0] - 2024-10-24
 
 ### Fixed
-- Updated file permisions on tools/packman/python.sh to make it executable
+- Updated file permissions on tools/packman/python.sh to make it executable
 
 
 ## [106.2.0] - 2024-10-21
