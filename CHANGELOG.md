@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
+## [106.2.0] - 2024-10-30
+
+### Fixed
+- Updated file permissions on all Linux shell scripts to make them executable
+
+
 ## [106.2.0] - 2024-10-24
 
 ### Fixed
