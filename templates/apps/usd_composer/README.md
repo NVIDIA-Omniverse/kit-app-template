@@ -2,7 +2,6 @@
 
 ![USD Composer Hero Image](../../../readme-assets/usd_composer.jpg)
 
-**Based On:** `Omniverse Kit SDK 106.0`
 
 ## Overview
 
@@ -238,7 +237,7 @@ To package your application as a container image, use the `--container` flag:
 ./repo.sh package --container
 ```
 
-You will be prompted to select a `.kit` file to serve as the application to launch via the container entrypoint script. This will dictate the behavior of your containerized application. 
+You will be prompted to select a `.kit` file to serve as the application to launch via the container entrypoint script. This will dictate the behavior of your containerized application.
 
 For example, if you are containerizing an application for streaming, select the `{your-app-name}_streaming.kit` file to ensure the correct application configuration is launched within the container.
 
@@ -255,7 +254,7 @@ Applications packaged as container images can be launched using the `launch` com
 
 **Linux:**
 ```bash
-./repo.sh launch --container 
+./repo.sh launch --container
 ```
 
 If only a single container image exists, it will launch automatically. If multiple container images exist, you will be prompted to select the desired container image to launch.
@@ -315,7 +314,7 @@ When streaming a containerized application, ensure that the containerized applic
 
 **Linux:**
 ```bash
-./repo.sh launch --container 
+./repo.sh launch --container
 ```
 
 If only a single container image exists, it will launch automatically. If multiple container images exist, you will be prompted to select the desired container image to launch.

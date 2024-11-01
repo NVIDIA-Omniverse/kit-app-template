@@ -58,6 +58,7 @@ template_name = "omni.usd_composer"
 "omni.kit.manipulator.viewport" = {}
 "omni.kit.material.library" = {}
 "omni.kit.menu.aov" = {}
+"omni.kit.menu.common" = { order = 1000 }
 "omni.kit.menu.create" = {}
 "omni.kit.menu.edit" = {}
 "omni.kit.menu.file" = {}
@@ -131,6 +132,7 @@ template_name = "omni.usd_composer"
 "omni.kit.window.title" = {}
 "omni.kit.window.toolbar" = {}
 "omni.kit.window.usd_paths" = {}
+"omni.light_rigs" = {}
 "omni.mdl.usd_converter" = {}
 "omni.no_code_ui.authoring" = {}
 "omni.physx.stageupdate" = {}
@@ -138,9 +140,6 @@ template_name = "omni.usd_composer"
 "omni.rtx.settings.core" = {} # this is the new Render Settings 2.0
 "omni.scene.optimizer.bundle" = {}
 "omni.scene.visualization.bundle" = {}
-"omni.services.starfleet.auth" = {}
-"omni.services.transport.server.http" = {}
-"omni.services.usd" = {}
 "omni.stats" = {}
 "omni.usd.fileformat.sbsar" = {}
 "omni.usd.metrics.assembler.ui" = {}
@@ -237,6 +236,7 @@ experience = "{{ application_display_name }}"
 "omni.kit.widget.layers".useNewFilePicker = true
 "omni.kit.window.file".useNewFilePicker = true
 "omni.kit.window.material".load_after_startup = true
+"omni.light_rigs".setup_extension_name = "{{ setup_extension_name }}"
 "omni.services.transport.server.http".port = 8111
 "omni.ui".raster.default_rasterpolicy_enabled = true
 "omni.usd".enableUsdMaterialWatcherForFsd = true
@@ -342,10 +342,3 @@ structuredLog.enable = true
 # Anonymous Kit application usage telemetry
 enableAnonymousAppName = true
 enableAnonymousData = true
-
-[settings.exts."omni.kit.registry.nucleus"]
-registries = [
-    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/106/shared" },
-    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
-    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
-]

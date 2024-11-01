@@ -4,11 +4,11 @@
   <img src="../../../readme-assets/cpp_logo.png" width="30%" />
 </p>
 
-**Based On:** `Omniverse Kit SDK 106.0`
-
 ## Overview
 
 The Basic C++ Extension Template is a starting point for developers looking to build C++ based extensions within the NVIDIA Omniverse ecosystem. This template offers a best practices foundation and structure to easily integrate with the broader capabilities of the Omniverse Kit SDK.
+
+**Note for Windows C++ Developers** : This template requires that Visual Studio is installed  on the host.  Additionally, `"platform:windows-x86_64".enabled` and `link_host_toolchain` within the `repo.toml` file be set to `true`. For additional C++ configuration information [see here](../../../readme-assets/additional-docs/windows_developer_configuration.md).
 
 ### Use Cases
 
