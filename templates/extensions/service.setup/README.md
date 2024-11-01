@@ -2,6 +2,7 @@
 
 ![Kit Service Image](../../../readme-assets/kit_service.png)
 
+**Based On:** `Omniverse Kit SDK 106.0`
 
 ## Overview
 

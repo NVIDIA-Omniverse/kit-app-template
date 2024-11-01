@@ -2,6 +2,7 @@
 
 ![USD Viewer Hero Image](../../../readme-assets/usd_viewer.jpg)
 
+**Based On:** `Omniverse Kit SDK 106.0`
 
 ## Overview
 
@@ -109,12 +110,12 @@ To display content in the desktop application, you can pass an argument to the `
 
 **Linux:**
 ```bash
-./repo.sh launch -- --/app/auto_load_usd={replace-with-full-path-to-kit-app-template}/_build/linux-x86_64/release/samples/stage01.usd
+./repo.sh launch -- --/app/auto_load_usd={replace-with-full-path-to-kit-app-template}/source/extensions/{replace-with-setup-extension-name}/samples/stage01.usd
 ```
 
 **Windows:**
 ```powershell
-.\repo.bat launch -- --/app/auto_load_usd={replace-with-full-path-to-kit-app-template}\_build\windows-x86_64\release\samples\stage01.usd
+.\repo.bat launch -- --/app/auto_load_usd={replace-with-full-path-to-kit-app-template}\source\extensions\{replace-with-setup-extension-name}\samples\stage01.usd
 ```
 
 ![USD Viewer Asset Launch](../../../readme-assets/usd_viewer_load_asset_desktop.png)
@@ -223,7 +224,7 @@ To package your application as a container image, use the `--container` flag:
 ./repo.sh package --container
 ```
 
-You will be prompted to select a `.kit` file to serve as the application to launch via the container entrypoint script. This will dictate the behavior of your containerized application.
+You will be prompted to select a `.kit` file to serve as the application to launch via the container entrypoint script. This will dictate the behavior of your containerized application. 
 
 For example, if you are containerizing an application for streaming, select the `{your-app-name}_streaming.kit` file to ensure the correct application configuration is launched within the container.
 
@@ -240,7 +241,7 @@ Applications packaged as container images can be launched using the `launch` com
 
 **Linux:**
 ```bash
-./repo.sh launch --container
+./repo.sh launch --container 
 ```
 
 If only a single container image exists, it will launch automatically. If multiple container images exist, you will be prompted to select the desired container image to launch.
@@ -282,7 +283,7 @@ When streaming a containerized application, ensure that the containerized applic
 
 **Linux:**
 ```bash
-./repo.sh launch --container
+./repo.sh launch --container 
 ```
 
 If only a single container image exists, it will launch automatically. If multiple container images exist, you will be prompted to select the desired container image to launch.

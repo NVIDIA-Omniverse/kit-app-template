@@ -205,18 +205,12 @@ def run_selected_image(image_id: str, dev_bundle: bool, extra_args: List[str], v
     """
     # TODO: Can we just assume the Dockerfile expose port ranges
     # and always map those in? Or should this be configurable via CLI args/toml file?
-    nvda_kit_args = os.environ.get("NVDA_KIT_ARGS", "")
-    nvda_kit_nucleus = os.environ.get("NVDA_KIT_NUCLEUS", "")
     docker_run_cmd = [
         "docker",
         "run",
         "--gpus=all",
         "--env",
         f"OM_KIT_VERBOSE={1 if verbose else 0}",
-        "--env",
-        f"NVDA_KIT_ARGS={nvda_kit_args}",
-        "--env",
-        f"NVDA_KIT_NUCLEUS={nvda_kit_nucleus}",
         "--mount",  # RTX Shader Cache
         "type=volume,src=omniverse_shader_cache,dst=/home/ubuntu/.cache/ov,volume-driver=local",
         "--mount",  # Kit Extension Cache
@@ -430,6 +424,15 @@ def launch_kit(
 
     # Enable the developer bundle
     kit_cmd = [str(app_build_path)]
+    # Stealing this from the `repo_precache_exts` logic in `repo build`
+    # Ensures we're pointing at the correct registries for kit when using `repo launch`
+    registries = config.get("repo_precache_exts", {}).get("registries", [])
+    for idx, registry in enumerate(registries):
+        name = registry.get("name")
+        url = registry.get("url")
+        if name and url:
+            kit_cmd += [f'--/exts/omni.kit.registry.nucleus/registries/{idx}/name={name}',
+                        f'--/exts/omni.kit.registry.nucleus/registries/{idx}/url={url}']
     if dev_bundle:
         kit_cmd += ["--enable", "omni.kit.developer.bundle"]
 

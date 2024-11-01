@@ -2,6 +2,7 @@
 
 ![USD Viewer Hero Image](../../../readme-assets/usd_viewer.jpg)
 
+**Based On:** `Omniverse Kit SDK 106.0`
 
 ## Overview
 

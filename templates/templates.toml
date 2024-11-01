@@ -1,4 +1,18 @@
 # -- Application templates --
+[templates."kit_service"]
+class = "ApplicationTemplate"
+name = "Kit Service"
+url = "."
+subpath = "apps/kit_service/kit_service.kit"
+variables.application_name = "my_company.my_service"
+variables.application_display_name = "My Service"
+variables.version = "0.1.0"
+
+[[templates."kit_service".extensions]]
+template = "kit_service_setup"
+type = "setup"
+
+
 [templates."kit_base_editor"]
 class = "ApplicationTemplate"
 name = "Kit Base Editor"
@@ -74,19 +88,6 @@ type = "gdn"
 [[templates."omni_usd_viewer".applications]]
 template = "omni_default_streaming"
 type = "streaming"
-
-[templates."kit_service"]
-class = "ApplicationTemplate"
-name = "Kit Service"
-url = "."
-subpath = "apps/kit_service/kit_service.kit"
-variables.application_name = "my_company.my_service"
-variables.application_display_name = "My Service"
-variables.version = "0.1.0"
-
-[[templates."kit_service".extensions]]
-template = "kit_service_setup"
-type = "setup"
 
 
 # -- Application Layer templates --

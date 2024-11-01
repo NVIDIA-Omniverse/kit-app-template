@@ -1,0 +1,146 @@
+mdl 1.8;
+
+
+import ::base::*;
+import ::state::*;
+import ::math::*;
+import ::scene::*;
+// import ::anno::*;
+// import ::tex::*;
+// import ::df::*;
+
+import ::nvidia::core_definitions::add_emission;
+import ::OmniPBR::OmniPBR;
+
+float linstep(float a, float b, float x){
+    return math::saturate((x-a)/(b-a));
+}
+
+float3 GridSingle(float3 p,float lod=0,float3 edgewidth=1){
+    float3 pos=p*math::exp2(lod);
+    return float3(1)-math::smoothstep(float3(0),edgewidth*math::exp2(lod),math::abs(math::frac(pos+float3(0.5))*2-float3(1)));
+}
+
+float3 GridLOD(float3 p,float lod=0,float3 edgewidth=1){
+    return math::lerp(
+        GridSingle(p,math::floor(lod)+0.0,edgewidth),
+        GridSingle(p,math::floor(lod)+1.0,edgewidth),
+        math::frac(lod)
+        );
+}
+
+float DrawGrid(
+    float LodBias = 0 ,
+    float Thickness = 0.01,
+    int ProjectionType = 0 ,
+
+    float3 Translate = float3(0,0,0) ,
+
+    float ScaleExp = 0
+)
+{
+
+    float grid=0;
+    base::texture_coordinate_info uvw = base::coordinate_source(base::texture_coordinate_object,0);
+    base::texture_coordinate_info uvw_world = base::coordinate_source(base::texture_coordinate_world,0);
+    // float worldsize=math::length(state::transform_vector(state::coordinate_world,state::coordinate_object,float3(1,1,1)));
+    // float3 normal_world=math::normalize(state::transform_vector(state::coordinate_internal,state::coordinate_world,state::normal()));
+    // float3 p=uvw_world.position-Translate+normal_world*ShaperA*ShaperB.x;
+    float3 p=(ProjectionType==0?uvw_world.position:uvw.position)-Translate;
+    p*=math::exp2(ScaleExp);
+
+
+    p*=math::length(state::transform_vector(state::coordinate_object, state::coordinate_world,float3(1,1,1)));
+    
+    grid=math::length(float3(GridLOD(p,LodBias,Thickness*float3(1,1,1))));
+
+    // float wd=sigma_float(ShaperB.y*0.1);
+
+
+
+    return grid;
+}
+
+float DrawSwipe(float Fader=0,float3 dir=float3(1,1,1),float width=0.25){
+    base::texture_coordinate_info uvw_obj = base::coordinate_source(base::texture_coordinate_object,0);
+    float3 p=math::normalize(uvw_obj.position);
+    p+=state::normal()*0.5;
+    float3 rd=math::normalize(p);
+    float3 sd=math::normalize(dir);
+    float dp=math::dot(rd,sd);
+    float chi=math::acos(dp)/math::PI;
+    float wd=width;
+    float mask=linstep(wd,-wd,chi/(1+wd*2)+wd-(Fader)*(1+wd*1));
+    return mask;
+}
+float FresnelFactor(uniform float3 CameraPosition=float3(0,0,10000)){
+    float3 wp=state::transform_point(state::coordinate_internal, state::coordinate_world,state::position());
+    float3 ViewVector=math::normalize(wp-CameraPosition);
+    float dp=math::dot(ViewVector,state::normal());
+    return dp;
+}
+export material EffectLayer(
+    material input_material = OmniPBR::OmniPBR(),
+
+    uniform float Fader=-100.0,
+    uniform float AnimationStart=99999.0,
+    uniform float AnimationDuration=1.0,
+
+    float FaderGridGlow=50.0,
+    float FaderFresnelGlow=50.0,
+
+    float FresnelGlow=0.0,
+    float GridGlow=0.0,
+    
+    color GridColor=color(0.0959, 0.6535, 0.8760),
+    uniform float3 CameraPosition=float3(0,0,10000)
+
+    )
+
+ = let{
+
+    float ft0=( (state::animation_time()-AnimationStart)/(AnimationDuration!=0.0?AnimationDuration:0.00001) );
+    float ft=AnimationDuration<0?math::saturate(ft0+1):math::saturate(ft0);
+    // float ft=(state::animation_time()-AnimationStart)/AnimationDuration;
+    // float f=Fader>-10?Fader:math::saturate(ft);
+    float f=Fader>-10?Fader:ft;
+    float dp=FresnelFactor(CameraPosition);
+    float swipe=(1.0-math::abs(DrawSwipe(Fader)*2.0-1.0));
+    float glow=math::pow(1.0-math::abs(dp),4.0);
+    float t=state::animation_time()*math::PI;
+    float glow_pulse=math::exp2(math::sin(t));
+
+    float sgridlod=-4.0+3*swipe;
+    float sgrid=DrawGrid(
+
+        LodBias: sgridlod,
+        
+        Thickness: 4*0.200000003f,
+        ProjectionType: 1,
+        // Translate: float3(0.f),
+        Translate: float3(0.f),
+        ScaleExp: 0.f
+        )*math::smoothstep(0,1,8.0+sgridlod);
+
+
+
+
+
+
+
+ } in ::nvidia::core_definitions::add_emission(
+            base: input_material,
+            tint: color(0,0,0)
+                +sgrid*100*GridColor*GridGlow
+                +sgrid*100*GridColor*FaderGridGlow*f*glow_pulse
+                +glow*2000*GridColor*FresnelGlow
+                +glow*2000*GridColor*FaderFresnelGlow*f*glow_pulse
+                +swipe*GridColor*5000
+                // +glow*3000*GridColor*FaderFresnelGlow*f*glow_pulse
+
+                +GridColor*1000*glow*math::smoothstep(0,0.5,f)*math::smoothstep(0,0.5,1.0-f)
+                +input_material.surface.emission.intensity
+                ,
+
+            intensity: 1.f,
+            unit_scale: 1.f);

@@ -8,5 +8,6 @@ repo_build.prebuild_link {
     { "data", ext.target_dir.."/data" },
     { "docs", ext.target_dir.."/docs" },
     { "layouts", ext.target_dir.."/layouts" },
+    { "samples", ext.target_dir.."/../../samples" },
     { "{{ python_module_toplevel }}", ext.target_dir.."/{{ python_module_toplevel }}" },
 }

@@ -33,7 +33,6 @@ template_name = "omni.usd_viewer"
 "omni.kit.viewport.window" = {}
 "omni.no_code_ui.bundle" = {}
 "omni.ujitso.client" = {}
-"omni.usd_viewer.samples" = {}
 "usdrt.scenegraph" = {}
 "{{ setup_extension_name }}" = { order = 1000 }
 
@@ -101,9 +100,6 @@ height = 1080
 x = -1
 y = -1
 
-[settings.crashreporter.data]
-experience = "{{ application_display_name }}"
-
 [settings.exts]
 "omni.kit.renderer.core".present.enabled = true  # Enable the present thread
 "omni.kit.renderer.core".present.presentAfterRendering = true  # Ensure the present thread waits for the rendering to complete
@@ -137,6 +133,12 @@ materials = true
 datastore.localCachePath=""	# The absolute path to the root directory containing cached assets.
 readCacheWithAssetRoot=""	# The absolute path to the root directory containing the original non-cached assets.
 
+[settings.exts."omni.kit.registry.nucleus"]
+registries = [
+    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/106/shared" },
+    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
+]
 
 
 # Tests

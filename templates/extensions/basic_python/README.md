@@ -4,6 +4,8 @@
   <img src="../../../readme-assets/python-logo-only.png" width="30%" />
 </p>
 
+**Based On:** `Omniverse Kit SDK 106.0`
+
 ## Overview
 
 The Basic Python Extension Template is a starting point for developers looking to build Python-based extensions within the NVIDIA Omniverse ecosystem. This template offers a best practices foundation and structure to easily integrate with the broader capabilities of the Omniverse Kit SDK.
