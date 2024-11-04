@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = "{{ extension_display_name }}"
+version = "{{ version }}"  # Semantic Versionning is used: https://semver.org/
+description = "The setup extension for the USD Viewer template."
+category = "Setup"  # How to categorize this in the Extension Manager
+changelog = "docs/CHANGELOG.md"
+icon = "data/icon.png"  # Icon to show in the Extension Manager
+keywords = ["kit", "extension", "setup"]  # Search keywords for the Extension Manager
+preview_image = "data/preview.png"  # Preview to show in the Extension Manager
+readme  = "docs/README.md"  # Path (relative to the root) or content of readme markdown file for UI
+repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of the extension source repository
+
+
+[dependencies]
+"omni.kit.usd.layers" = {}
+"omni.activity.ui" = {order=1000}   # Progress activity messages
+"omni.kit.quicklayout" = {}
+"omni.kit.viewport.utility" = {}
+"{{ extra_extension_name }}" = {}  # Required messaging extension
+
+
+[settings.app]
+useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
+
+
+[settings.exts."{{ extension_name }}"]
+menu_visible = false
+
+
+[[python.module]]  # Main python module this extension provides, it will be publicly available as "import omni.hello.world"
+name = "{{ extension_name }}"
+
+
+[documentation]
+pages = [
+    "docs/Overview.md",
+    "docs/CHANGELOG.md",
+]
+
+
+[[test]]
+dependencies = [
+    "{{ application_name }}",
+    "omni.kit.mainwindow",
+    "omni.kit.ui_test",
+]
+
+args = [
+    "--/app/layout/name=default",
+    "--/app/fastShutdown=1",
+    "--/app/file/ignoreUnsavedOnExit=true",
+    "--/app/window/dpiScaleOverride=1.0",
+    "--/app/window/height=720",
+    "--/app/window/scaleToMonitor=false",
+    "--/app/window/width=1280",
+    "--/exts/omni.kit.viewport.window/startup/windowName=Viewport",
+    "--no-window",
+    "--reset-user"
+]

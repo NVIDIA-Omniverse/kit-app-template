@@ -1,0 +1,27 @@
+########################################################################################################################
+# Example:
+########################################################################################################################
+
+#
+# [[dependency]]                           # Toml way to define array of objects.
+# python = "../../_build/target-deps/python"  # Path to python used to install. Absolute or relative to this config.
+# packages = ["numpy"]                     # Array of packages to install, they all will be passed directly to pip.
+# target = "../../_build/target-deps/numpy"   # Folder to install into.   Absolute or relative to this config.
+# platforms = ["windows-x86_64"]           # Platform(s) to filter, default is ["*"].
+# download_only = true                     # Do pip download instead of install, gets a whl file that can be installed later.
+#
+
+# Another sample
+# [[dependency]]
+# python = "../../_build/target-deps/python"
+# packages = [
+#     "toml==0.10.1",
+# ]
+# target = "../../_build/target-deps/pip_prebundle"
+# platforms = ["*"]
+# download_only = false
+# append_to_install_folder = true
+# python_include_dir = true
+# subprocess_path = ["${root}/_build/host-deps/msvc/MSBuild/Current/Bin", "${root}/_build/host-deps/msvc/VC/Tools/MSVC/14.29.30133/bin/HostX64/x64", "${root}/_build/host-deps/msvc/VC/Auxiliary/Build", "${root}/_build/host-deps/winsdk/bin/x64"]
+# msvc_path = "${root}/_build/host-deps/msvc/VC/Tools/MSVC/14.29.30133"
+# win_sdk_path = "${root}/_build/host-deps/winsdk"

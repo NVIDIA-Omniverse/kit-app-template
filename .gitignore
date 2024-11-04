@@ -1,0 +1,38 @@
+﻿# All folders starting with _ are local.
+_*/
+
+# Compiled python files.
+*.py[cod]
+
+# Visual Studio files.
+/.vs
+**/.vscode/ipch
+
+# macOS files.
+.DS_Store
+
+# Generated license file.
+PACKAGE-DEPS.yaml
+
+# packman .user config
+*.packman.xml.user
+
+# kit user config
+deps/**/user.toml
+
+# vscode settings are copied and filled in from 'settings.json.template'
+.vscode/settings.json
+
+# PyCharm files.
+/.idea/
+
+# Linux in docker build $HOME dirs
+/.nvidia-omniverse
+/.local
+/.cache
+
+# Omniverse EULA breadcrumb
+/.omniverse_eula_accepted.txt
+
+# Streaming EventTrace
+*.etli

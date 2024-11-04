@@ -1,0 +1,94 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = "{{ extension_display_name }}"
+version = "{{ version }}"  # Semantic Versionning is used: https://semver.org/
+description = "A setup extension for a USD Explorer based template applicaiton"
+category = "Setup"  # How to categorize this in the Extension Manager
+changelog = "docs/CHANGELOG.md"
+icon = "data/icon.png"  # Icon to show in the Extension Manager
+keywords = ["kit", "extension", "setup"]  # Search keywords for the Extension Manager
+preview_image = "data/preview.png"  # Preview to show in the Extension Manager
+readme  = "docs/README.md"  # Path (relative to the root) or content of readme markdown file for UI
+repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of the extension source repository
+
+
+[dependencies]
+"omni.kit.browser.asset" = {}
+"omni.kit.property.bundle" = {}
+"omni.kit.property.layer" = {}
+"omni.kit.quicklayout" = {}
+"omni.kit.stage_templates" = {}
+"omni.kit.widgets.custom" = {}
+"omni.kit.widget.layers" = { optional=true }
+"omni.kit.window.console" = {}
+"omni.kit.window.content_browser" = {}
+"omni.kit.window.file" = {}
+"omni.kit.window.material" = {}
+"omni.kit.window.preferences" = {}
+"omni.kit.window.title" = {}
+"omni.kit.window.toolbar" = {}
+"omni.kit.viewport.menubar.camera" = { optional=true }
+"omni.kit.viewport.navigation.usd_explorer.bundle" = {}
+
+
+[settings.app]
+application_mode = "review"
+content.emptyStageOnStart = true
+layout.name = "viewport_only"
+viewport.createCameraModelRep = false # Disable creation of camera meshes in USD
+
+
+[settings.exts]
+"omni.kit.browser.material".enabled = false
+"omni.kit.mesh.raycast".bvhBuildOnFirstRequired = true # Avoids mesh raycast to initialize during stage open
+"omni.kit.renderer.core".imgui.enableMips = true
+"omni.kit.tool.asset_importer".useNewFilePicker = true
+"omni.kit.tool.collect".useNewFilePicker = true
+"omni.kit.viewport.menubar.camera".expand = true # Expand the extra-camera settings by default
+"omni.kit.widget.cloud_share".require_access_code = false
+"omni.kit.widget.layers".useNewFilePicker = true
+"omni.kit.window.file".useNewFilePicker = true
+"omni.kit.window.material".load_after_startup = true
+"omni.kit.viewport.navigation.camera_manipulator".defaultOperation = ""
+
+
+[[python.module]]  # Main python module this extension provides, it will be publicly available as "import omni.hello.world"
+name = "{{ extension_name }}"
+
+
+[documentation]
+pages = [
+    "docs/Overview.md",
+    "docs/CHANGELOG.md",
+]
+
+
+[[test]]
+dependencies = [
+    "omni.kit.mainwindow",
+    "omni.kit.stage_templates",
+    "omni.kit.ui_test",
+    "omni.kit.viewport.window",
+    "omni.kit.viewport.utility",
+]
+
+args = [
+    "--/app/fastShutdown=1",
+    "--/app/file/ignoreUnsavedOnExit=true",
+    "--/app/window/dpiScaleOverride=1.0",
+    "--/app/window/height=720",
+    "--/app/window/scaleToMonitor=false",
+    "--/app/window/width=1280",
+    "--/exts/omni.kit.viewport.window/startup/windowName=Viewport",
+    "--no-window",
+    "--reset-user"
+]
