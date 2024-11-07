@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [106.3.0] - 2024-11-07
+
+### Removed
+- Removed the USD Viewer setup samples folder and the light_rigs folders from the USD Composer and USD Explorer setup templates. That data is now accessible from the omni.usd_viewer.setup and omni.light_rigs extension dependencies.
+
+
 ## [106.3.0] - 2024-11-04
 
 ### Added
