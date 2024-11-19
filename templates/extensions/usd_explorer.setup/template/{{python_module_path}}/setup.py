@@ -162,8 +162,9 @@ class SetupExtension(omni.ext.IExt):
 
         # remove the user defined layout so that we always load the default
         # layout when startup
-        with suppress(FileNotFoundError):
-            os.remove(self.layout_user_path)
+        if not self._settings.get_as_bool('/app/ovc_deploytment'):
+            with suppress(FileNotFoundError):
+                os.remove(self.layout_user_path)
 
         # setup the menu and their layout
         self._layout_menu_items = []
@@ -305,7 +306,9 @@ class SetupExtension(omni.ext.IExt):
             await _load_layout(self.review_layout_path, False)
         else:  # current_mode == "layout":
             # check if there is any user modified layout, if yes use that one
-            layout_filename = self.layout_user_path if os.path.exists(self.layout_user_path) else self.default_layout_path
+            layout_filename = self.default_layout_path
+            if not self._settings.get_as_bool('/app.ovc_deployment') and os.path.exists(self.layout_user_path):
+                layout_filename = self.layout_user_path
             await _load_layout(layout_filename, keep_windows)
 
         self._set_viewport_menubar_visibility(current_mode == "layout")

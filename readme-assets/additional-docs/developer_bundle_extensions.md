@@ -30,7 +30,6 @@ Developer Utilities are designed to assist developers in various aspects of appl
     - **omni.kit.widget.ext_win.create_extension**: A widget to add the ability to create an extension within the extension window.
     - **omni.kit.widget.ext_win.dependency_graph**: Exposes the dependency graph capabilities for the extension window.
 
-
 - **[Developer > Commands] omni.kit.window.commands**: Captures the command history within a running application. It is particularly useful for developers who interact with the UI, allowing them to capture the commands used to execute specific functionalities.
 
 - **[Developer > Script Editor] omni.kit.window.script_editor**: A simplified script editor for running short code snippets directly within the application. It's a helpful tool for testing small pieces of code before integrating them into a project. Additionally, it offers useful sample scripts that can be executed live.

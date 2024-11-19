@@ -37,6 +37,7 @@ console = Console(theme=theme)
 DOCKERFILE = pathlib.Path("tools/containers/Dockerfile.j2")
 ENTRYPOINT_DEFAULT = pathlib.Path("tools/containers/entrypoint.sh.j2")
 ENTRYPOINT_MEMCACHED = pathlib.Path("tools/containers/entrypoint_memcached.sh.j2")
+STREAM_SDK_TIMEOUT = pathlib.Path("tools/containers/stream_sdk.txt")
 KIT_ARGS = pathlib.Path("tools/containers/kit_args.txt")
 
 # Breadcrumb temporarily used to replace .kit name until
@@ -119,12 +120,14 @@ def package_container(options: argparse.Namespace, config: dict, build_path: pat
             # Tokens that will be replaced in the entrypoint template.
             replacements = {
                 KIT_FILE_NAME_BREADCRUMB: target_kit,
-                # KIT_ARGS_BREADCRUMB: kit_args_path.read_text(),
                 KIT_ARGS_BREADCRUMB: KIT_ARGS.read_text(),
             }
 
             # In-place replace the known tokens
             _in_place_replace(tmpdir_entrypoint, replacements)
+
+        # Stream-SDK needs a timeout set a bit higher for now.
+        shutil.copy(STREAM_SDK_TIMEOUT.resolve(), tmpdir)
 
         # Now build the container image.
         # Set repo_diagnostic to map in stdin to prevent docker build from complaining.

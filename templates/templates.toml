@@ -31,6 +31,11 @@ template = "omni_default_streaming"
 type = "streaming"
 
 
+[[templates."omni_usd_composer".applications]]
+template = "ovc_streaming"
+type = "ovc"
+
+
 [templates."omni_usd_explorer"]
 class = "ApplicationTemplate"
 name = "USD Explorer"
@@ -47,6 +52,11 @@ type = "setup"
 [[templates."omni_usd_explorer".applications]]
 template = "omni_default_streaming"
 type = "streaming"
+
+
+[[templates."omni_usd_explorer".applications]]
+template = "ovc_streaming"
+type = "ovc"
 
 
 [templates."omni_usd_viewer"]
@@ -103,6 +113,14 @@ class = "ApplicationLayerTemplate"
 name = "GDN Streaming"
 url = "."
 subpath = "apps/streaming_configs/gdn_stream.kit"
+variables.version = "0.1.0"
+
+
+[templates."omni_ovc_streaming"]
+class = "ApplicationLayerTemplate"
+name = "Omniverse Cloud Streaming"
+url = "."
+subpath = "apps/streaming_configs/ovc_stream.kit"
 variables.version = "0.1.0"
 
 

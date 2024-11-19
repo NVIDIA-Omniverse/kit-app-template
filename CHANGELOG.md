@@ -2,10 +2,30 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+
+## [106.4.0] - 2024-11-18
+
+### Added
+- Added `stream_sdk.txt` to set timeout for stream SDK and updated container packaging to add it to container images
+- Added `replay` to the `template new` tooling to allow for replaying app and extension creation to support automation
+- Added companion tutorial section for using python pip packages
+
+### Changed
+- Updated to `Kit 106.4.0`
+  - [Kit 106.4 Early Access Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/106_4.html)
+  - [Kit 106.4 Early Access Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/106_4_highlights.html)
+- Updated the `omni.kit.asset.browser` extension URLs to point to current asset libraries when not specified in Kit file
+- Updated to `Cad Converter 202.0.0` Release
+  - [Cad Converter Release Notes](https://docs.omniverse.nvidia.com/extensions/latest/ext_cad-converter/release-notes.html)
+
+### Fixed
+- Added missing notification of successful build `BUILD (RELEASE) SUCCEEDED` for Python only builds for Windows
+
+
 ## [106.3.0] - 2024-11-07
 
 ### Removed
-- Removed the USD Viewer setup samples folder and the light_rigs folders from the USD Composer and USD Explorer setup templates. That data is now accessible from the omni.usd_viewer.setup and omni.light_rigs extension dependencies.
+- Removed the USD Viewer setup samples folder and the light_rigs folders from the USD Composer and USD Explorer setup templates. That data is now accessible from the `omni.usd_viewer.setup` and `omni.light_rigs` extension dependencies.
 
 
 ## [106.3.0] - 2024-11-04
@@ -55,7 +75,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Updated to `Kit 106.1.0`
-   - [Kit 106.1 Early Access Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/106_1.html)
+  - [Kit 106.1 Early Access Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/106_1.html)
   - [Kit 106.1 Early Access Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/106_1_highlights.html)
 - Aligned default testing for applications and extensions
 - Update and align code formatting/style across templates
@@ -78,7 +98,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for local streaming configurations for UI based Applications
 - Support for multiple setup extensions per application
-- Ability to pass arguments to Kit via the 'repo launch` tool
+- Ability to pass arguments to Kit via the `repo launch` tool
 - USD Composer Application Template and Documentation
 - USD Viewer Application Template and Documentation
 - USD Composer Setup Extension and Documentation
@@ -129,7 +149,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Updated to `Kit 106.0.0`
-   - [Kit 106.0 Beta Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/106_0.html)
+  - [Kit 106.0 Beta Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/106_0.html)
   - [Kit 106.0 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/106_0_highlights.html)
 - Updated repo_kit_template tooling to support Applications and Extensions
 - Updated repo_kit_template tooling to allow for application setup extensions

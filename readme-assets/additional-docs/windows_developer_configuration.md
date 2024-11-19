@@ -100,6 +100,8 @@ winsdk_path = "D:\\CustomPath\\Windows Kits\\10\\bin\\10.0.19041.0"
 
 Adjust and save the paths as needed.
 
+**Note:** If the path entered is incorrect or invalid, the build system will fall back to auto-detection.
+
 #### Multiple Installations
 
 For multiple Visual Studio or Windows SDK installations, the latest version is used by default. If unspecified, default edition preference is "Enterprise", "Professional", "Community". To specify preferred versions, editions, or paths:

@@ -9,23 +9,27 @@
 # its affiliates is strictly prohibited.
 
 [package]
-title = "{{ application_display_name }} Streaming"
+title = "{{ application_display_name }} Omniverse Cloud Streaming"
 version = "{{ version }}"
-description = "Configuration for streaming deployments of {{ application_display_name }}"
-keywords = ["experience", "app", "dev", "streaming"]
-template_name = "omni.streaming_configuration"
+description = "Configuration for Omniverse Cloud streaming deployments of {{ application_display_name }}"
+keywords = ["experience", "app", "dev", "streaming", "ovc"]
+template_name = "omni.ovc_streaming_configuration"
 
 [dependencies]
 "{{ application_name }}" = {}  # Application kit file
 "omni.kit.livestream.webrtc" = {}  # Livestream extension
+"omni.ujitso.client" = {} # Caching
+"omni.cloud.open_stage" = {}  # Nucleus Connection
+
 
 [settings.app]
 fastShutdown = true
-name = "{{ application_display_name }} Streaming"  # Application Display Name
+name = "{{ application_display_name }} OVC Streaming"  # Application Display Name
 ovc_deployment = true
 renderer.skipWhileMinimized = true
 renderer.resolution.height = 1080
 renderer.resolution.width = 1920
+useFabricSceneDelegate = false
 vsync = false  # Vsync disabled by default, can be set to true for L40 or similar
 window.scaleToMonitor = true
 window.showStartup = false
@@ -34,8 +38,11 @@ window.width = 1920
 
 [settings]
 rtx.post.aa.op = 3
+rtx.hydra.geometrystreaming.gpuBudgetMB = 32000
+rtx.hydra.geometrystreaming.instanceBudget = 14388608
 rtx.verifyDriverVersion.enabled = false
-rtx-transient.dlssg.enabled = false  # Disable DLSS otherwise it can push the framerate above the locked limit
+rtx-transient.dlssg.enabled = true
+rtx-transient.scenedb.instanceBudget=1000000
 
 [settings.app.extensions]
 registryEnabled = true
@@ -84,3 +91,19 @@ defaults.tickRate = 60  # Lock to 60fps[settings.app]
 [settings.exts."omni.kit.renderer.core"]
 present.enabled = true  # Enable the present thread
 present.presentAfterRendering = true  # Ensure the present thread waits for the rendering to complete[settings]
+
+[settings.exts."omni.kit.window.filepicker"]
+# The list has to be padded out to at least 3 elements or else "My Computer" will be injected automatically
+show_only_collections = ["bookmarks", "omniverse", ""]
+# Do not allow connections to new servers when running on OVC.
+show_add_new_connection = false
+
+
+[settings.UJITSO]
+# UJITSO supports loading cached representations of assets.
+# These settings controls what is loaded from cache and where from.
+enabled = true	# Enable or disable the use of UJITSO cache.
+geometry = true
+
+[settings.persistent.UJITSO]
+geometry = true

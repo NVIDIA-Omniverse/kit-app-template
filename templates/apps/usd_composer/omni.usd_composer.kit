@@ -49,7 +49,7 @@ template_name = "omni.usd_composer"
 "omni.kit.collaboration.telemetry" = {}
 "omni.kit.collaboration.viewport.camera" = {}
 "omni.kit.context_menu" = {}
-"omni.kit.converter.cad" = {}
+"omni.kit.converter.cad" = {order = 1000} # allow other deps like asset_importer to load first
 "omni.kit.graph.delegate.default" = {}
 "omni.kit.hotkeys.window" = {}
 "omni.kit.manipulator.prim" = {}
@@ -151,7 +151,7 @@ template_name = "omni.usd_composer"
 
 # Windows only extensions
 [dependencies."filter:platform"."windows-x86_64"]
-"omni.kit.window.modifier.titlebar" = {}
+"omni.kit.window.modifier.titlebar" = {version = "=105.2.16"}  # Use exact version to avoid supported target platform check
 
 
 [settings.app]
@@ -162,11 +162,13 @@ name = "{{ application_display_name }}"
 useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 show_developer_preference_section = false
 
+
 [settings.app.extensions]
 skipPublishVerification = false
 registryEnabled = true
 supportedTargets.platform = []
-supportedTargets.config = []
+supportedTargets.config = ["release"]
+
 
 # Linux excluded extensions. For all of them set exact=true to not be included into generated version lock.
 # That will break linux otherwise, as version lock is platform agnostic currently.

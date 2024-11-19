@@ -6,7 +6,7 @@
 
 
 ## :warning: EA Release Information
-**This branch is based on Omniverse Kit 106.3 EA. It includes EA versions of the Kit SDK, associated development tools, and templates. For the latest stable release, see the `106.0` branch.**
+**This branch is based on Omniverse Kit 106.4 EA. It includes EA versions of the Kit SDK, associated development tools, and templates. For the latest stable release, see the `106.0` branch.**
 
 
 ## Overview
@@ -166,7 +166,7 @@ Build your new application with the following command:
 .\repo.bat build
  ```
 
-A successful build will result in the following message: (not supported for all build configurations)
+A successful build will result in the following message:
 
 ```text
 BUILD (RELEASE) SUCCEEDED (Took XX.XX seconds)
@@ -219,6 +219,8 @@ For more information on the extensions available in the developer bundle, see th
 
 Begin constructing Omniverse Applications using these templates
 
+- **[Kit Service](./templates/apps/kit_service)**: The minimal definition of an Omniverse Kit SDK based service. This template is useful for creating headless services leveraging Omniverse Kit functionality.
+
 - **[Kit Base Editor](./templates/apps/kit_base_editor/)**: A minimal template application for loading, manipulating and rendering OpenUSD content from a graphical interface.
 
 - **[USD Composer](./templates/apps/usd_composer)**: A template application for authoring complex OpenUSD scenes, such as configurators.
@@ -226,8 +228,6 @@ Begin constructing Omniverse Applications using these templates
 - **[USD Explorer](./templates/apps/usd_explorer)**: A template application for exploring and collaborating on large Open USD scenes.
 
 - **[USD Viewer](./templates/apps/usd_viewer)**: A viewport-only template application that can be easily streamed and interacted with remotely, well-suited for streaming content to web pages.
-
-- **[Kit Service](./templates/apps/kit_service)**: The minimal definition of an Omniverse Kit SDK based service. This template is useful for creating headless services leveraging Omniverse Kit functionality.
 
 ### Extensions
 
@@ -237,7 +237,7 @@ Enhance Omniverse capabilities with extension templates:
 
 - **[Basic C++](./templates/extensions/basic_cpp)**: The minimal definition of an Omniverse C++ Extension.
 
-   **Note for Windows C++ Developers** : This template requires `"platform:windows-x86_64".enabled` within the `repo.toml` file be set to `true`. For additional C++ configuration information [see here](readme-assets/additional-docs/windows_developer_configuration.md).
+   **Note for Windows C++ Developers** : This template requires `"platform:windows-x86_64".enabled` and `link_host_toolchain` within the `repo.toml` file be set to `true`. For additional C++ configuration information [see here](readme-assets/additional-docs/windows_developer_configuration.md).
 
 - **[Python UI](./templates/extensions/python_ui)**: An extension that provides an easily extendable Python-based user interface.
 

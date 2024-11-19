@@ -22,6 +22,8 @@ fi
 # if NVDA_KIT_NUCLEUS is set, write out the omniverse.toml value
 if [ -n "$${NVDA_KIT_NUCLEUS:-}" ]; then
   write_omniverse_toml "$${NVDA_KIT_NUCLEUS}"
+  # Additionally set the Nucleus server address to the provided address.
+  nucleus_cmd="--/ovc/nucleus/server=$${NVDA_KIT_NUCLEUS}"
 fi
 
 CMD="/app/kit/kit"
@@ -29,6 +31,7 @@ ARGS=(
 "/app/apps/$KIT_FILE_NAME_BREADCRUMB"
 $KIT_ARGS_BREADCRUMB
 $${NVDA_KIT_ARGS:-""}
+$${nucleus_cmd:-""}
 )
 
 # Emit the .kit file to be executed if kit_verbose is set

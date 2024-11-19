@@ -30,7 +30,7 @@ template_name = "omni.usd_explorer"
 "omni.kit.collaboration.telemetry" = {}
 "omni.kit.collaboration.viewport.camera" = {}
 "omni.kit.context_menu" = {}
-"omni.kit.converter.cad" = {}
+"omni.kit.converter.cad" = {order = 1000} # allow other deps like asset_importer to load first
 "omni.kit.manipulator.camera" = {} # Manipulator for the Viewport
 "omni.kit.manipulator.prim" = {}
 "omni.kit.manipulator.selection" = {}
@@ -125,11 +125,12 @@ excluded = [
 	"omni.kit.viewport.menubar.render",
 	"omni.kit.viewport.menubar.settings",
 ]
-generatedVersionLockExclude = [
+generateVersionLockExclude = [
 	"{{ setup_extension_name }}",
 ]
 registryEnabled = true
 skipPublishVerification = false
+supportedTargets.config = ["release"]
 
 [settings.app.extensions."filter:platform"."linux-x86_64"]
 # Windows only extensions. For all of them set exact=true to not be included into generated version lock.

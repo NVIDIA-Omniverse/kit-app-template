@@ -23,7 +23,7 @@ Each tool plays a specific role in the development workflow:
 The template tool facilitates the initiation of new projects by generating scaffolds for applications or extensions based on predefined templates located in `/templates/templates.toml`.
 
 ### Usage
-The template tool has two main commands: `list` and `new`.
+The template tool has three main commands: `list`, `new`, `replay`.
 
 #### `list`
 Lists available templates without initiating the configuration wizard.
@@ -47,6 +47,33 @@ Creates new applications or extensions from templates with interactive prompts g
 **Windows:**
 ```powershell
 .\repo.bat template new
+```
+
+#### `replay`
+In cases where automation is required for CI pipelines or other scripted workflows, it is possible to record and replay the `template new` configuration.  
+
+To achieve this first run template new with the `--generate-playback` flag:
+
+**Linux:**
+```bash
+./repo.sh template new --generate-playback {playback_file_name}.toml
+```
+
+**Windows:**
+```powershell
+.\repo.bat template new --generate-playback {playback_file_name}.toml
+```
+
+After the configuration has been generated, the configuration can be replayed using the `replay` command:
+
+**Linux:**
+```bash
+./repo.sh template replay {playback_file_name}.toml
+```
+
+**Windows:**
+```powershell
+.\repo.bat template replay {playback_file_name}.toml
 ```
 
 ## Build Tool
@@ -91,7 +118,7 @@ Select and run a built .kit file from the `source/apps` directory:
 .\repo.bat launch
 ```
 
-Additional package options:
+Additional launch options:
 - **`-d` or `--dev-bundle`:** Launches with a suite of developer tools enabled in UI-based applications.
 
 - **`-p` or `--package`:** Launches a packaged application from a specified path.

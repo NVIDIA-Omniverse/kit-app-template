@@ -62,6 +62,7 @@ name = "{{ application_display_name }}"
 renderer.resolution.width = 1920
 renderer.resolution.height = 1080
 useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
+extensions.supportedTargets.config = ["release"]
 
 [settings.app.usdrt.population.utils]
 mergeInstances = false
@@ -107,7 +108,6 @@ experience = "{{ application_display_name }}"
 [settings.exts]
 "omni.kit.renderer.core".present.enabled = true  # Enable the present thread
 "omni.kit.renderer.core".present.presentAfterRendering = true  # Ensure the present thread waits for the rendering to complete
-"omni.kit.viewport.window".startup.windowName = "Viewport"  # force new viewport name
 "omni.kit.window.viewport".showContextMenu = false  # Disable context menu, viewer not editor.
 
 [settings]
