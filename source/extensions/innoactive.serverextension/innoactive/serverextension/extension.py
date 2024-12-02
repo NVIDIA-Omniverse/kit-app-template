@@ -22,8 +22,10 @@ class MyExtension(omni.ext.IExt):
     # ext_id is the current extension id. It can be used with the extension manager to query additional information,
     # like where this extension is located on the filesystem.
     empty_stage = "usd/Empty/Stage.usd"
-    usd_to_load = "" # usd/JetEngine/jetengine.usd
+    usd_to_load = ""
+    default_usd = "usd/JetEngine/jetengine.usd"
     layout_json = "./InnoactiveLayout.json"
+    interface_mode = "screen"
     stage = None  # Reference to the USD stage
     
     def set_usd(self, usd_file):
@@ -109,17 +111,13 @@ class MyExtension(omni.ext.IExt):
                 carb.log_error(f"[innoactive.serverextension] Invalid USD path: {usd_file}. Must be a string.")
             return
 
-        if not os.path.exists(usd_file):
-            if log_errors:
-                carb.log_error(f"[innoactive.serverextension] USD file does not exist: {usd_file}")
-            return
-
         try:
             carb.log_info(f"[innoactive.serverextension] Loading USD file: {usd_file}")
             omni.usd.get_context().open_stage(usd_file)
 
-            # Ensure the XRCam camera exists
-            self._ensure_camera_temp("XRCam", position=(0, 0, 0))
+            # If AR, then ensure the XRCam camera exists
+            if self.interface_mode == "ar":
+                self._ensure_camera_temp("XRCam", position=(0, 0, 0))
 
         except Exception as e:
             if log_errors:
@@ -157,12 +155,17 @@ class MyExtension(omni.ext.IExt):
             if log_errors:
                 carb.log_error(f"[innoactive.serverextension] Unexpected error while loading layout: {str(e)}")
 
-
-    
     
     def on_startup(self, ext_id):
         print("[innoactive.serverextension] Extension startup")
 
+        # Get the settings interface
+        settings = carb.settings.get_settings()
+
+        # Access parameters
+        self.interface_mode = settings.get_as_string("/innoactive/serverextension/interfaceMode") or "screen"
+        self.usd_to_load = settings.get_as_string("/innoactive/serverextension/usdPath") or self.default_usd
+        
         # Get the USD context
         self.usd_context = omni.usd.get_context()
 
