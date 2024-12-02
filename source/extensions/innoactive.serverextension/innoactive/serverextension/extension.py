@@ -15,14 +15,15 @@ import omni.usd
 import json
 import carb
 import carb.tokens
-
+import asyncio  # Import asyncio for the delay
+from pxr import Usd, UsdGeom, Gf
+from omni.kit.viewport.utility import get_active_viewport
 
 
 # Functions and vars are available to other extensions as usual in python: `innoactive.serverextension.some_public_function(x)`
-def some_public_function(x: int):
-    print(f"[innoactive.serverextension] some_public_function was called with {x}")
-    return x ** x
-
+def set_usd(usd):
+    print(f"[innoactive.serverextension] set_usd '{usd}'")
+    MyExtension.set_usd(MyExtension, usd)
 
 # Any class derived from `omni.ext.IExt` in the top level module (defined in `python.modules` of `extension.toml`) will
 # be instantiated when the extension gets enabled, and `on_startup(ext_id)` will be called.
@@ -31,7 +32,78 @@ class MyExtension(omni.ext.IExt):
     # ext_id is the current extension id. It can be used with the extension manager to query additional information,
     # like where this extension is located on the filesystem.
     empty_stage = "usd/Empty/Stage.usd"
+    usd_to_load = "" # usd/JetEngine/jetengine.usd
     layout_json = "./InnoactiveLayout.json"
+    stage = None  # Reference to the USD stage
+    
+    def set_usd(self, usd_file):
+        print(f"[innoactive.serverextension] internal set_usd '{usd_file}'")
+        self.usd_to_load = usd_file
+
+    def _ensure_camera(self, camera_name="XRCam", position=(0, 0, 0)):
+        """
+        Ensures a camera with the specified name exists at the root level of the stage.
+        If not, it creates one at the given position.
+        Sets the camera as the active camera for the stage.
+        """
+        if not self.stage:
+            print("[innoactive.serverextension] Stage is not loaded.")
+            return
+
+        camera_path = f"/{camera_name}"
+        camera_prim = self.stage.GetPrimAtPath(camera_path)
+
+        if camera_prim and camera_prim.IsValid():
+            print(f"[innoactive.serverextension] Camera '{camera_name}' already exists.")
+        else:
+            print(f"[innoactive.serverextension] Camera '{camera_name}' not found. Adding it to the stage.")
+            try:
+                # Create the camera at the root level
+                camera_prim = self.stage.DefinePrim(camera_path, "Camera")
+                camera = UsdGeom.Camera(camera_prim)
+
+                # Set camera's translation
+                camera_prim.GetAttribute("xformOp:translate").Set(Gf.Vec3d(*position))
+
+                print(f"[innoactive.serverextension] Camera '{camera_name}' added successfully at {position}.")
+            except Exception as e:
+                print(f"[innoactive.serverextension] Failed to add Camera '{camera_name}': {str(e)}")
+
+        # Set the camera as active
+        self._set_active_camera_in_viewport(camera_path)
+
+    def _set_active_camera_in_viewport(self, camera_path):
+        """
+        Sets the specified camera as the active camera in the active viewport.
+        """
+        try:
+            viewport = get_active_viewport()
+            if not viewport:
+                raise RuntimeError("No active Viewport")
+            viewport.camera_path = camera_path
+            print(f"[innoactive.serverextension] Camera '{camera_path}' set as active in the viewport.")
+        except Exception as e:
+            print(f"[innoactive.serverextension] Failed to set active camera in the viewport '{camera_path}': {str(e)}")
+
+    def _on_stage_event(self, event):
+        if event.type == int(omni.usd.StageEventType.OPENED):
+            print("[innoactive.serverextension] Stage has fully loaded!")
+            stage_path = self.usd_context.get_stage_url()
+            print(f"[innoactive.serverextension] Stage {stage_path}")
+
+            # Get the stage and store it at the class level
+            self.stage = self.usd_context.get_stage()
+            if not self.stage:
+                print("[innoactive.serverextension] Unable to retrieve stage.")
+                return
+
+            if stage_path == self.empty_stage:
+                print("[innoactive.serverextension] empty_stage loaded")
+                asyncio.ensure_future(self._delayed_load_usd(10))
+            else:
+                print("[innoactive.serverextension] USD loaded")
+                self.load_layout(workspace_file=self.layout_json)
+
 
     def load_usd(self, usd_file: str, log_errors=True):
         """
@@ -53,18 +125,21 @@ class MyExtension(omni.ext.IExt):
         try:
             carb.log_info(f"[innoactive.serverextension] Loading USD file: {usd_file}")
             omni.usd.get_context().open_stage(usd_file)
+
+            # Ensure the XRCam camera exists
+            self._ensure_camera("XRCam", position=(0, 0, 0))
+
         except Exception as e:
             if log_errors:
                 carb.log_error(f"[innoactive.serverextension] Failed to open USD file {usd_file}: {str(e)}")
 
+    async def _delayed_load_usd(self, delay = 10):
+
+        await asyncio.sleep(delay) 
+        self.load_usd(usd_file=self.usd_to_load)
+
     def load_layout(self, workspace_file="./InnoactiveLayout.json", log_errors=True):
-        """
-        Class method to load a layout from a JSON file.
-        Args:
-            workspace_file (str): Path to the JSON workspace file.
-            log_errors (bool): Whether to log errors if loading fails.
-            *args: Additional arguments passed by the event system, ignored here.
-        """
+
         if not os.path.exists(workspace_file):
             if log_errors:
                 carb.log_error(f"[innoactive.serverextension] Layout file does not exist: {workspace_file}")
@@ -110,8 +185,11 @@ class MyExtension(omni.ext.IExt):
             with ui.VStack():
                 label = ui.Label("")
 
+                def set_cam():
+                    self._set_active_camera_in_viewport("/XRCam")
+
                 def on_load_usd():
-                    self.load_usd(usd_file="usd/JetEngine/jetengine.usd")
+                    self.load_usd(usd_file=self.usd_to_load)
 
                 def on_reset_stage():
                     self.load_usd(usd_file=self.empty_stage)
@@ -122,25 +200,13 @@ class MyExtension(omni.ext.IExt):
                     print("on_load_layout()")
 
                 with ui.VStack():
+                    ui.Button("SetCam", clicked_fn=set_cam)
                     ui.Button("Load Layout", clicked_fn=on_load_layout)
                     ui.Button("Load USD", clicked_fn=on_load_usd)
                     ui.Button("Reset", clicked_fn=on_reset_stage)
 
     
-    def _on_stage_event(self, event):
-        if event.type == int(omni.usd.StageEventType.OPENED):
-            print("[innoactive.serverextension] Stage has fully loaded!")
-            stage_path = self.usd_context.get_stage_url()
-            print(f"[innoactive.serverextension] Stage {stage_path}")
-            if stage_path == self.empty_stage:
-                print("[innoactive.serverextension] empty_stage loaded")
-                self.load_usd(usd_file="usd/JetEngine/jetengine.usd")
-            else:
-                print("[innoactive.serverextension] USD loaded")
-                self.load_layout(workspace_file=self.layout_json) 
-
-
-
+    
 
     def on_shutdown(self):
         print("[innoactive.serverextension] Extension shutdown")
