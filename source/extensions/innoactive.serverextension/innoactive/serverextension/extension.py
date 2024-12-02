@@ -1,13 +1,3 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
-#
-# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
-# property and proprietary rights in and to this material, related
-# documentation and any modifications thereto. Any use, reproduction,
-# disclosure or distribution of this material and related documentation
-# without an express license agreement from NVIDIA CORPORATION or
-# its affiliates is strictly prohibited.
-
 import os
 import omni.ext
 import omni.ui as ui
@@ -40,36 +30,38 @@ class MyExtension(omni.ext.IExt):
         print(f"[innoactive.serverextension] internal set_usd '{usd_file}'")
         self.usd_to_load = usd_file
 
-    def _ensure_camera(self, camera_name="XRCam", position=(0, 0, 0)):
+    def _ensure_camera_temp(self, camera_name="XRCam", position=(0, 0, 0)):
         """
-        Ensures a camera with the specified name exists at the root level of the stage.
+        Ensures a temporary camera with the specified name exists in the stage.
         If not, it creates one at the given position.
-        Sets the camera as the active camera for the stage.
+        Sets the camera as the active camera for the viewport.
         """
         if not self.stage:
             print("[innoactive.serverextension] Stage is not loaded.")
             return
 
         camera_path = f"/{camera_name}"
-        camera_prim = self.stage.GetPrimAtPath(camera_path)
 
+        # Check if the camera already exists
+        camera_prim = self.stage.GetPrimAtPath(camera_path)
         if camera_prim and camera_prim.IsValid():
             print(f"[innoactive.serverextension] Camera '{camera_name}' already exists.")
         else:
-            print(f"[innoactive.serverextension] Camera '{camera_name}' not found. Adding it to the stage.")
+            print(f"[innoactive.serverextension] Camera '{camera_name}' not found. Adding it to the stage (temporary).")
             try:
-                # Create the camera at the root level
-                camera_prim = self.stage.DefinePrim(camera_path, "Camera")
-                camera = UsdGeom.Camera(camera_prim)
+                # Add the camera in the session layer
+                with Usd.EditContext(self.stage, self.stage.GetSessionLayer()):
+                    camera_prim = self.stage.DefinePrim(camera_path, "Camera")
+                    camera = UsdGeom.Camera(camera_prim)
 
-                # Set camera's translation
-                camera_prim.GetAttribute("xformOp:translate").Set(Gf.Vec3d(*position))
+                    # Set camera's translation
+                    camera_prim.GetAttribute("xformOp:translate").Set(Gf.Vec3d(*position))
 
-                print(f"[innoactive.serverextension] Camera '{camera_name}' added successfully at {position}.")
+                print(f"[innoactive.serverextension] Temporary Camera '{camera_name}' added successfully at {position}.")
             except Exception as e:
-                print(f"[innoactive.serverextension] Failed to add Camera '{camera_name}': {str(e)}")
+                print(f"[innoactive.serverextension] Failed to add temporary Camera '{camera_name}': {str(e)}")
 
-        # Set the camera as active
+        # Set the camera as active in the viewport
         self._set_active_camera_in_viewport(camera_path)
 
     def _set_active_camera_in_viewport(self, camera_path):
@@ -127,7 +119,7 @@ class MyExtension(omni.ext.IExt):
             omni.usd.get_context().open_stage(usd_file)
 
             # Ensure the XRCam camera exists
-            self._ensure_camera("XRCam", position=(0, 0, 0))
+            self._ensure_camera_temp("XRCam", position=(0, 0, 0))
 
         except Exception as e:
             if log_errors:
@@ -200,10 +192,10 @@ class MyExtension(omni.ext.IExt):
                     print("on_load_layout()")
 
                 with ui.VStack():
-                    ui.Button("SetCam", clicked_fn=set_cam)
+                    # ui.Button("SetCam", clicked_fn=set_cam)
                     ui.Button("Load Layout", clicked_fn=on_load_layout)
-                    ui.Button("Load USD", clicked_fn=on_load_usd)
-                    ui.Button("Reset", clicked_fn=on_reset_stage)
+                    # ui.Button("Load USD", clicked_fn=on_load_usd)
+                    # ui.Button("Reset", clicked_fn=on_reset_stage)
 
     
     
