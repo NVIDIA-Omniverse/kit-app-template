@@ -18,7 +18,7 @@ def set_usd(usd):
 # Any class derived from `omni.ext.IExt` in the top level module (defined in `python.modules` of `extension.toml`) will
 # be instantiated when the extension gets enabled, and `on_startup(ext_id)` will be called.
 # Later when the extension gets disabled on_shutdown() is called.
-class MyExtension(omni.ext.IInnoactiveExt):
+class MyExtension(omni.ext.IExt):
     # ext_id is the current extension id. It can be used with the extension manager to query additional information,
     # like where this extension is located on the filesystem.
     empty_stage = "usd/Empty/Stage.usd"
