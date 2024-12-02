@@ -18,7 +18,7 @@ def set_usd(usd):
 # Any class derived from `omni.ext.IExt` in the top level module (defined in `python.modules` of `extension.toml`) will
 # be instantiated when the extension gets enabled, and `on_startup(ext_id)` will be called.
 # Later when the extension gets disabled on_shutdown() is called.
-class MyExtension(omni.ext.IExt):
+class MyExtension(omni.ext.IInnoactiveExt):
     # ext_id is the current extension id. It can be used with the extension manager to query additional information,
     # like where this extension is located on the filesystem.
     empty_stage = "usd/Empty/Stage.usd"
@@ -172,7 +172,7 @@ class MyExtension(omni.ext.IExt):
             name="Stage Event Subscription"
         )
 
-        self._window = ui.Window("Innoctive Server Extension", width=300, height=300)
+        self._window = ui.Window("Innoactive Server Extension", width=300, height=300)
         with self._window.frame:
             with ui.VStack():
                 label = ui.Label("")
