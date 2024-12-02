@@ -31,6 +31,7 @@ class MyExtension(omni.ext.IExt):
     # ext_id is the current extension id. It can be used with the extension manager to query additional information,
     # like where this extension is located on the filesystem.
     empty_stage = "usd/Empty/Stage.usd"
+    layout_json = "./InnoactiveLayout.json"
 
     def load_usd(self, usd_file: str, log_errors=True):
         """
@@ -113,11 +114,11 @@ class MyExtension(omni.ext.IExt):
                     self.load_usd(usd_file="usd/JetEngine/jetengine.usd")
 
                 def on_reset_stage():
-                    self.load_usd(usd_file="usd/Empty/Stage.usd")
+                    self.load_usd(usd_file=self.empty_stage)
                     print("on_reset_stage()")
 
                 def on_load_layout():
-                    self.load_layout(workspace_file="./InnoactiveLayout.json")
+                    self.load_layout(workspace_file=self.layout_json)
                     print("on_load_layout()")
 
                 with ui.VStack():
@@ -134,11 +135,11 @@ class MyExtension(omni.ext.IExt):
             if stage_path == self.empty_stage:
                 print("[innoactive.serverextension] empty_stage loaded")
                 self.load_usd(usd_file="usd/JetEngine/jetengine.usd")
-                self.load_layout(workspace_file="./InnoactiveLayout.json")  # No need to pass additional arguments
             else:
                 print("[innoactive.serverextension] USD loaded")
+                self.load_layout(workspace_file=self.layout_json) 
 
-                               
+
 
 
     def on_shutdown(self):
