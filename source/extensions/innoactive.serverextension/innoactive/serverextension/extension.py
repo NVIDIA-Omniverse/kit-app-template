@@ -2,9 +2,12 @@ import os
 import omni.ext
 import omni.ui as ui
 import omni.usd
+import omni.kit
+import omni.kit.commands
 import json
 import carb
 import carb.tokens
+import carb.settings
 import asyncio  # Import asyncio for the delay
 from pxr import Usd, UsdGeom, Gf
 from omni.kit.viewport.utility import get_active_viewport
@@ -32,7 +35,7 @@ class MyExtension(omni.ext.IExt):
         print(f"[innoactive.serverextension] internal set_usd '{usd_file}'")
         self.usd_to_load = usd_file
 
-    def _ensure_camera_temp(self, camera_name="XRCam", position=(0, 0, 0)):
+    def _ensure_camera_temp(self, camera_path="/Root/XRCam", position=(0, 0, 0)):
         """
         Ensures a temporary camera with the specified name exists in the stage.
         If not, it creates one at the given position.
@@ -42,14 +45,12 @@ class MyExtension(omni.ext.IExt):
             print("[innoactive.serverextension] Stage is not loaded.")
             return
 
-        camera_path = f"/{camera_name}"
-
         # Check if the camera already exists
         camera_prim = self.stage.GetPrimAtPath(camera_path)
         if camera_prim and camera_prim.IsValid():
-            print(f"[innoactive.serverextension] Camera '{camera_name}' already exists.")
+            print(f"[innoactive.serverextension] Camera '{camera_path}' already exists.")
         else:
-            print(f"[innoactive.serverextension] Camera '{camera_name}' not found. Adding it to the stage (temporary).")
+            print(f"[innoactive.serverextension] Camera '{camera_path}' not found. Adding it to the stage (temporary).")
             try:
                 # Add the camera in the session layer
                 with Usd.EditContext(self.stage, self.stage.GetSessionLayer()):
@@ -57,11 +58,11 @@ class MyExtension(omni.ext.IExt):
                     camera = UsdGeom.Camera(camera_prim)
 
                     # Set camera's translation
-                    camera_prim.GetAttribute("xformOp:translate").Set(Gf.Vec3d(*position))
+                    #camera_prim.GetAttribute("xformOp:translate").Set(Gf.Vec3d(*position))
 
-                print(f"[innoactive.serverextension] Temporary Camera '{camera_name}' added successfully at {position}.")
+                print(f"[innoactive.serverextension] Temporary Camera '{camera_path}' added successfully at {position}.")
             except Exception as e:
-                print(f"[innoactive.serverextension] Failed to add temporary Camera '{camera_name}': {str(e)}")
+                print(f"[innoactive.serverextension] Failed to add temporary Camera '{camera_path}': {str(e)}")
 
         # Set the camera as active in the viewport
         self._set_active_camera_in_viewport(camera_path)
@@ -91,11 +92,12 @@ class MyExtension(omni.ext.IExt):
                 print("[innoactive.serverextension] Unable to retrieve stage.")
                 return
 
-            if stage_path == self.empty_stage:
-                print("[innoactive.serverextension] empty_stage loaded")
-                asyncio.ensure_future(self._delayed_load_usd(10))
+            if stage_path.startswith("anon:"):
+                delay = 1
+                print(f"[innoactive.serverextension] empty_stage loaded. Now loading USD file with delay of {delay} seconds")
+                asyncio.ensure_future(self._delayed_load_usd(delay))
             else:
-                print("[innoactive.serverextension] USD loaded")
+                print(f"[innoactive.serverextension] USD loaded: {stage_path}")
                 self.load_layout(workspace_file=self.layout_json)
 
 
@@ -117,7 +119,7 @@ class MyExtension(omni.ext.IExt):
 
             # If AR, then ensure the XRCam camera exists
             if self.interface_mode == "ar":
-                self._ensure_camera_temp("XRCam", position=(0, 0, 0))
+                self._ensure_camera_temp("/Root/XRCam", position=(0, 0, 0))
 
         except Exception as e:
             if log_errors:
@@ -155,16 +157,22 @@ class MyExtension(omni.ext.IExt):
             if log_errors:
                 carb.log_error(f"[innoactive.serverextension] Unexpected error while loading layout: {str(e)}")
 
-    
+
     def on_startup(self, ext_id):
         print("[innoactive.serverextension] Extension startup")
 
-        # Get the settings interface
+        # Configure OV settings
         settings = carb.settings.get_settings()
-
+        
         # Access parameters
         self.interface_mode = settings.get_as_string("/innoactive/serverextension/interfaceMode") or "screen"
         self.usd_to_load = settings.get_as_string("/innoactive/serverextension/usdPath") or self.default_usd
+        
+        # Set the resolution multiplier for VR rendering
+        settings.set("/persistent/xr/profile/vr/render/resolutionMultiplier", 2.0)
+        settings.set("/persistent/xr/profile/vr/foveation/mode", "warped") #none / warped / inset
+        settings.set("/persistent/xr/profile/vr/foveation/warped/resolutionMultiplier", 0.5)
+        settings.set("/persistent/xr/profile/vr/foveation/warped/insetSize", 0.4)
         
         # Get the USD context
         self.usd_context = omni.usd.get_context()
@@ -175,14 +183,14 @@ class MyExtension(omni.ext.IExt):
             name="Stage Event Subscription"
         )
 
+
+
         self._window = ui.Window("Innoactive Server Extension", width=300, height=300)
         with self._window.frame:
             with ui.VStack():
                 label = ui.Label("")
 
-                def set_cam():
-                    self._set_active_camera_in_viewport("/XRCam")
-
+                
                 def on_load_usd():
                     self.load_usd(usd_file=self.usd_to_load)
 
@@ -195,13 +203,12 @@ class MyExtension(omni.ext.IExt):
                     print("on_load_layout()")
 
                 with ui.VStack():
-                    # ui.Button("SetCam", clicked_fn=set_cam)
+                    #ui.Button("ConfigVR", clicked_fn=config_vr)
                     ui.Button("Load Layout", clicked_fn=on_load_layout)
                     # ui.Button("Load USD", clicked_fn=on_load_usd)
                     # ui.Button("Reset", clicked_fn=on_reset_stage)
 
-    
-    
+        
 
     def on_shutdown(self):
         print("[innoactive.serverextension] Extension shutdown")
