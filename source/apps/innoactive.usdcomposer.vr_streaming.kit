@@ -1,0 +1,204 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = "Innoactive USD Composer Streaming"
+version = "0.1.0"
+description = "Configuration for streaming deployments of Innoactive USD Composer"
+keywords = ["experience", "app", "dev", "streaming"]
+template_name = "omni.streaming_configuration"
+
+[dependencies]
+"innoactive.usdcomposer.vr" = {}  # Application kit file
+"omni.kit.livestream.webrtc" = {}  # Livestream extension
+
+[settings.app]
+fastShutdown = true
+livestream.allowResize = false  # Enable or Disable SDK Scaling
+livestream.skipCapture = 1  # livestream skipCapture ON for local streaming
+livestream.webrtcEtli = true  # Only log error or critical level issues.
+name = "Innoactive USD Composer Streaming"  # Application Display Name
+ovc_deployment = true
+renderer.skipWhileMinimized = true
+renderer.resolution.height = 1080
+renderer.resolution.width = 1920
+runLoops.present.rateLimitEnabled = false
+window.scaleToMonitor = true
+window.showStartup = false
+window.height = 1080
+window.width = 1920
+
+
+[settings]
+rtx.post.aa.op = 3
+rtx.verifyDriverVersion.enabled = false
+rtx-transient.dlssg.enabled = false  # Disable DLSS otherwise it can push the framerate above the locked limit
+
+
+[settings.app.extensions]
+registryEnabled = true
+supportedTargets.platform = []  # Skip checking supported platform/config when building
+
+[settings.app.exts]
+folders.'++' = [  # Search paths for extensions.
+    "${app}/../exts",
+    "${app}/../apps",
+    "${app}/../extscache"
+]
+
+[template]
+type = "ApplicationLayerTemplate" # Repo Template Metadata
+
+
+########################################################################################################################
+# BEGIN GENERATED PART (Remove from 'BEGIN' to 'END' to regenerate)
+########################################################################################################################
+
+# Kit SDK Version: 106.0.2+release.127937.36286b8b.gl
+
+# Exact Version dependencies:
+# 	omni.asset_validator.core-0.14.2
+# 	omni.convexdecomposition-106.0.20
+# 	omni.kit.data2ui.core-1.0.27
+# 	omni.kit.data2ui.usd-1.0.27
+# 	omni.kvdb-106.0.20
+# 	omni.localcache-106.0.20
+# 	omni.no_code_ui.bundle-1.0.27
+# 	omni.physx-106.0.20
+# 	omni.physx.cooking-106.0.20
+# 	omni.physx.foundation-106.0.20
+# 	omni.scene.optimizer.core-106.0.15
+# 	omni.scene.optimizer.ui-106.0.15
+# 	omni.usd.schema.physx-106.0.20
+# 	omni.usdphysics-106.0.20
+# 	omni.warp.core-1.4.1
+
+# Version lock for all dependencies:
+[settings.app.exts]
+enabled = [
+	"omni.anim.curve.bundle-1.2.3",
+	"omni.anim.curve.core-1.1.13",
+	"omni.anim.curve.ui-1.3.16",
+	"omni.anim.curve_editor-105.17.10",
+	"omni.anim.shared.core-106.0.1",
+	"omni.anim.time_samples_player-105.17.10",
+	"omni.anim.timeline-105.0.23",
+	"omni.anim.window.timeline-105.13.5",
+	"omni.asset_validator.ui-0.14.2",
+	"omni.configurator_publisher-1.1.2",
+	"omni.curve.creator-105.0.4",
+	"omni.curve.manipulator-105.2.8",
+	"omni.genproc.bundle-105.1.0",
+	"omni.genproc.core-105.1.9",
+	"omni.genproc.ui-105.1.2",
+	"omni.graph.action-1.102.1",
+	"omni.graph.action_nodes-1.23.2",
+	"omni.graph.bundle.action-2.4.1",
+	"omni.graph.examples.cpp-1.25.1",
+	"omni.graph.nodes-1.143.2",
+	"omni.graph.scriptnode-1.19.1",
+	"omni.graph.telemetry-2.13.1",
+	"omni.graph.ui-1.70.0",
+	"omni.graph.ui_nodes-1.25.2",
+	"omni.graph.window.action-1.26.0",
+	"omni.graph.window.core-1.109.1",
+	"omni.graph.window.generic-1.24.0",
+	"omni.kit.asset_converter-2.2.0",
+	"omni.kit.browser.configurator_samples-1.0.2",
+	"omni.kit.browser.core-2.3.11",
+	"omni.kit.browser.folder.core-1.10.1",
+	"omni.kit.browser.material-1.6.0",
+	"omni.kit.collaboration.viewport.camera-2.0.18",
+	"omni.kit.converter.cad-201.1.1",
+	"omni.kit.converter.common-500.0.15",
+	"omni.kit.converter.dgn-500.0.9",
+	"omni.kit.converter.dgn_core-500.0.22",
+	"omni.kit.converter.hoops-500.0.10",
+	"omni.kit.converter.hoops_core-500.0.21",
+	"omni.kit.converter.jt-500.0.10",
+	"omni.kit.converter.jt_core-500.0.19",
+	"omni.kit.core.collection-0.1.7",
+	"omni.kit.environment.core-1.3.14",
+	"omni.kit.graph.delegate.default-1.2.2",
+	"omni.kit.graph.delegate.modern-1.10.7",
+	"omni.kit.graph.editor.core-1.5.3",
+	"omni.kit.graph.usd.commands-1.3.1",
+	"omni.kit.graph.widget.variables-2.1.0",
+	"omni.kit.livestream.core-4.3.6",
+	"omni.kit.livestream.webrtc-4.1.1",
+	"omni.kit.manipulator.tool.mesh_snap-1.4.5",
+	"omni.kit.menu.stage-1.2.5",
+	"omni.kit.mesh.raycast-105.4.0",
+	"omni.kit.ngsearch-0.3.3",
+	"omni.kit.preferences.animation-1.1.7",
+	"omni.kit.property.collection-0.1.17",
+	"omni.kit.property.environment-1.2.1",
+	"omni.kit.property.sbsar-107.0.0",
+	"omni.kit.search.files-1.0.4",
+	"omni.kit.search.service-0.1.12",
+	"omni.kit.sequencer.core-103.4.2",
+	"omni.kit.sequencer.usd-103.4.6",
+	"omni.kit.stage_column.payload-2.0.0",
+	"omni.kit.stage_column.variant-1.0.13",
+	"omni.kit.streamsdk.plugins-4.5.4",
+	"omni.kit.thumbnails.mdl-1.0.24",
+	"omni.kit.thumbnails.usd-1.0.9",
+	"omni.kit.tool.asset_exporter-1.3.3",
+	"omni.kit.tool.asset_importer-2.7.0",
+	"omni.kit.tool.collect-2.2.15",
+	"omni.kit.tool.remove_unused.controller-0.1.3",
+	"omni.kit.tool.remove_unused.core-0.1.2",
+	"omni.kit.variant.editor-106.0.3",
+	"omni.kit.variant.presenter-106.0.0",
+	"omni.kit.viewport.menubar.lighting-106.0.2",
+	"omni.kit.widget.calendar-1.0.8",
+	"omni.kit.widget.collection-0.1.18",
+	"omni.kit.widget.extended_searchfield-1.0.28",
+	"omni.kit.widget.material_preview-1.0.16",
+	"omni.kit.widget.sliderbar-1.0.10",
+	"omni.kit.widget.timeline-105.0.1",
+	"omni.kit.widget.zoombar-1.0.5",
+	"omni.kit.widgets.custom-1.0.8",
+	"omni.kit.window.collection-0.1.22",
+	"omni.kit.window.environment-1.7.3",
+	"omni.kit.window.material-1.6.2",
+	"omni.kit.window.material_graph-1.8.19",
+	"omni.kit.window.modifier.titlebar-105.2.16",
+	"omni.kit.window.movie_capture-2.4.2",
+	"omni.kit.window.quicksearch-2.4.4",
+	"omni.no_code_ui.authoring-1.0.27",
+	"omni.physx.stageupdate-106.0.20",
+	"omni.ramp-105.1.15",
+	"omni.scene.optimizer.bundle-106.0.15",
+	"omni.scene.visualization.bundle-105.1.0",
+	"omni.scene.visualization.core-105.4.13",
+	"omni.scene.visualization.ui-105.1.2",
+	"omni.services.client-0.5.3",
+	"omni.services.core-1.9.0",
+	"omni.services.facilities.base-1.0.4",
+	"omni.services.pip_archive-0.13.6",
+	"omni.services.starfleet.auth-0.1.5",
+	"omni.services.transport.client.base-1.2.4",
+	"omni.services.transport.client.http_async-1.3.6",
+	"omni.services.transport.server.base-1.1.1",
+	"omni.services.transport.server.http-1.3.1",
+	"omni.services.usd-1.1.0",
+	"omni.usd.fileformat.sbsar-107.0.2",
+	"omni.usd.metrics.assembler-106.0.1",
+	"omni.usd.metrics.assembler.ui-106.0.2",
+	"omni.usd.schema.metrics.assembler-106.0.1",
+	"omni.usd.schema.scene.visualization-2.0.2",
+	"omni.usd.schema.sequence-2.3.1",
+	"omni.warp-1.4.1",
+]
+
+########################################################################################################################
+# END GENERATED PART
+########################################################################################################################

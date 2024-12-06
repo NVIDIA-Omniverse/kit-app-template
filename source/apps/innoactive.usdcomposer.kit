@@ -131,7 +131,6 @@ template_name = "omni.usd_composer"
 "omni.kit.window.title" = {}
 "omni.kit.window.toolbar" = {}
 "omni.kit.window.usd_paths" = {}
-"omni.kit.window.extensions" = {}
 "omni.mdl.usd_converter" = {}
 "omni.no_code_ui.authoring" = {}
 "omni.physx.stageupdate" = {}
@@ -150,21 +149,9 @@ template_name = "omni.usd_composer"
 "omni.videoencoding" = {}
 
 # Innoactive extensions
+"omni.kit.window.extensions" = {}
 "innoactive.serverextension" = {}
 "innoactive.usdcomposer.setup" = { order = 1000 } # we are running that at the end
-
-# VR streaming
-"omni.kit.xr.profile.vr" = {}
-
-# AVP
-# XR extensions for AVP development
-"omni.kit.xr.ogn" = {}
-"omni.kit.xr.profile.ar" = {}
-# XR Simulator Extensions
-"omni.kit.xr.system.simulatedxr" = {}
-# Environment Core
-"omni.kit.environment.core" = {}
-
 
 
 # Windows only extensions
@@ -222,7 +209,7 @@ persistent = true
 
 [settings.app.window]
 title = "Innoactive USD Composer"
-iconPath = "${innoactive.usdcomposer.setup}/data/nvidia-omniverse-create.png"
+iconPath = "${innoactive.usdcomposer.vr.setup}/data/nvidia-omniverse-create.png"
 saveSizeOnExit = false
 width = 1920
 height = 1080
@@ -351,22 +338,6 @@ renderer.active = "rtx" # RTX As the default renderer always
 renderer.enabled = "rtx"  # iray, pxr
 structuredLog.enable = true
 
-# XR Settings for AVP development
-xr.cloudxr.version = 4.1
-xr.depth.aov = "GBufferDepth"
-xr.simulatedxr.enabled = true
-# Performance Settings
-persistent.renderer.raytracingOmm.enabled = true
-rtx-transient.resourcemanager.enableTextureStreaming = false
-xr.ui.enabled=false
-# Default AR mode to "Stage" render quality
-defaults.xr.profile.ar.renderQuality = "off"
-# Enable CloudXR 4.1 by default
-defaults.xr.profile.ar.system.display = "CloudXR41"
-# Set near clipping plane for AR to 0.15 meters
-persistent.xr.profile.ar.render.nearPlane = 0.15
-# Avoid some glass artifacts
-persistent.rtx.sceneDb.allowDuplicateAhsInvocation = false
 
 [settings.telemetry]
 # Anonymous Kit application usage telemetry
@@ -490,29 +461,6 @@ enabled = [
 	"omni.kit.window.modifier.titlebar-105.2.16",
 	"omni.kit.window.movie_capture-2.4.2",
 	"omni.kit.window.quicksearch-2.4.4",
-	"omni.kit.xr.advertise-106.0.202",
-	"omni.kit.xr.common-106.0.202",
-	"omni.kit.xr.core-106.0.202",
-	"omni.kit.xr.ogn-106.0.202",
-	"omni.kit.xr.profile.ar-106.0.202",
-	"omni.kit.xr.profile.common-106.0.202",
-	"omni.kit.xr.scene_view.core-106.0.202",
-	"omni.kit.xr.scene_view.utils-106.0.202",
-	"omni.kit.xr.system.cloudxr-106.0.202",
-	"omni.kit.xr.system.cloudxr41-106.0.202",
-	"omni.kit.xr.system.openxr-106.0.202",
-	"omni.kit.xr.system.playback-106.0.202",
-	"omni.kit.xr.system.simulatedxr-106.0.202",
-	"omni.kit.xr.system.steamvr-106.0.202",
-	"omni.kit.xr.telemetry-106.0.202",
-	"omni.kit.xr.ui.config.common-106.0.202",
-	"omni.kit.xr.ui.config.generic-106.0.202",
-	"omni.kit.xr.ui.config.htcvive-106.0.202",
-	"omni.kit.xr.ui.config.magicleap-106.0.202",
-	"omni.kit.xr.ui.config.metaquest-106.0.202",
-	"omni.kit.xr.ui.stage.common-106.0.202",
-	"omni.kit.xr.ui.window.profile-106.0.202",
-	"omni.kit.xr.ui.window.viewport-106.0.202",
 	"omni.no_code_ui.authoring-1.0.27",
 	"omni.physx.stageupdate-106.0.20",
 	"omni.ramp-105.1.15",
@@ -529,7 +477,6 @@ enabled = [
 	"omni.services.transport.client.http_async-1.3.6",
 	"omni.services.transport.server.base-1.1.1",
 	"omni.services.transport.server.http-1.3.1",
-	"omni.services.transport.server.zeroconf-1.0.9",
 	"omni.services.usd-1.1.0",
 	"omni.usd.fileformat.sbsar-107.0.2",
 	"omni.usd.metrics.assembler-106.0.1",

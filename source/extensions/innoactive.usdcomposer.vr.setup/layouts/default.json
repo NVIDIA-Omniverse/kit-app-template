@@ -1,0 +1,557 @@
+[
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "dock_id": 5,
+                    "height": 430.0,
+                    "position_x": 0.0,
+                    "position_y": 26.0,
+                    "selected_in_dock": false,
+                    "title": "Main ToolBar",
+                    "visible": true,
+                    "width": 44.0
+                  }
+                ],
+                "dock_id": 5,
+                "position": "LEFT"
+              },
+              {
+                "children": [
+                  {
+                    "dock_id": 6,
+                    "dock_tab_bar_enabled": true,
+                    "dock_tab_bar_visible": false,
+                    "height": 430.0,
+                    "position_x": 46.0,
+                    "position_y": 26.0,
+                    "selected_in_dock": true,
+                    "title": "Viewport",
+                    "visible": true,
+                    "width": 1192.0
+                  }
+                ],
+                "dock_id": 6,
+                "position": "RIGHT"
+              }
+            ],
+            "dock_id": 3,
+            "position": "TOP"
+          },
+          {
+            "children": [
+              {
+                "dock_id": 4,
+                "dock_tab_bar_enabled": true,
+                "dock_tab_bar_visible": true,
+                "height": 310.0,
+                "position_x": 0.0,
+                "position_y": 458.0,
+                "selected_in_dock": false,
+                "title": "Content",
+                "visible": true,
+                "width": 1238.0
+              },
+              {
+                "dock_id": 4,
+                "height": 310.0,
+                "position_x": 1190.0,
+                "position_y": 26.0,
+                "selected_in_dock": false,
+                "title": "Environments",
+                "visible": true,
+                "width": 1238.0
+              },
+              {
+                "dock_id": 4,
+                "height": 310.0,
+                "position_x": 600.0,
+                "position_y": 100.0,
+                "selected_in_dock": false,
+                "title": "Materials",
+                "visible": true,
+                "width": 1238.0
+              },
+              {
+                "dock_id": 4,
+                "height": 310.0,
+                "position_x": 0.0,
+                "position_y": 545.0,
+                "selected_in_dock": false,
+                "title": "Console",
+                "visible": true,
+                "width": 1238.0
+              },
+              {
+                "dock_id": 4,
+                "dock_tab_bar_enabled": true,
+                "dock_tab_bar_visible": true,
+                "height": 310.0,
+                "position_x": 0.0,
+                "position_y": 610.5,
+                "selected_in_dock": true,
+                "title": "Configurator Samples",
+                "visible": true,
+                "width": 1238.0
+              }
+            ],
+            "dock_id": 4,
+            "position": "BOTTOM"
+          }
+        ],
+        "dock_id": 1,
+        "position": "LEFT"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "dock_id": 7,
+                "dock_tab_bar_enabled": true,
+                "dock_tab_bar_visible": true,
+                "height": 365.0,
+                "position_x": 1240.0,
+                "position_y": 26.0,
+                "selected_in_dock": false,
+                "title": "Stage",
+                "visible": true,
+                "width": 460.0
+              },
+              {
+                "dock_id": 7,
+                "height": 365.0,
+                "position_x": 60.0,
+                "position_y": 60.0,
+                "selected_in_dock": false,
+                "title": "Layer",
+                "visible": true,
+                "width": 460.0
+              },
+              {
+                "dock_id": 7,
+                "height": 365.0,
+                "position_x": 60.0,
+                "position_y": 60.0,
+                "selected_in_dock": false,
+                "title": "Render Settings",
+                "visible": true,
+                "width": 460.0
+              },
+              {
+                "dock_id": 7,
+                "dock_tab_bar_enabled": true,
+                "dock_tab_bar_visible": true,
+                "height": 498.0,
+                "position_x": 1399.5,
+                "position_y": 23.0,
+                "selected_in_dock": true,
+                "title": "Variant Presenter",
+                "visible": true,
+                "width": 460.0
+              }
+            ],
+            "dock_id": 7,
+            "position": "TOP"
+          },
+          {
+            "children": [
+              {
+                "dock_id": 8,
+                "dock_tab_bar_enabled": true,
+                "dock_tab_bar_visible": true,
+                "height": 375.0,
+                "position_x": 1240.0,
+                "position_y": 393.0,
+                "selected_in_dock": true,
+                "title": "Property",
+                "visible": true,
+                "width": 460.0
+              }
+            ],
+            "dock_id": 8,
+            "position": "BOTTOM"
+          }
+        ],
+        "dock_id": 2,
+        "position": "RIGHT"
+      }
+    ],
+    "dock_id": 3358485147
+  },
+  {
+    "dock_id": 0,
+    "height": 370.0,
+    "position_x": 0.0,
+    "position_y": 398.0,
+    "selected_in_dock": false,
+    "title": "Timeline toolbar",
+    "visible": false,
+    "width": 1700.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 600.0,
+    "position_y": 100.0,
+    "selected_in_dock": false,
+    "title": "Section",
+    "visible": false,
+    "width": 500.0
+  },
+  {
+    "dock_id": 0,
+    "height": 111.0,
+    "position_x": 0.0,
+    "position_y": 285.0,
+    "selected_in_dock": false,
+    "title": "Flow",
+    "visible": false,
+    "width": 1188.0
+  },
+  {
+    "dock_id": 0,
+    "height": 111.0,
+    "position_x": 0.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Sequencer",
+    "visible": false,
+    "width": 1188.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 600.0,
+    "position_y": 100.0,
+    "selected_in_dock": false,
+    "title": "Paint",
+    "visible": false,
+    "width": 500.0
+  },
+  {
+    "dock_id": 0,
+    "height": 60.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Changing directory ...",
+    "visible": false,
+    "width": 300.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Options",
+    "visible": false,
+    "width": 220.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Filter",
+    "visible": false,
+    "width": 150.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Add Nucleus connection",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Add Attribute...",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Reference...",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Payload...",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Asset...",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 300.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Curve Editor",
+    "visible": false,
+    "width": 600.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Preferences",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Screenshot Directory",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Template",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Filename (Local Files Only)",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 560.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "PhysX Vehicle Wizard",
+    "visible": false,
+    "width": 630.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Rename",
+    "visible": false,
+    "width": 200.0
+  },
+  {
+    "dock_id": 0,
+    "height": 800.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "OmniGraph Node Description Editor",
+    "visible": false,
+    "width": 600.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Create Animation Graph",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Animation Graph",
+    "visible": false,
+    "width": 640.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Animation Graph Samples",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Pivot Tool",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 710.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Captured Traces Browser",
+    "visible": false,
+    "width": 800.0
+  },
+  {
+    "dock_id": 0,
+    "height": 800.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Animation Retargeting",
+    "visible": false,
+    "width": 450.0
+  },
+  {
+    "dock_id": 0,
+    "height": 700.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Bug Submitter",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 175.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Particle Playback Controls",
+    "visible": false,
+    "width": 200.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Particle Templates",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Particle Samples",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Image Search",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Search Options",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "BeginSearch",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Statistics",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 120.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "omni.ui.scene 2846129267520",
+    "visible": false,
+    "width": 210.8000030517578
+  },
+  {
+    "dock_id": 0,
+    "height": 120.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "omni.ui.scene 2846129268064",
+    "visible": false,
+    "width": 279.3999938964844
+  }
+]

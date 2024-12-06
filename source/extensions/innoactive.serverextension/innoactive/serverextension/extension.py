@@ -98,7 +98,7 @@ class MyExtension(omni.ext.IExt):
                 asyncio.ensure_future(self._delayed_load_usd(delay))
             else:
                 print(f"[innoactive.serverextension] USD loaded: {stage_path}")
-                self.load_layout(workspace_file=self.layout_json)
+                self.load_layout()
 
 
     def load_usd(self, usd_file: str, log_errors=True):
@@ -130,7 +130,9 @@ class MyExtension(omni.ext.IExt):
         await asyncio.sleep(delay) 
         self.load_usd(usd_file=self.usd_to_load)
 
-    def load_layout(self, workspace_file="./InnoactiveLayout.json", log_errors=True):
+    def load_layout(self, log_errors=True):
+
+        workspace_file = f"./InnoactiveLayout.{self.interface_mode}.json"
 
         if not os.path.exists(workspace_file):
             if log_errors:
@@ -167,8 +169,10 @@ class MyExtension(omni.ext.IExt):
         # Access parameters
         self.interface_mode = settings.get_as_string("/innoactive/serverextension/interfaceMode") or "screen"
         self.usd_to_load = settings.get_as_string("/innoactive/serverextension/usdPath") or self.default_usd
-        
+        print(settings.get("/persistent/xr/profile/vr/system/display"))
+
         # Set the resolution multiplier for VR rendering
+        settings.set("/persistent/xr/profile/vr/system/display", "SteamVR")
         settings.set("/persistent/xr/profile/vr/render/resolutionMultiplier", 2.0)
         settings.set("/persistent/xr/profile/vr/foveation/mode", "warped") #none / warped / inset
         settings.set("/persistent/xr/profile/vr/foveation/warped/resolutionMultiplier", 0.5)
@@ -199,7 +203,7 @@ class MyExtension(omni.ext.IExt):
                     print("on_reset_stage()")
 
                 def on_load_layout():
-                    self.load_layout(workspace_file=self.layout_json)
+                    self.load_layout()
                     print("on_load_layout()")
 
                 with ui.VStack():
