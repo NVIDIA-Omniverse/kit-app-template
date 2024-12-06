@@ -49,7 +49,7 @@ template_name = "omni.usd_composer"
 "omni.kit.collaboration.telemetry" = {}
 "omni.kit.collaboration.viewport.camera" = {}
 "omni.kit.context_menu" = {}
-"omni.kit.converter.cad" = {}
+"omni.kit.converter.cad" = {order = 1000} # allow other deps like asset_importer to load first
 "omni.kit.graph.delegate.default" = {}
 "omni.kit.hotkeys.window" = {}
 "omni.kit.manipulator.prim" = {}
@@ -58,6 +58,7 @@ template_name = "omni.usd_composer"
 "omni.kit.manipulator.viewport" = {}
 "omni.kit.material.library" = {}
 "omni.kit.menu.aov" = {}
+"omni.kit.menu.common" = { order = 1000 }
 "omni.kit.menu.create" = {}
 "omni.kit.menu.edit" = {}
 "omni.kit.menu.file" = {}
@@ -131,6 +132,7 @@ template_name = "omni.usd_composer"
 "omni.kit.window.title" = {}
 "omni.kit.window.toolbar" = {}
 "omni.kit.window.usd_paths" = {}
+"omni.light_rigs" = {}
 "omni.mdl.usd_converter" = {}
 "omni.no_code_ui.authoring" = {}
 "omni.physx.stageupdate" = {}
@@ -138,9 +140,6 @@ template_name = "omni.usd_composer"
 "omni.rtx.settings.core" = {} # this is the new Render Settings 2.0
 "omni.scene.optimizer.bundle" = {}
 "omni.scene.visualization.bundle" = {}
-"omni.services.starfleet.auth" = {}
-"omni.services.transport.server.http" = {}
-"omni.services.usd" = {}
 "omni.stats" = {}
 "omni.usd.fileformat.sbsar" = {}
 "omni.usd.metrics.assembler.ui" = {}
@@ -152,7 +151,7 @@ template_name = "omni.usd_composer"
 
 # Windows only extensions
 [dependencies."filter:platform"."windows-x86_64"]
-"omni.kit.window.modifier.titlebar" = {}
+"omni.kit.window.modifier.titlebar" = {version = "=105.2.16"}  # Use exact version to avoid supported target platform check
 
 
 [settings.app]
@@ -163,11 +162,13 @@ name = "{{ application_display_name }}"
 useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 show_developer_preference_section = false
 
+
 [settings.app.extensions]
 skipPublishVerification = false
 registryEnabled = true
 supportedTargets.platform = []
-supportedTargets.config = []
+supportedTargets.config = ["release"]
+
 
 # Linux excluded extensions. For all of them set exact=true to not be included into generated version lock.
 # That will break linux otherwise, as version lock is platform agnostic currently.
@@ -203,6 +204,9 @@ skipWhileMinimized = true
 dev_build = false
 persistent = true
 
+[settings.app.usdrt.population.utils]
+mergeMaterials = false
+
 [settings.app.window]
 title = "{{ application_display_name }}"
 iconPath = "${% raw %}{{% endraw %}{{ setup_extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-create.png"
@@ -234,6 +238,7 @@ experience = "{{ application_display_name }}"
 "omni.kit.widget.layers".useNewFilePicker = true
 "omni.kit.window.file".useNewFilePicker = true
 "omni.kit.window.material".load_after_startup = true
+"omni.light_rigs".setup_extension_name = "{{ setup_extension_name }}"
 "omni.services.transport.server.http".port = 8111
 "omni.ui".raster.default_rasterpolicy_enabled = true
 "omni.usd".enableUsdMaterialWatcherForFsd = true

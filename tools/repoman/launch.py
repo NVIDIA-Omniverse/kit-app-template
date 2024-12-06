@@ -4,6 +4,7 @@ import logging
 import os
 import platform
 import shutil
+import subprocess
 import sys
 from collections import defaultdict
 from glob import glob
@@ -13,11 +14,10 @@ from typing import Callable, Dict, List, Optional
 import omni.repo.man
 from omni.repo.kit_template.backend import read_toml
 from omni.repo.kit_template.frontend import CLIInput, Separator
-from omni.repo.man.configuration import add_config_arg
 from omni.repo.man.exceptions import QuietExpectedError
 from omni.repo.man.fileutils import rmtree
 from omni.repo.man.guidelines import get_host_platform
-from omni.repo.man.utils import find_and_extract_package, run_process, run_process_return_output
+from omni.repo.man.utils import find_and_extract_package, process_args_to_cmd, run_process, run_process_return_output
 
 # These dependencies come from repo_kit_template
 from rich.console import Console
@@ -53,6 +53,48 @@ def _select(query: str, apps: list) -> str:
     return cli_input.select(message=query, choices=apps, default=apps[0])
 
 
+def _run_process(args: List, exit_on_error=False, timeout=None, **kwargs) -> int:
+    """Run system process and wait for completion.
+
+    This was copy/pasted out of omni.repo.man.utils to work around the KeyboardInterrupt error message.
+
+    Args:
+        args (List): List of arguments.
+        exit_on_error (bool, optional): Exit if return code is non zero.
+    """
+    returncode = 0
+    message = ""
+    try:
+        logger.info(f"running process: {process_args_to_cmd(args)}")
+        # Optionally map in sys.stdin for local debugging via pdb.set_trace.
+        # Otherwise use DEVNULL, prevents weird failures on Windows.
+        stdin = subprocess.DEVNULL
+        if os.environ.get("repo_diagnostic"):
+            stdin = sys.stdin
+
+        p = subprocess.run(args, stdin=stdin, stdout=sys.stdout, stderr=subprocess.STDOUT, timeout=timeout, **kwargs)
+        returncode = p.returncode
+    except subprocess.CalledProcessError as e:
+        returncode = e.returncode
+        message = e
+    except subprocess.TimeoutExpired as e:
+        returncode = -1
+        message = e
+    except (FileNotFoundError, OSError, Exception) as e:
+        returncode = -1
+        message = str(e)
+    except KeyboardInterrupt:
+        returncode = -1
+        message = "KeyboardInterrupt"
+
+    # Do not logger.error for a KeyboardInterrupt
+    if returncode != 0 and message != "KeyboardInterrupt":
+        logger.error(f'error running: {process_args_to_cmd(args)}, code: {returncode}, message: "{message}"')
+        if exit_on_error:
+            sys.exit(returncode)
+    return returncode
+
+
 def discover_kit_files(target_directory: Path) -> List:
     if not target_directory.is_dir():
         return []
@@ -81,9 +123,14 @@ def discover_typed_kit_files(target_directory: Path) -> Dict:
     discovered_apps = defaultdict(list)
     for app in glob("**/*.kit", root_dir=target_directory, recursive=True):
         app_path = target_directory / app
-        app_data = read_toml(app_path)
-        app_type = app_data.get("template", {}).get("type", "ApplicationTemplate")
-        discovered_apps[app_type].append(app_path.name)
+        try:
+            app_data = read_toml(app_path)
+            app_type = app_data.get("template", {}).get("type", "ApplicationTemplate")
+            discovered_apps[app_type].append(app_path.name)
+        except Exception as e:
+            # For now broadly catching until repo_kit_template's read_toml can instead raise a omni.repo.man.exception
+            err_msg = f"Failed to read kit file: {app_path.resolve()}. There might be a duplicate toml key: {e}"
+            _quiet_error(err_msg)
 
     return discovered_apps
 
@@ -158,12 +205,18 @@ def run_selected_image(image_id: str, dev_bundle: bool, extra_args: List[str], v
     """
     # TODO: Can we just assume the Dockerfile expose port ranges
     # and always map those in? Or should this be configurable via CLI args/toml file?
+    nvda_kit_args = os.environ.get("NVDA_KIT_ARGS", "")
+    nvda_kit_nucleus = os.environ.get("NVDA_KIT_NUCLEUS", "")
     docker_run_cmd = [
         "docker",
         "run",
         "--gpus=all",
         "--env",
         f"OM_KIT_VERBOSE={1 if verbose else 0}",
+        "--env",
+        f"NVDA_KIT_ARGS={nvda_kit_args}",
+        "--env",
+        f"NVDA_KIT_NUCLEUS={nvda_kit_nucleus}",
         "--mount",  # RTX Shader Cache
         "type=volume,src=omniverse_shader_cache,dst=/home/ubuntu/.cache/ov,volume-driver=local",
         "--mount",  # Kit Extension Cache
@@ -186,7 +239,10 @@ def run_selected_image(image_id: str, dev_bundle: bool, extra_args: List[str], v
     if extra_args:
         docker_run_cmd += extra_args
 
-    run_process(docker_run_cmd, exit_on_error=False)
+    _ = _run_process(
+        docker_run_cmd,
+        exit_on_error=False,
+    )
 
 
 def nvidia_driver_check():
@@ -381,8 +437,10 @@ def launch_kit(
     if extra_args:
         kit_cmd += extra_args
 
-    ret_code = run_process(kit_cmd, exit_on_error=False)
-    # TODO: do something with this ret_code
+    _ = _run_process(
+        kit_cmd,
+        exit_on_error=False,
+    )
 
 
 def expand_package(package_path: str) -> Path:
@@ -451,6 +509,8 @@ def add_args(parser: argparse.ArgumentParser):
         help="Enable the developer debugging extension bundle.",
     )
 
+
+def add_package_arg(parser: argparse.ArgumentParser):
     parser.add_argument(
         "-p",
         PACKAGE_ARG,
@@ -460,6 +520,8 @@ def add_args(parser: argparse.ArgumentParser):
         help="Path to a kit app package that you want to launch",
     )
 
+
+def add_name_arg(parser: argparse.ArgumentParser):
     parser.add_argument(
         "-n",
         "--name",
@@ -474,25 +536,30 @@ def setup_repo_tool(parser: argparse.ArgumentParser, config: Dict) -> Optional[C
 
     parser.description = "Simple tool to launch Kit applications"
     add_args(parser)
+    add_package_arg(parser)
+    add_name_arg(parser)
 
     # Currently unused
     # tool_config = config.get("repo_launch", {})
+
+    # Get list of kit apps on filesystem.
+    app_names = discover_kit_files(KIT_APP_PATH)
+
+    subparsers = parser.add_subparsers()
+    for app in app_names:
+        subparser = subparsers.add_parser(app)
+        subparser.set_defaults(app_name=app)
+        # Add --dev-bundle and --container args
+        add_args(subparser)
 
     def run_repo_tool(options: argparse.Namespace, config_dict: Dict):
         app_name = None
         config = "release"
         dev_bundle = False
-        extra_args = []
 
         # Providing a kit file is optional, otherwise we present a select
         app_name = options.app_name
-
-        # If a kit file was selected then a config value was optionally set.
-        if hasattr(options, "config"):
-            config = options.config
-
-        if hasattr(options, "dev_bundle"):
-            dev_bundle = options.dev_bundle
+        dev_bundle = options.dev_bundle
 
         try:
             # Launching from a distributed package

@@ -41,8 +41,10 @@ pages = [
 
 [[test]]
 dependencies = [
+    "omni.activity.ui",
     "omni.kit.mainwindow",
     "omni.kit.stage_templates",
+    # "omni.kit.test_suite.helpers",
     "omni.kit.ui_test",
     "omni.kit.viewport.utility",
     "omni.kit.viewport.window",

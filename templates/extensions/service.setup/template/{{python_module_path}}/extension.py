@@ -13,18 +13,22 @@ from omni.services.core import main
 from .service import router
 
 
-# Any class derived from `omni.ext.IExt` in the top level module (defined in `python.modules` of `extension.toml`) will
-# be instantiated when the extension gets enabled, and `on_startup(ext_id)` will be called.
-# Later when the extension gets disabled on_shutdown() is called.
+# Any class derived from `omni.ext.IExt` in the top level module (defined in
+# `python.modules` of `extension.toml`) will be instantiated when the extension
+# gets enabled, and `on_startup(ext_id)` will be called. Later when the
+# extension gets disabled on_shutdown() is called.
 class MyExtension(omni.ext.IExt):
-    # ext_id is the current extension id. It can be used with the extension manager to
-    # query additional information, like where this extension is located on the filesystem.
-    def on_startup(self, ext_id):
-
+    """This extension manages the service setup"""
+    # ext_id is the current extension id. It can be used with the extension
+    # manager to query additional information, like where this extension is
+    # located on the filesystem.
+    def on_startup(self, _ext_id):
+        """This is called every time the extension is activated."""
         main.register_router(router)
-
         print("[{{ extension_name }}] MyExtension startup : Local Docs -  http://localhost:8011/docs")
 
     def on_shutdown(self):
+        """This is called every time the extension is deactivated. It is used
+        to clean up the extension state."""
         main.deregister_router(router)
         print("[{{ extension_name }}] MyExtension shutdown")

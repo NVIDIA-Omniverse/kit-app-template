@@ -32,6 +32,7 @@ template_name = "kit_base_editor"
 "omni.kit.manipulator.prim" = {}  # Load the prim-manipulator (translate, rotate, scale)
 "omni.kit.manipulator.selection" = {}  # Load the selection-manipulator (selectable prims)
 "omni.kit.material.library" = {} # Create and assign materials.
+"omni.kit.menu.common" = { order = 1000 } # Common menu library. Loads last so omni.kit.activity.ui can be available.
 "omni.kit.menu.create" = {} # Create menu
 "omni.kit.menu.edit" = {}  # Edit menu
 "omni.kit.menu.file" = {}  # File menu
@@ -84,6 +85,7 @@ hangDetector.enabled = true
 hangDetector.timeout = 120
 renderer.skipWhileMinimized = true
 window.title = "{{ application_display_name }}"
+extensions.supportedTargets.config = ["release"]
 
 
 [settings.app.exts]

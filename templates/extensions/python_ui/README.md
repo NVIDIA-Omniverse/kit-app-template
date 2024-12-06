@@ -4,8 +4,6 @@
   <img src="../../../readme-assets/python_ui_extension_template.jpg" width="50%" />
 </p>
 
-**Based On:** `Omniverse Kit SDK 106.0`
-
 ## Overview
 
 The Python UI Extension Template offers a simple starting point for developers looking to build Python-based extensions with performant User Interfaces. This template offers a best practices foundation and structure to easily integrate with the broader capabilities of the Omniverse Kit SDK.

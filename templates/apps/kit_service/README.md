@@ -2,7 +2,6 @@
 
 ![Kit Service Image](../../../readme-assets/kit_service.png)
 
-**Based On:** `Omniverse Kit SDK 106.0`
 
 ## Overview
 
@@ -52,7 +51,7 @@ cd kit-app-template
 .\repo.bat template new
 ```
 
-> **Note:** If this is your first time running the `template new` tool, you'll be prompted to accept the Omniverse Licensing Terms.
+> **NOTE:** If this is your first time running the `template new` tool, you'll be prompted to accept the Omniverse Licensing Terms.
 
 Follow the prompt instructions:
 - **? Select with arrow keys what you want to create:** Application
@@ -174,16 +173,66 @@ Alternatively, you can specify a package name using the `--name` flag:
 
 **Linux:**
 ```bash
-./repo.sh package --name [package_name]
+./repo.sh package --name <package_name>
 ```
 **Windows:**
 ```powershell
-.\repo.bat package --name [package_name]
+.\repo.bat package --name <package_name>
 ```
 
 This will bundle your application into a distributable format, ready for deployment on compatible platforms.
 
 :warning: **Important Note for Packaging:** Because the packaging operation will package everything within the `source/` directory the package version will need to be set independently of a given `kit` file.  **The version is set within the `tools/VERSION.md` file.**
+
+#### Launching a Package
+
+Applications packaged using the `package` command can be launched using the `launch` command:
+
+**Linux:**
+```bash
+./repo.sh launch --package <full-path-to-package>
+```
+**Windows:**
+```powershell
+.\repo.bat launch --package <full-path-to-package>
+```
+
+> **NOTE:** This behavior is not supported when packaging with the `--thin` flag.
+
+### Containerization (Linux Only)
+
+**Requires:** `Docker` and `NVIDIA Container Toolkit`
+
+The packaging tooling provided by the Kit App Template also supports containerization of applications. This is especially useful for deploying headless services and streaming applications in a containerized environment.
+
+To package your application as a container image, use the `--container` flag:
+
+**Linux:**
+```bash
+./repo.sh package --container
+```
+
+You will be prompted to select a `.kit` file to serve as the application to launch via the container entrypoint script. This will dictate the behavior of your containerized application.
+
+For example, if you are containerizing a headless Kit Service, select the `{your-service-name}.kit` file to ensure the correct application configuration is launched within the container.
+
+Similar to desktop packaging, the container option allows for specifying a package name using the `--name` flag to name the container image:
+
+**Linux:**
+```bash
+./repo.sh package --container --name [container_image_name]
+```
+
+#### Launching a Container
+
+Applications packaged as container images can be launched using the `launch` command:
+
+**Linux:**
+```bash
+./repo.sh launch --container
+```
+
+If only a single container image exists, it will launch automatically. If multiple container images exist, you will be prompted to select the desired container image to launch.
 
 ## Additional Learning
 

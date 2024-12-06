@@ -49,3 +49,25 @@ For a clean build, use the command `./repo.sh build -c` or `.\repo.bat build -c`
 
 ### Windows Long Path
 Due to path length limitations on Windows it is recommended to place repository artifacts in a location closer to the root of the drive. This will help avoid issues with the path lengths when building and packaging applications.
+
+
+### Space Constraints Due to Docker Artifacts
+When performing extensive local testing of container images created via `repo package --container`, Docker artifacts can accumulate over time, consuming significant disk space.
+
+`docker system df` can be used to determine disk space utilized by Docker objects.  To reclaim space, consider the following options:
+
+1. **Regular Safe Cleanup**:
+    - **Command**: `docker container prune`
+    - **Description**: This command removes all stopped containers, which is typically safe and helps manage disk space without affecting images, networks, or volumes.
+    - **Use**: Recommended for regular maintenance.
+
+2. **Extensive Cleanup (:warning:Use with Caution:warning:)**:
+    - **Command**: `docker system prune`
+    - **Description**: This command removes all unused containers, networks, images, and optionally, volumes. It is akin to running a `rm -rf` for Docker resources.
+    - **Warning**: Use this command carefully, as it will remove many resources indiscriminately. Ensure you review and understand what will be deleted.
+
+For image-specific cleanup, use `docker images` to list all images and `docker rmi <image>` to manually remove those that are no longer needed.
+
+
+### exFAT Drive Compatibility Limitations
+The Kit App Template repository and associated tooling are designed to work with drive formats that support junctions/symlinks. If you are using an exFAT-formatted drive, you may encounter errors during the build process. To resolve this issue, consider using a different drive format such as NTFS.

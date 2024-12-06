@@ -2,7 +2,6 @@
 
 ![USD Explorer Hero Image](../../../readme-assets/usd_explorer.jpg)
 
-**Based On:** `Omniverse Kit SDK 106.0`
 
 ## Overview
 

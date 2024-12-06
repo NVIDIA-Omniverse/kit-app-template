@@ -13,7 +13,49 @@ import_configs = [
 # Repository Name
 name = "kit-app-template"
 
-# Disable linbuild until we know what we want to do with this.
+[repo_build]
+# These are necessary to avoid a repo_build failure where the source/apps directory
+# is expected to always exist.
+fetch."platform:linux-x86_64".before_pull_commands = [
+    ["mkdir", "--parents", "${root}/source/apps"],
+]
+
+# Mute this command, don't emit to console.
+fetch."platform:windows-x86_64".before_pull_commands = [
+    ["powershell", "-Command", "New-Item -ItemType Directory -Path ${root}/source/apps -ErrorAction SilentlyContinue", ";", "Write-Host 'Done'"],
+]
+
+[repo_build.build]
+enabled = true
+"platform:windows-x86_64".enabled = false
+
+[repo_build.msbuild]
+# If set to true will attempt to link to host's Visual Studio and Windows SDK installations.
+# This is needed if C++ compilation is needed on Windows, and repo_build.build.enabled is set to true.
+link_host_toolchain = false
+
+# Filter on Visual Studio version e.g.: Visual Studio 2022. Empty string will match all years and prioritize the newest.
+vs_version = "vs2022"
+
+# Visual Studio path; This will be used if the user would like to point to a specific VS installation rather than rely on heuristic locating.
+# vs_path = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\"
+
+# Filter specifically to "Enterprise", "Professional", or "Community" editions of Visual Studio
+# vs_edition = "Community"
+
+# Filter by Visual Studio installations that have installed this version of the MSVC compiler.
+# msvc_version = "v142"
+
+# Filter by Visual Studio installations that ship with MSBuild of this major version.
+# msbuild_version = "17"
+
+# Windows SDK version
+# winsdk_version = "10.0.17763.0"
+
+# Windows SDK path; This will prevent needing to dynamically locate an installation by guesswork.
+# winsdk_path = "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.17763.0"
+
+# Disable linbuild until we have a public image available.
 [repo_build.docker]
 enabled = false
 

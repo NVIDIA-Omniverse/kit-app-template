@@ -6,9 +6,9 @@
         {
             "label": "New Template",
             "type": "shell",
-            "command": "${workspaceRoot}/repo.sh",
+            "command": "${workspaceRoot}${/}repo.sh",
             "windows": {
-                "command": "${workspaceRoot}/repo.bat"
+                "command": "${workspaceRoot}${/}repo.bat"
             },
             "args": [
                 "template",
@@ -23,9 +23,9 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "${workspaceRoot}/repo.sh",
+            "command": "${workspaceRoot}${/}repo.sh",
             "windows": {
-                "command": "${workspaceRoot}/repo.bat"
+                "command": "${workspaceRoot}${/}repo.bat"
             },
             "args": [
                 "build"
@@ -43,9 +43,9 @@
         {
             "label": "Launch",
             "type": "shell",
-            "command": "${workspaceRoot}/repo.sh",
+            "command": "${workspaceRoot}${/}repo.sh",
             "windows": {
-                "command": "${workspaceRoot}/repo.bat"
+                "command": "${workspaceRoot}${/}repo.bat"
             },
             "args": [
                 "launch"
@@ -59,9 +59,9 @@
         {
             "label": "Launch (Developer Mode)",
             "type": "shell",
-            "command": "${workspaceRoot}/repo.sh",
+            "command": "${workspaceRoot}${/}repo.sh",
             "windows": {
-                "command": "${workspaceRoot}/repo.bat"
+                "command": "${workspaceRoot}${/}repo.bat"
             },
             "args": [
                 "launch",
@@ -76,9 +76,9 @@
         {
             "label": "Run Unit Tests",
             "type": "shell",
-            "command": "${workspaceRoot}/repo.sh",
+            "command": "${workspaceRoot}${/}repo.sh",
             "windows": {
-                "command": "${workspaceRoot}/repo.bat"
+                "command": "${workspaceRoot}${/}repo.bat"
             },
             "args": [
                 "test",
@@ -92,9 +92,9 @@
         {
             "label": "Package",
             "type": "shell",
-            "command": "${workspaceRoot}/repo.sh",
+            "command": "${workspaceRoot}${/}repo.sh",
             "windows": {
-                "command": "${workspaceRoot}/repo.bat"
+                "command": "${workspaceRoot}${/}repo.bat"
             },
             "args": [
                 "package"

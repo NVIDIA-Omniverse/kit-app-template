@@ -24,7 +24,6 @@ class TestAppStartup(AsyncTestCase):
         startup_time = omni.kit.app.get_app().get_time_since_start_s()
         test_result = {"startup_time_s": startup_time}
         print(f"App Startup time: {startup_time}")
-        self._post_to_nvdf(test_id, test_result, time.monotonic() - test_start_time)
         return startup_time
 
     def app_startup_warning_count(self, test_id: str) -> Tuple[int, int]:
@@ -43,40 +42,7 @@ class TestAppStartup(AsyncTestCase):
         test_result = {"startup_warning_count": warning_count, "startup_error_count": error_count}
         print(f"App Startup Warning count: {warning_count}")
         print(f"App Startup Error count: {error_count}")
-        self._post_to_nvdf(test_id, test_result, time.monotonic() - test_start_time)
         return warning_count, error_count
-
-    # TODO: should call proper API from Kit
-    def _post_to_nvdf(self, test_id: str, test_result: dict, test_duration: float):
-        """Send results to nvdf"""
-        try:
-            from omni.kit.test.nvdf import _can_post_to_nvdf, _get_ci_info, _post_json, get_app_info, to_nvdf_form
-
-            if not _can_post_to_nvdf():
-                return
-
-            data = {}
-            data["ts_created"] = int(time.time() * 1000)
-            data["app"] = get_app_info()
-            data["ci"] = _get_ci_info()
-            data["test"] = {
-                "passed": True,
-                "skipped": False,
-                "unreliable": False,
-                "duration": test_duration,
-                "test_id": test_id,
-                "ext_test_id": "omni.create.tests",
-                "test_type": "unittest",
-            }
-            data["test"].update(test_result)
-
-            project = "omniverse-kit-tests-results-v2"
-            json_str = json.dumps(to_nvdf_form(data), skipkeys=True)
-            _post_json(project, json_str)
-            # print(json_str)  # uncomment to debug
-
-        except Exception as e:
-            carb.log_warn(f"Exception occurred: {e}")
 
     async def test_l1_app_startup_time(self):
         """Get startup time - send to nvdf"""

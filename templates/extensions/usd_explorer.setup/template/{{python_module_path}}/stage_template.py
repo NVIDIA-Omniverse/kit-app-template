@@ -16,13 +16,16 @@ from pxr import Gf, Sdf, Usd, UsdGeom, UsdLux
 
 
 class SunnySkyStage:
+    """Stage template for a sunny sky."""
     def __init__(self):
         register_template("SunnySky", self.new_stage)
 
     def __del__(self):
+        """Unregister the template when the object is deleted."""
         unregister_template("SunnySky")
 
-    def new_stage(self, rootname, usd_context_name):
+    def new_stage(self, _rootname, usd_context_name):
+        """Create a new stage with a sunny sky."""
         # Create basic DistantLight
         usd_context = omni.usd.get_context(usd_context_name)
         stage = usd_context.get_stage()
@@ -64,13 +67,23 @@ class SunnySkyStage:
                 context_name=usd_context_name
             )
             prim = stage.GetPrimAtPath("/Environment/Sky")
-            prim.CreateAttribute("xformOp:scale", Sdf.ValueTypeNames.Double3, False).Set(Gf.Vec3d(1, 1, 1))
-            prim.CreateAttribute("xformOp:translate", Sdf.ValueTypeNames.Double3, False).Set(Gf.Vec3d(0, 0, 0))
+            prim.CreateAttribute(
+                "xformOp:scale", Sdf.ValueTypeNames.Double3, False
+            ).Set(Gf.Vec3d(1, 1, 1))
+            prim.CreateAttribute(
+                "xformOp:translate", Sdf.ValueTypeNames.Double3, False
+            ).Set(Gf.Vec3d(0, 0, 0))
             if up_axis == "Y":
-                prim.CreateAttribute("xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False).Set(Gf.Vec3d(270, 0, 0))
+                prim.CreateAttribute(
+                    "xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False
+                ).Set(Gf.Vec3d(270, 0, 0))
             else:
-                prim.CreateAttribute("xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False).Set(Gf.Vec3d(0, 0, 90))
-            prim.CreateAttribute("xformOpOrder", Sdf.ValueTypeNames.String, False).Set(["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"])
+                prim.CreateAttribute(
+                    "xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False
+                ).Set(Gf.Vec3d(0, 0, 90))
+            prim.CreateAttribute(
+                "xformOpOrder", Sdf.ValueTypeNames.String, False
+            ).Set(["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"])
 
             # create DistantLight
             omni.kit.commands.execute(
@@ -82,7 +95,7 @@ class SunnySkyStage:
                     UsdLux.Tokens.inputsAngle: 4.3,
                     UsdLux.Tokens.inputsIntensity: 3000,
                     UsdGeom.Tokens.visibility: "inherited",
-                    } if hasattr(UsdLux.Tokens, 'inputsIntensity') else \
+                    } if hasattr(UsdLux.Tokens, 'inputsIntensity') else
                     {
                     UsdLux.Tokens.angle: 4.3,
                     UsdLux.Tokens.intensity: 3000,
@@ -92,10 +105,33 @@ class SunnySkyStage:
                 context_name=usd_context_name
             )
             prim = stage.GetPrimAtPath("/Environment/DistantLight")
-            prim.CreateAttribute("xformOp:scale", Sdf.ValueTypeNames.Double3, False).Set(Gf.Vec3d(1, 1, 1))
-            prim.CreateAttribute("xformOp:translate", Sdf.ValueTypeNames.Double3, False).Set(Gf.Vec3d(0, 0, 0))
+            prim.CreateAttribute(
+                "xformOp:scale", Sdf.ValueTypeNames.Double3, False
+            ).Set(Gf.Vec3d(1, 1, 1))
+            prim.CreateAttribute(
+                "xformOp:translate", Sdf.ValueTypeNames.Double3, False
+            ).Set(Gf.Vec3d(0, 0, 0))
             if up_axis == "Y":
-                prim.CreateAttribute("xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False).Set(Gf.Vec3d(310.6366313590111, -125.93251524567805, 0.8821359067542289))
+                prim.CreateAttribute(
+                    "xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False
+                    ).Set(
+                        Gf.Vec3d(
+                            310.6366313590111,
+                            -125.93251524567805,
+                            0.8821359067542289
+                            )
+                        )
             else:
-                prim.CreateAttribute("xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False).Set(Gf.Vec3d(41.35092544555664, 0.517652153968811, -35.92928695678711))
-            prim.CreateAttribute("xformOpOrder", Sdf.ValueTypeNames.String, False).Set(["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"])
+                prim.CreateAttribute(
+                    "xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False
+                ).Set(
+                    Gf.Vec3d(
+                        41.35092544555664,
+                        0.517652153968811,
+                        -35.92928695678711
+                        )
+                    )
+            prim.CreateAttribute(
+                "xformOpOrder", Sdf.ValueTypeNames.String, False).Set(
+                    ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+                )

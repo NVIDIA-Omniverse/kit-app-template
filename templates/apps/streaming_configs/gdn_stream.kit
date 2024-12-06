@@ -25,7 +25,8 @@ fastShutdown = true  # Skip long full shutdown and exit quickly
 name = "{{ application_display_name }} GDN Streaming"  # Skip checking supported platform/config when building
 titleVersion = "1.0.0"  # this is used in our setup file to display some Version to the user in the title bar
 useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
-
+vsync = false  # Vsync disabled by default, can be set to true for L40 or similar
+extensions.supportedTargets.config = ["release"]
 
 [settings.app.content]
 # this will create a stage during the statup process you don't have too,
@@ -36,6 +37,32 @@ emptyStageOnStart = false
 
 [settings.app.file]
 ignoreUnsavedOnExit = true  # enable quiting without confirmation
+
+
+[settings.app.rendergraph]
+maxFramesInFlight = 2
+
+
+[settings.app.runloops]
+main.rateLimitEnabled = true  # Enable rate limiting on the main thread
+main.rateLimitFrequency = 60  # Lock it to 60fps
+main.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+main.syncToPresent = true  # Sync with the present thread, smooths UI updates
+present.rateLimitEnabled = true  # Rate limit the present thread
+present.rateLimitFrequency = 60  # Lock it to 60fps
+present.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+rendering_0.rateLimitEnabled = true  # Enable rate limiting for the rendering thread
+rendering_0.rateLimitFrequency = 60  # Lock it to 60fps
+rendering_0.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+rendering_0.syncToPresent = true  # Sync with the present tread, smooths UI updates
+rendering_1.rateLimitEnabled = true  # Enable rate limiting for the rendering thread
+rendering_1.rateLimitFrequency = 60  # Lock it to 60fps
+rendering_1.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+rendering_1.syncToPresent = true  # Sync with the present tread, smooths UI updates
+
+
+[settings.app.runLoopsGlobal]
+syncToPresent = true  # Sync everything with the present thread
 
 
 [settings.app.window]
@@ -63,22 +90,19 @@ width = 1920  # width of main window
 enabled = true
 
 
-[settings.app.usdrt.population.utils]
-# When populating Fabric from USD, merge meshes under scene
-# graph instances. Helps with e.g. Tesla
-# Needs to be tested more before enabling for Runway
-mergeInstances = false
-
 [settings.app.viewport]
 forceHideFps = true  # control if performance data is shown in Viewport
 createCameraModelRep = false
+defaults.tickRate = 60  # Lock to 60fps[settings.app]
 
 
 [settings.exts."omni.appwindow"]
 listenF11 = false
 listenF7 = false
 
+
 [settings.exts."omni.kit.gfn"]
+
 auto_startup_gfn = true
 
 # Tests

@@ -1,4 +1,5 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 # SPDX-License-Identifier: LicenseRef-NvidiaProprietary
 #
 # NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
@@ -21,14 +22,16 @@ SETTINGS_APPLICATION_MODE_PATH = "/app/application_mode"
 
 
 class MenuHelper:
-    def __init__(self) -> None:
+    """Helper class to manage the main menu layout based on the
+    application mode."""
+    def __init__(self):
         self._settings = carb.settings.get_settings()
         self._current_layout = None
         self._pending_layout = None
         self._changing_layout_task: asyncio.Task = None
-
         self._menu_layout_empty = []
         self._menu_layout_modify = []
+        self._app_ready_sub = None
 
         omni.kit.menu.utils.add_hook(self._menu_hook)
 
@@ -37,7 +40,8 @@ class MenuHelper:
         )
         self._menu_hook()
 
-    def destroy(self) -> None:
+    def destroy(self):
+        """Tear down the menu helper."""
         omni.kit.menu.utils.remove_hook(self._menu_hook)
 
         if self._changing_layout_task and not self._changing_layout_task.done():
@@ -54,12 +58,15 @@ class MenuHelper:
             omni.kit.menu.utils.remove_layout(self._current_layout)
             self._current_layout = None
 
-    def _menu_hook(self, *args, **kwargs) -> None:
+    def _menu_hook(self, *args, **kwargs):
+        """Get the menu instance and build the desired menu."""
         if self._settings.get_as_bool("/app/view/debug/menus"):
             return
 
         LAYOUT_EMPTY_ALLOWED_MENUS = set(["Developer",])
-        LAYOUT_MODIFY_ALLOWED_MENUS = {"File", "Edit", "Window", "Tools", "Help", "Developer",}
+        LAYOUT_MODIFY_ALLOWED_MENUS = {
+            "File", "Edit", "Window", "Tools", "Help", "Developer",
+        }
 
         # make NEW list object instead of clear original
         # the original list may be held by self._current_layout and omni.kit.menu.utils
@@ -71,41 +78,54 @@ class MenuHelper:
             return
 
         # Build new layouts using allowlists
-        for key in menu_instance._menu_defs:
+        menu_defs, _menu_order, _menu_delegates = menu_instance.get_menu_data()
+
+        for key in menu_defs:
             if key.lower().endswith("widget"):
                 continue
 
             if key not in LAYOUT_EMPTY_ALLOWED_MENUS:
-                self._menu_layout_empty.append(MenuLayout.Menu(key, remove=True))
+                self._menu_layout_empty.append(
+                    MenuLayout.Menu(key, remove=True)
+                )
 
             if key not in LAYOUT_MODIFY_ALLOWED_MENUS:
-                self._menu_layout_modify.append(MenuLayout.Menu(key, remove=True))
+                self._menu_layout_modify.append(
+                    MenuLayout.Menu(key, remove=True)
+                )
 
             # Remove 'Viewport 2' entry
             if key == "Window":
-                for menu_item_1 in menu_instance._menu_defs[key]:
+                for menu_item_1 in menu_defs[key]:
                     for menu_item_2 in menu_item_1:
                         if menu_item_2.name == "Viewport":
-                            menu_item_2.sub_menu = [mi for mi in menu_item_2.sub_menu if mi.name != "Viewport 2"]
+                            menu_item_2.sub_menu = [mi for mi in
+                                                    menu_item_2.sub_menu if
+                                                    mi.name != "Viewport 2"]
 
         if self._changing_layout_task is None or self._changing_layout_task.done():
-            self._changing_layout_task = asyncio.ensure_future(self._delayed_change_layout())
+            self._changing_layout_task = \
+                asyncio.ensure_future(self._delayed_change_layout())
 
-    def _on_application_mode_changed(self, *args) -> None:
+    def _on_application_mode_changed(self, *args):
+        """Callback for when the application mode changes."""
         if self._changing_layout_task is None or self._changing_layout_task.done():
-            self._changing_layout_task = asyncio.ensure_future(self._delayed_change_layout())
+            self._changing_layout_task = \
+                asyncio.ensure_future(self._delayed_change_layout())
 
     async def _delayed_change_layout(self):
+        """Delay the layout change to avoid omni.ui error."""
         mode = self._settings.get_as_string(SETTINGS_APPLICATION_MODE_PATH)
         if mode in ["present", "review"]:
             pending_layout = self._menu_layout_empty
         else:
             pending_layout = self._menu_layout_modify
 
-        # Don't change layout inside of menu callback _on_application_mode_changed
-        # omni.ui throws error
+        # Don't change layout inside of menu callback
+        # _on_application_mode_changed omni.ui throws error
         if self._current_layout:
-            # Here only check number of layout menu items and name of every of layout menu item
+            # Here only check number of layout menu items and name of every of
+            # layout menu item
             same_layout = len(self._current_layout) == len(pending_layout)
             if same_layout:
                 for index, item in enumerate(self._current_layout):

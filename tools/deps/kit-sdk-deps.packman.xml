@@ -9,7 +9,6 @@
     <filter include="fmt" />
     <filter include="python" />
     <filter include="carb_sdk_plugins" />
-    <filter include="winsdk" />
   </import>
 
   <!-- Pull those deps of the same version as in Kit SDK. Override linkPath to point correctly, other properties can also be override, including version. -->
@@ -21,10 +20,8 @@
   <!-- Import host deps from Kit SDK to keep in sync -->
   <import path="../../_build/${platform}/${config}/kit/dev/deps/host-deps.packman.xml">
     <filter include="premake" />
-    <filter include="msvc" />
   </import>
 
   <dependency name="premake" linkPath="../../_build/host-deps/premake" />
-  <dependency name="msvc" linkPath="../../_build/host-deps/msvc" />
-  <dependency name="winsdk" linkPath="../../_build/host-deps/winsdk" />
+
 </project>

@@ -21,30 +21,25 @@ template_name = "omni.streaming_configuration"
 
 [settings.app]
 fastShutdown = true
-livestream.allowResize = false  # Enable or Disable SDK Scaling
-livestream.skipCapture = 1  # livestream skipCapture ON for local streaming
-livestream.webrtcEtli = true  # Only log error or critical level issues.
 name = "{{ application_display_name }} Streaming"  # Application Display Name
 ovc_deployment = true
 renderer.skipWhileMinimized = true
 renderer.resolution.height = 1080
 renderer.resolution.width = 1920
-runLoops.present.rateLimitEnabled = false
+vsync = false  # Vsync disabled by default, can be set to true for L40 or similar
 window.scaleToMonitor = true
 window.showStartup = false
 window.height = 1080
 window.width = 1920
-
 
 [settings]
 rtx.post.aa.op = 3
 rtx.verifyDriverVersion.enabled = false
 rtx-transient.dlssg.enabled = false  # Disable DLSS otherwise it can push the framerate above the locked limit
 
-
 [settings.app.extensions]
 registryEnabled = true
-supportedTargets.platform = []  # Skip checking supported platform/config when building
+supportedTargets.config = ["release"]  # Skip checking supported platform/config when building
 
 [settings.app.exts]
 folders.'++' = [  # Search paths for extensions.
@@ -52,3 +47,40 @@ folders.'++' = [  # Search paths for extensions.
     "${app}/../apps",
     "${app}/../extscache"
 ]
+
+[settings.app.file]
+ignoreUnsavedOnExit = true
+
+[settings.app.livestream]
+skipCapture = 1  # livestream skipCapture ON for local streaming
+webrtcEtli = true  # Only log error or critical level issues.
+
+[settings.app.rendergraph]
+maxFramesInFlight = 2
+
+[settings.app.runloops]
+main.rateLimitEnabled = true  # Enable rate limiting on the main thread
+main.rateLimitFrequency = 60  # Lock it to 60fps
+main.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+main.syncToPresent = true  # Sync with the present thread, smooths UI updates
+present.rateLimitEnabled = true  # Rate limit the present thread
+present.rateLimitFrequency = 60  # Lock it to 60fps
+present.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+rendering_0.rateLimitEnabled = true  # Enable rate limiting for the rendering thread
+rendering_0.rateLimitFrequency = 60  # Lock it to 60fps
+rendering_0.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+rendering_0.syncToPresent = true  # Sync with the present tread, smooths UI updates
+rendering_1.rateLimitEnabled = true  # Enable rate limiting for the rendering thread
+rendering_1.rateLimitFrequency = 60  # Lock it to 60fps
+rendering_1.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+rendering_1.syncToPresent = true  # Sync with the present tread, smooths UI updates
+
+[settings.app.runLoopsGlobal]
+syncToPresent = true  # Sync everything with the present thread
+
+[settings.app.viewport]
+defaults.tickRate = 60  # Lock to 60fps[settings.app]
+
+[settings.exts."omni.kit.renderer.core"]
+present.enabled = true  # Enable the present thread
+present.presentAfterRendering = true  # Ensure the present thread waits for the rendering to complete[settings]

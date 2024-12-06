@@ -12,24 +12,31 @@ import omni.ext
 import omni.ui as ui
 
 
-# Functions and vars are available to other extensions as usual in python: `{{python_module}}.some_public_function(x)`
+# Functions and vars are available to other extensions as usual in python:
+# `{{python_module}}.some_public_function(x)`
 def some_public_function(x: int):
+    """This is a public function that can be called from other extensions."""
     print(f"[{{ extension_name }}] some_public_function was called with {x}")
     return x ** x
 
 
-# Any class derived from `omni.ext.IExt` in the top level module (defined in `python.modules` of `extension.toml`) will
-# be instantiated when the extension gets enabled, and `on_startup(ext_id)` will be called.
-# Later when the extension gets disabled on_shutdown() is called.
+# Any class derived from `omni.ext.IExt` in the top level module (defined in
+# `python.modules` of `extension.toml`) will be instantiated when the extension
+# gets enabled, and `on_startup(ext_id)` will be called. Later when the
+# extension gets disabled on_shutdown() is called.
 class MyExtension(omni.ext.IExt):
-    # ext_id is the current extension id. It can be used with the extension manager to query additional information,
-    # like where this extension is located on the filesystem.
-    def on_startup(self, ext_id):
+    """This extension manages a simple counter UI."""
+    # ext_id is the current extension id. It can be used with the extension
+    # manager to query additional information, like where this extension is
+    # located on the filesystem.
+    def on_startup(self, _ext_id):
+        """This is called every time the extension is activated."""
         print("[{{ extension_name }}] Extension startup")
 
         self._count = 0
-
-        self._window = ui.Window("{{ extension_display_name }}", width=300, height=300)
+        self._window = ui.Window(
+            "{{ extension_display_name }}", width=300, height=300
+        )
         with self._window.frame:
             with ui.VStack():
                 label = ui.Label("")
@@ -49,4 +56,6 @@ class MyExtension(omni.ext.IExt):
                     ui.Button("Reset", clicked_fn=on_reset)
 
     def on_shutdown(self):
+        """This is called every time the extension is deactivated. It is used
+        to clean up the extension state."""
         print("[{{ extension_name }}] Extension shutdown")

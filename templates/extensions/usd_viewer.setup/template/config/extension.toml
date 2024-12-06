@@ -22,10 +22,15 @@ repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of th
 
 
 [dependencies]
-"omni.activity.ui" = {}   # Progress activity messages
+"omni.kit.usd.layers" = {}
+"omni.activity.ui" = {order=1000}   # Progress activity messages
 "omni.kit.quicklayout" = {}
 "omni.kit.viewport.utility" = {}
 "{{ extra_extension_name }}" = {}  # Required messaging extension
+
+
+[settings.app]
+useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 
 
 [settings.exts."{{ extension_name }}"]
@@ -45,9 +50,20 @@ pages = [
 
 [[test]]
 dependencies = [
+    "{{ application_name }}",
+    "omni.kit.mainwindow",
+    "omni.kit.ui_test",
 ]
 
 args = [
     "--/app/layout/name=default",
+    "--/app/fastShutdown=1",
+    "--/app/file/ignoreUnsavedOnExit=true",
+    "--/app/window/dpiScaleOverride=1.0",
+    "--/app/window/height=720",
+    "--/app/window/scaleToMonitor=false",
+    "--/app/window/width=1280",
+    "--/exts/omni.kit.viewport.window/startup/windowName=Viewport",
     "--no-window",
+    "--reset-user"
 ]

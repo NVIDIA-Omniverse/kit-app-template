@@ -30,12 +30,13 @@ template_name = "omni.usd_explorer"
 "omni.kit.collaboration.telemetry" = {}
 "omni.kit.collaboration.viewport.camera" = {}
 "omni.kit.context_menu" = {}
-"omni.kit.converter.cad" = {}
+"omni.kit.converter.cad" = {order = 1000} # allow other deps like asset_importer to load first
 "omni.kit.manipulator.camera" = {} # Manipulator for the Viewport
 "omni.kit.manipulator.prim" = {}
 "omni.kit.manipulator.selection" = {}
 "omni.kit.manipulator.transform" = {}
 "omni.kit.manipulator.viewport" = {}
+"omni.kit.menu.common" = { order = 1000 }
 "omni.kit.menu.edit" = {}
 "omni.kit.menu.file" = {}
 "omni.kit.property.bundle" = {}
@@ -89,6 +90,7 @@ template_name = "omni.usd_explorer"
 "omni.kit.window.status_bar" = {}
 "omni.kit.window.title" = {}
 "omni.kit.window.toolbar" = {}
+"omni.light_rigs" = {}
 "omni.resourcemonitor" = {}  # Needed for Fabric delegate
 "omni.rtx.settings.core" = {}  # This is the Render Settings 2.0
 "omni.scene.optimizer.bundle" = {}
@@ -123,11 +125,12 @@ excluded = [
 	"omni.kit.viewport.menubar.render",
 	"omni.kit.viewport.menubar.settings",
 ]
-generatedVersionLockExclude = [
+generateVersionLockExclude = [
 	"{{ setup_extension_name }}",
 ]
 registryEnabled = true
 skipPublishVerification = false
+supportedTargets.config = ["release"]
 
 [settings.app.extensions."filter:platform"."linux-x86_64"]
 # Windows only extensions. For all of them set exact=true to not be included into generated version lock.
@@ -269,7 +272,7 @@ x = -1
 y = -1
 
 [settings.crashreporter.data]
-experience = "USD Explorer"
+experience = "{{ application_display_name }}"
 
 [settings.ext."omni.kit.widget.viewport".sceneView.singleCameraModel]
 enabled = true  # Enable single Viewport camera model (setting w/ typo in current Kit)
@@ -503,6 +506,9 @@ visible = false
 startup.windowName = "Viewport"
 hud.hostMemory.perProcess = true
 
+[settings.exts."omni.light_rigs"]
+setup_extension_name="{{ setup_extension_name }}"
+
 [settings.exts."omni.services.transport.server.http"]
 port = 8311 # Setting the port for the embedded http server, using custom port for your application make sure not to collide with other apps
 
@@ -548,7 +554,7 @@ enable = false  # Making a ground for whatever reason bewteen scene loads is cau
 inertiaDecay = 3
 tumbleSpeed = 720
 
-[setings.persistent.exts."omni.kit.manipulator.prim".manipulator]
+[settings.persistent.exts."omni.kit.manipulator.prim.core".manipulator]
 placement = "Bounding Box Base"
 
 [settings.persistent.exts."omni.kit.manipulator.tool.snap"]
@@ -613,7 +619,7 @@ ambientLightIntensity = 1.0
 rendermode = 1
 
 [settings.rtx-transient.hydra]
-conservativeMemoryLimits = true # Enable a more conservative approach to stop loading geometry when the amount of free GPU and system memory go below specified thresholds
+conservativeMemoryLimits = true # Stop loading geometry when memory goes below specified thresholds
 maxInstanceCount = 12000000  # Limit the number of instances to 12 million to cap performance and memory impact of larger instance counts
 
 [settings.rtx-transient.meshlights]
@@ -635,7 +641,6 @@ enableAnonymousAppName = true
 samplingFactor = 1.0  # No test sampling for these tests
 
 dependencies = [
-    "omni.kit.test_suite.helpers",
 	"omni.kit.ui_test",
     #"omni.hydra.pxr",
     # NOTE: test_extensions.py (with imports from omni.kit.core.tests) need dependencies from some extensions

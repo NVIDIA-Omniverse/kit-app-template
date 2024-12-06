@@ -1,18 +1,4 @@
 # -- Application templates --
-[templates."kit_service"]
-class = "ApplicationTemplate"
-name = "Kit Service"
-url = "."
-subpath = "apps/kit_service/kit_service.kit"
-variables.application_name = "my_company.my_service"
-variables.application_display_name = "My Service"
-variables.version = "0.1.0"
-
-[[templates."kit_service".extensions]]
-template = "kit_service_setup"
-type = "setup"
-
-
 [templates."kit_base_editor"]
 class = "ApplicationTemplate"
 name = "Kit Base Editor"
@@ -45,6 +31,11 @@ template = "omni_default_streaming"
 type = "streaming"
 
 
+[[templates."omni_usd_composer".applications]]
+template = "ovc_streaming"
+type = "ovc"
+
+
 [templates."omni_usd_explorer"]
 class = "ApplicationTemplate"
 name = "USD Explorer"
@@ -61,6 +52,11 @@ type = "setup"
 [[templates."omni_usd_explorer".applications]]
 template = "omni_default_streaming"
 type = "streaming"
+
+
+[[templates."omni_usd_explorer".applications]]
+template = "ovc_streaming"
+type = "ovc"
 
 
 [templates."omni_usd_viewer"]
@@ -80,6 +76,7 @@ type = "extra"
 template = "omni_usd_viewer_setup"
 type = "setup"
 
+
 [[templates."omni_usd_viewer".applications]]
 template = "omni_gdn_streaming"
 type = "gdn"
@@ -87,6 +84,19 @@ type = "gdn"
 [[templates."omni_usd_viewer".applications]]
 template = "omni_default_streaming"
 type = "streaming"
+
+[templates."kit_service"]
+class = "ApplicationTemplate"
+name = "Kit Service"
+url = "."
+subpath = "apps/kit_service/kit_service.kit"
+variables.application_name = "my_company.my_service"
+variables.application_display_name = "My Service"
+variables.version = "0.1.0"
+
+[[templates."kit_service".extensions]]
+template = "kit_service_setup"
+type = "setup"
 
 
 # -- Application Layer templates --
@@ -103,6 +113,14 @@ class = "ApplicationLayerTemplate"
 name = "GDN Streaming"
 url = "."
 subpath = "apps/streaming_configs/gdn_stream.kit"
+variables.version = "0.1.0"
+
+
+[templates."omni_ovc_streaming"]
+class = "ApplicationLayerTemplate"
+name = "Omniverse Cloud Streaming"
+url = "."
+subpath = "apps/streaming_configs/ovc_stream.kit"
 variables.version = "0.1.0"
 
 
@@ -178,7 +196,7 @@ variables.version = "0.1.0"
 
 
 [templates."omni_usd_viewer_messaging"]
-class = "ExtensionTemplate"
+class = "SetupExtensionTemplate"
 name = "Omni USD Viewer Messaging"
 url = "."
 subpath = "extensions/usd_viewer.messaging/template"
