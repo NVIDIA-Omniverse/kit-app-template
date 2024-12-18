@@ -2,6 +2,22 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [106.5.0] - 2024-12-18
+
+### Added
+- Added `app.environment` name setting for all kit file templates
+
+### Removed
+- Removed `WALK_VISIBLE_PATH` from USD Explorer Setup Extension
+
+### Changed
+- Updated to `Kit 106.5.0`
+  - [Kit 106.5 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/106_5.html)
+  - [Kit 106.5 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/106_5_highlights.html)
+- Optimized OVC streaming file kit settings for OVC streaming deployments
+
+### Fixed
+- Updated Editor tutorial away from deprecated methods to use action based method for show/hide of menus
 
 ## [106.4.0] - 2024-11-18
 

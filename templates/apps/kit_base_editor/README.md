@@ -224,6 +224,8 @@ You will be prompted to select a `.kit` file to serve as the application to laun
 
 For example, if you are containerizing an application for streaming, select the `{your-app-name}_streaming.kit` file to ensure the correct application configuration is launched within the container.
 
+> **NOTE:** If creating a container for Omniverse Cloud Managed PaaS (OVC), select the `{your-app-name}_ovc.kit` file to ensure the proper settings are used for that platform.
+
 Similar to desktop packaging, the container option allows for specifying a package name using the `--name` flag to name the container image:
 
 **Linux:**

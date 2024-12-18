@@ -62,7 +62,9 @@ name = "{{ application_display_name }}"
 renderer.resolution.width = 1920
 renderer.resolution.height = 1080
 useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
-extensions.supportedTargets.config = ["release"]
+
+[settings.app.environment]
+name = "{{ application_display_name }}"
 
 [settings.app.usdrt.population.utils]
 mergeInstances = false

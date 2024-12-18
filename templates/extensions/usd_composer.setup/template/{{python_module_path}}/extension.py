@@ -18,11 +18,7 @@ import webbrowser
 from pathlib import Path
 
 
-
-import carb.imgui as _imgui
-import carb.input
-import carb.settings
-import carb.tokens
+import carb
 import omni.ext
 import omni.kit.app
 import omni.kit.commands
@@ -169,22 +165,22 @@ class CreateSetupExtension(omni.ext.IExt):
             else:
                 window_title.set_app_version(app_version)
 
-        # setup some imgui Style overide
-        imgui = _imgui.acquire_imgui()
-        imgui.push_style_color(
-            _imgui.StyleColor.ScrollbarGrab,
-            carb.Float4(0.4, 0.4, 0.4, 1)
-        )
-        imgui.push_style_color(
-            _imgui.StyleColor.ScrollbarGrabHovered,
-            carb.Float4(0.6, 0.6, 0.6, 1)
-        )
-        imgui.push_style_color(
-            _imgui.StyleColor.ScrollbarGrabActive,
-            carb.Float4(0.8, 0.8, 0.8, 1)
-        )
+        imgui_style_applied = False
+        try:
+            # using imgui directly to adjust some color and Variable
+            import carb.imgui as _imgui
+            imgui = _imgui.acquire_imgui()
+            if imgui.is_valid():
+                imgui.push_style_color(_imgui.StyleColor.ScrollbarGrab, carb.Float4(0.4, 0.4, 0.4, 1))
+                imgui.push_style_color(_imgui.StyleColor.ScrollbarGrabHovered, carb.Float4(0.6, 0.6, 0.6, 1))
+                imgui.push_style_color(_imgui.StyleColor.ScrollbarGrabActive, carb.Float4(0.8, 0.8, 0.8, 1))
+                imgui.push_style_var_float(_imgui.StyleVar.DockSplitterSize, 2)
+                imgui_style_applied = True
+        except ImportError:
+            pass
 
-        imgui.push_style_var_float(_imgui.StyleVar.DockSplitterSize, 2)
+        if not imgui_style_applied:
+            carb.log_error("Style may not be as expected (carb.imgui was not valid)")
 
         layout_file = f"{DATA_PATH}/layouts/default.json"
 

@@ -42,7 +42,7 @@ class SunnySkyStage:
                 context_name=usd_context_name
             )
 
-            texture_path = carb.tokens.get_tokens_interface().resolve("${% raw %}{{% endraw %}{{ extension_name }}{% raw %}}{% endraw %}/data/light_rigs/HDR/partly_cloudy.hdr")
+            texture_path = carb.tokens.get_tokens_interface().resolve("${omni.light_rigs}/light_rig_data/light_rigs/HDR/partly_cloudy.hdr")
 
             # create Sky
             omni.kit.commands.execute(

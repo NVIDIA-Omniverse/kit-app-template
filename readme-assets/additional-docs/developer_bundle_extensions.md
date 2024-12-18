@@ -27,8 +27,6 @@ The `launch` tool will prompt for a selection of a `.kit` file to launch. Select
 Developer Utilities are designed to assist developers in various aspects of application development, from debugging to extension management. These utilities offer insight into the internal workings of an application and its extensions.
 
 - **[Developer > Extensions] omni.kit.window.extensions**: The most popular utility, this tool manages available extensions. It provides quick access to the extension registry and local extensions, simplifying the process of adding dependencies for developer extensions and applications.
-    - **omni.kit.widget.ext_win.create_extension**: A widget to add the ability to create an extension within the extension window.
-    - **omni.kit.widget.ext_win.dependency_graph**: Exposes the dependency graph capabilities for the extension window.
 
 - **[Developer > Commands] omni.kit.window.commands**: Captures the command history within a running application. It is particularly useful for developers who interact with the UI, allowing them to capture the commands used to execute specific functionalities.
 

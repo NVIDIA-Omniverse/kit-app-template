@@ -99,6 +99,7 @@ template_name = "omni.usd_composer"
 "omni.kit.viewport.rtx" = {}
 "omni.kit.viewport.actions" = {}
 "omni.kit.viewport.bundle" = {}
+"omni.kit.viewport.menubar.framerate" = {}
 "omni.kit.viewport.menubar.lighting" = {}
 "omni.kit.viewport_widgets_manager" = {}
 "omni.kit.widget.collection" = {}
@@ -106,6 +107,7 @@ template_name = "omni.usd_composer"
 "omni.kit.widget.filebrowser" = {}
 "omni.kit.widget.layers" = {}
 "omni.kit.widget.live" = {}
+"omni.kit.viewport.scene_camera_model" = {}
 "omni.kit.widget.timeline" = {}
 "omni.kit.widget.versioning" = {}
 "omni.kit.widgets.custom" = {}
@@ -151,7 +153,7 @@ template_name = "omni.usd_composer"
 
 # Windows only extensions
 [dependencies."filter:platform"."windows-x86_64"]
-"omni.kit.window.modifier.titlebar" = {version = "=105.2.16"}  # Use exact version to avoid supported target platform check
+"omni.kit.window.modifier.titlebar" = {}
 
 
 [settings.app]
@@ -163,12 +165,15 @@ useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 show_developer_preference_section = false
 
 
+[settings.app.environment]
+name = "{{ application_display_name }}"
+
+
 [settings.app.extensions]
 skipPublishVerification = false
 registryEnabled = true
 supportedTargets.platform = []
-supportedTargets.config = ["release"]
-
+supportedTargets.config = []
 
 # Linux excluded extensions. For all of them set exact=true to not be included into generated version lock.
 # That will break linux otherwise, as version lock is platform agnostic currently.
@@ -223,9 +228,6 @@ defaults.fillViewport = true
 experience = "{{ application_display_name }}"
 
 [settings.exts]
-"omni.kit.browser.texture".folders = [
-	"http://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Vegetation",
-]
 "omni.kit.menu.utils".logDeprecated = false
 "omni.kit.mesh.raycast".bvhBuildOnFirstRequired = true
 "omni.kit.renderer.core".imgui.enableMips = true
@@ -252,17 +254,17 @@ folders = [
     "vMaterials::https://omniverse-content-production.s3.us-west-2.amazonaws.com/Materials/vMaterials_2/",
 ]
 
+[settings.exts."omni.kit.viewport.menubar.lighting"]
+rigs = "${omni.light_rigs}/light_rig_data/light_rigs"  # Setup path to the light-rig items in the lighting menu
 
 [settings.exts."omni.kit.window.content_browser"]
 enable_thumbnail_generation_images = false # temp fix to avoid leaking python processes
-
 
 [settings.exts."omni.kit.window.environment"]
 folders = [
     "https://omniverse-content-production.s3.us-west-2.amazonaws.com/Environments/2024_1/"
 ]
 folders_hide_in_category = ["2024_1"]
-
 
 [settings.exts."omni.kit.window.modifier.titlebar"]
 changeWindowRegion = true
@@ -293,6 +295,10 @@ ui_show_list = [
 	"Add MDL File",
 	"Create MDL Graph",
 ]
+
+[settings.exts."omni.kit.viewport.menubar.framerate"]
+visible = true
+currentPreset = "60x2"
 
 
 [settings.persistent.app]

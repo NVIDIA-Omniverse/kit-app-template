@@ -26,7 +26,7 @@ name = "{{ application_display_name }} GDN Streaming"  # Skip checking supported
 titleVersion = "1.0.0"  # this is used in our setup file to display some Version to the user in the title bar
 useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 vsync = false  # Vsync disabled by default, can be set to true for L40 or similar
-extensions.supportedTargets.config = ["release"]
+
 
 [settings.app.content]
 # this will create a stage during the statup process you don't have too,
@@ -43,7 +43,7 @@ ignoreUnsavedOnExit = true  # enable quiting without confirmation
 maxFramesInFlight = 2
 
 
-[settings.app.runloops]
+[settings.app.runLoops]
 main.rateLimitEnabled = true  # Enable rate limiting on the main thread
 main.rateLimitFrequency = 60  # Lock it to 60fps
 main.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync

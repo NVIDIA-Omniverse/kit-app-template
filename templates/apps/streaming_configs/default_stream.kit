@@ -39,7 +39,7 @@ rtx-transient.dlssg.enabled = false  # Disable DLSS otherwise it can push the fr
 
 [settings.app.extensions]
 registryEnabled = true
-supportedTargets.config = ["release"]  # Skip checking supported platform/config when building
+supportedTargets.platform = []  # Skip checking supported platform/config when building
 
 [settings.app.exts]
 folders.'++' = [  # Search paths for extensions.
@@ -58,7 +58,7 @@ webrtcEtli = true  # Only log error or critical level issues.
 [settings.app.rendergraph]
 maxFramesInFlight = 2
 
-[settings.app.runloops]
+[settings.app.runLoops]
 main.rateLimitEnabled = true  # Enable rate limiting on the main thread
 main.rateLimitFrequency = 60  # Lock it to 60fps
 main.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync

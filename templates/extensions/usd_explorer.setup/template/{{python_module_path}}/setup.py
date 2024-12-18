@@ -162,7 +162,7 @@ class SetupExtension(omni.ext.IExt):
 
         # remove the user defined layout so that we always load the default
         # layout when startup
-        if not self._settings.get_as_bool('/app/ovc_deploytment'):
+        if not self._settings.get_as_bool('/app/ovc_deployment'):
             with suppress(FileNotFoundError):
                 os.remove(self.layout_user_path)
 

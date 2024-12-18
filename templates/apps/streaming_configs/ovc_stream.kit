@@ -32,21 +32,21 @@ renderer.resolution.width = 1920
 useFabricSceneDelegate = false
 vsync = false  # Vsync disabled by default, can be set to true for L40 or similar
 window.scaleToMonitor = true
-window.showStartup = false
 window.height = 1080
 window.width = 1920
 
 [settings]
 rtx.post.aa.op = 3
-rtx.hydra.geometrystreaming.gpuBudgetMB = 32000
+rtx.hydra.geometrystreaming.gpuBudgetMB = 64000
 rtx.hydra.geometrystreaming.instanceBudget = 14388608
 rtx.verifyDriverVersion.enabled = false
 rtx-transient.dlssg.enabled = true
+rtx-transient.scenedb.forceMaxTLASInstancesLimit = 15000000
 rtx-transient.scenedb.instanceBudget=1000000
 
 [settings.app.extensions]
 registryEnabled = true
-supportedTargets.config = ["release"]  # Skip checking supported platform/config when building
+supportedTargets.platform = []  # Skip checking supported platform/config when building
 
 [settings.app.exts]
 folders.'++' = [  # Search paths for extensions.
@@ -59,49 +59,28 @@ folders.'++' = [  # Search paths for extensions.
 ignoreUnsavedOnExit = true
 
 [settings.app.livestream]
+maxPushStreamDataAttempts = 1  # Number of attempts to push stream data
 skipCapture = 1  # livestream skipCapture ON for local streaming
 webrtcEtli = true  # Only log error or critical level issues.
 
 [settings.app.rendergraph]
 maxFramesInFlight = 2
 
-[settings.app.runloops]
-main.rateLimitEnabled = true  # Enable rate limiting on the main thread
-main.rateLimitFrequency = 60  # Lock it to 60fps
-main.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
-main.syncToPresent = true  # Sync with the present thread, smooths UI updates
-present.rateLimitEnabled = true  # Rate limit the present thread
-present.rateLimitFrequency = 60  # Lock it to 60fps
-present.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
-rendering_0.rateLimitEnabled = true  # Enable rate limiting for the rendering thread
-rendering_0.rateLimitFrequency = 60  # Lock it to 60fps
-rendering_0.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
-rendering_0.syncToPresent = true  # Sync with the present tread, smooths UI updates
-rendering_1.rateLimitEnabled = true  # Enable rate limiting for the rendering thread
-rendering_1.rateLimitFrequency = 60  # Lock it to 60fps
-rendering_1.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
-rendering_1.syncToPresent = true  # Sync with the present tread, smooths UI updates
-
-[settings.app.runLoopsGlobal]
-syncToPresent = true  # Sync everything with the present thread
-
-[settings.app.viewport]
-defaults.tickRate = 60  # Lock to 60fps[settings.app]
-
 [settings.exts."omni.kit.renderer.core"]
 present.enabled = true  # Enable the present thread
 present.presentAfterRendering = true  # Ensure the present thread waits for the rendering to complete[settings]
 
 [settings.exts."omni.kit.window.filepicker"]
-# The list has to be padded out to at least 3 elements or else "My Computer" will be injected automatically
-show_only_collections = ["bookmarks", "omniverse", ""]
-# Do not allow connections to new servers when running on OVC.
-show_add_new_connection = false
+show_only_collections.2 = ""
+show_add_new_connection = false  # Do not allow connections to new servers when running on OVC.
 
+[settings.exts."omni.kit.window.content_browser"]
+show_only_collections.2 = ""
 
 [settings.UJITSO]
 # UJITSO supports loading cached representations of assets.
 # These settings controls what is loaded from cache and where from.
+datastore.localCachePath = "/home/ubuntu/.nvidia-omniverse/ujitso/localCachePath"
 enabled = true	# Enable or disable the use of UJITSO cache.
 geometry = true
 

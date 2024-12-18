@@ -32,8 +32,6 @@ SETTING_NAVIGATION_ROOT = "/exts/omni.kit.tool.navigation/"
 NAVIGATION_BAR_VISIBLE_PATH = \
     "/exts/omni.kit.viewport.navigation.core/isVisible"
 APPLICATION_MODE_PATH = "/app/application_mode"
-WALK_VISIBLE_PATH = \
-    "/persistent/exts/omni.kit.viewport.navigation.walk/visible"
 CAPTURE_VISIBLE_PATH = \
     "/persistent/exts/omni.kit.viewport.navigation.capture/visible"
 MARKUP_VISIBLE_PATH = \
@@ -97,7 +95,6 @@ class Navigation:
                 self._on_welcome_window_visibility_change
             )
 
-        self._settings.set(WALK_VISIBLE_PATH, False)
         self._settings.set(MARKUP_VISIBLE_PATH, True)
         self._settings.set(WAYPOINT_VISIBLE_PATH, True)
         self._settings.set(TELEPORT_SEPARATOR_VISIBLE_PATH, True)

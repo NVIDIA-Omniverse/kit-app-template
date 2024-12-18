@@ -24,7 +24,7 @@ class TestSetupToolExtension(OmniUiTest):
         self.assertTrue(manager.is_extension_enabled(ext_id))
 
         app = omni.kit.app.get_app()
-        for _ in range(500):
+        for _ in range(100):
             await app.next_update_async()
 
         manager.set_extension_enabled(ext_id, False)

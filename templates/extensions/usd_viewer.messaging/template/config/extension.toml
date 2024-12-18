@@ -23,6 +23,8 @@ repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of th
 
 [dependencies]
 "omni.kit.livestream.messaging" = {}
+"omni.usd" = {}
+"omni.kit.viewport.utility" = {}
 
 
 [settings]
