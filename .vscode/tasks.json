@@ -104,22 +104,6 @@
                 "reveal": "always",
                 "focus": false
             }
-        },
-        {
-            "label": "Build All Templates",
-            "type": "shell",
-            "command": "${workspaceRoot}${/}tools${/}packman${/}python.sh",
-            "windows": {
-                "command": "${workspaceRoot}${/}tools${/}packman${/}python.bat"
-            },
-            "args": [
-                "${workspaceRoot}${/}.vscode${/}template_builder.py",
-            ],
-            "group": "none",
-            "presentation": {
-                "reveal": "always",
-                "focus": false
-            }
         }
     ]
 }
