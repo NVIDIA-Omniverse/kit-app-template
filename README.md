@@ -4,6 +4,12 @@
   <img src="readme-assets/kit_app_template_banner.png" width=100% />
 </p>
 
+## :memo: Feature Branch Information
+**This repository is based on a Feature Branch of the Omniverse Kit SDK.** Feature Branches are regularly updated and best suited for testing and prototyping.
+For stable, production-oriented development, please use the [Production Branch of the Kit SDK on NVIDIA GPU Cloud (NGC)](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/omniverse/collections/production_branch_december_2024).
+
+[Omniverse Release Information](https://docs.omniverse.nvidia.com/dev-overview/latest/omniverse-releases.html#)
+
 
 ## Overview
 
