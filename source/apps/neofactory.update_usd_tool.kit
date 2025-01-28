@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = 'Neofactory Update USD Tool'
+version = '0.1.0'
+description = """This Simple application shows you how to make a Kit Service"""
+keywords = ["app"]  # That makes it browsable in UI with "app" filter
+template_name = "kit_service"
+
+
+[dependencies]
+"omni.kit.telemetry" = {} # Telemetry
+"neofactory.update_usd_tool.setup" = { order = 10000 }
+
+
+[settings.app]
+name = "Neofactory Update USD Tool"
+
+
+[settings.app.environment]
+name = "Neofactory Update USD Tool"
+
+
+[settings.app.exts]
+folders.'++' = [  # Search paths for extensions.
+    "${app}/../exts",
+    "${app}/../extscache/"
+]
+
+
+[settings.telemetry]
+# Anonymous Kit application usage telemetry
+enableAnonymousData = true
+enableAnonymousAppName = true
+
+[template]
+type = "ApplicationTemplate" # Repo Template Metadata
