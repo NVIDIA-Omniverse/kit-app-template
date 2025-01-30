@@ -1,3 +1,9 @@
+# NeofactoryNotes
+Example of valid asset location for rest api:
+/home/keith/Documents/scratch
+
+
+
 # Omniverse Kit App Template
 
 <p align="center">

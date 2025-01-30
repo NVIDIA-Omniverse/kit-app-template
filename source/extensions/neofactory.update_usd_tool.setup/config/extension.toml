@@ -24,6 +24,7 @@ repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of th
 
 [dependencies]
 "omni.kit.commands" = {}
+"omni.kit.primitive.mesh" = {}
 "omni.services.core" = {}
 "omni.services.transport.server.http" = {}
 "omni.usd" = {}
