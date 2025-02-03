@@ -140,6 +140,20 @@ async def generate_scene(scene_data: FactorySceneRequest):
             table_rotate.Set((0, 0, 180))
 
 
+        # Add CMM
+        if scene_data.include_cmm:
+            cmm_asset_name = "HexagonGlobalS"
+            cmm_asset_path = f"{asset_library_path}cell/Hexagon Global/HexagonGlobalS_USD/HexagonGlobalS.usd"
+            cmm_prim_path = f"/{cell_asset_name}/{cmm_asset_name}"
+            cmm_prim = UsdGeom.Xform.Define(stage, cmm_prim_path)
+            cmm_prim.GetPrim().GetReferences().AddReference(cmm_asset_path)
+            cmm_translate = cmm_prim.AddTranslateOp()
+            cmm_translate.Set(Gf.Vec3d(-100, 0, 0))
+            cmm_rotate = cmm_prim.AddRotateXYZOp()
+            cmm_rotate.Set((-90, 0, 0))
+
+
+
 
 
 
