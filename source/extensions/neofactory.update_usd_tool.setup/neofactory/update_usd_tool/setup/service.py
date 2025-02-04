@@ -202,7 +202,7 @@ async def generate_scene(scene_data: FactorySceneRequest):
         single_track_prim.GetPrim().GetReferences().AddReference(single_track_library_path)
         # Transate first table
         single_track_translate = single_track_prim.AddTranslateOp()
-        single_track_translate.Set(Gf.Vec3d(0, 0, starting_coordinate_x + 150))
+        single_track_translate.Set(Gf.Vec3d(0, 0, starting_coordinate_x + 110))
         # Calculate track extent
         single_track_range = compute_bbox(single_track_prim)
         print(single_track_range.GetSize())
@@ -221,7 +221,7 @@ async def generate_scene(scene_data: FactorySceneRequest):
                 Gf.Vec3d(
                     0,
                     0,
-                    starting_coordinate_x + 62.6 - (single_track_width * i),
+                    starting_coordinate_x + 120 - ((single_track_width + 87)* i),
                     )
                 )
         # kuka_prim.GetPrim().GetReferences().AddReference(kuka_library_path)
