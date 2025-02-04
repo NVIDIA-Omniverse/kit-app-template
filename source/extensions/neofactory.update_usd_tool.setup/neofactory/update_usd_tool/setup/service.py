@@ -72,6 +72,7 @@ async def generate_scene(scene_data: FactorySceneRequest):
     cell_rotate.Set((0, -90, -90))
 
     # Add CNCs
+    cnc_prim = False
     cnc_asset_name = "UMA"
     cnc_asset_path = f"{asset_library_path}cell/UMC500/UMC500.usd"
     start_location = Gf.Vec3d(starting_coordinate_x, 202.92, 0.00)
@@ -95,16 +96,16 @@ async def generate_scene(scene_data: FactorySceneRequest):
         cmm_asset_name = "HexagonGlobalS"
         cmm_asset_path = f"{asset_library_path}cell/Hexagon Global/HexagonGlobalS_USD/HexagonGlobalS.usd"
         cmm_prim_path = f"{cell_asset_path}/{cmm_asset_name}"
-    #     cmm_prim_path = omni.usd.get_stage_next_free_path(
-    #         stage,
-    #         f"/{cell_asset_name}/{cmm_asset_name}",
-    #         True
-    # )
         cmm_prim = UsdGeom.Xform.Define(stage, cmm_prim_path)
         cmm_prim.GetPrim().GetReferences().AddReference(cmm_asset_path)
-        last_cnc_location = cnc_prim.GetPrim().GetProperty("xformOp:translate").Get()
+        if cnc_prim:
+            last_cnc_location = cnc_prim.GetPrim().GetProperty("xformOp:translate").Get()
+            cmm_translation = Gf.Vec3d(cnc_spacing + (cnc_x_extent / 2), -95, 0)
+        else:
+            last_cnc_location = start_location
+            cmm_translation = Gf.Vec3d(-100, 0, 0)
         cmm_translate = cmm_prim.AddTranslateOp()
-        cmm_translate.Set(last_cnc_location - Gf.Vec3d(cnc_spacing + (cnc_x_extent / 2), -95, 0))
+        cmm_translate.Set(last_cnc_location - cmm_translation)
         cmm_rotate = cmm_prim.AddRotateXYZOp()
         cmm_rotate.Set((0, 0, -90))
         cmm_scale = cmm_prim.AddScaleOp()
@@ -124,7 +125,7 @@ async def generate_scene(scene_data: FactorySceneRequest):
     # setup_table_rotate.Set((0, -90, -90))
 
     # Add Middle Table
-    if scene_data.cnc_machine_count > 0:
+    if scene_data.cnc_machine_count > 0 or scene_data.include_cmm:
         starting_x_buffer = 150
         middle_table_asset_name = "table"
         middle_table_library_path = f"{asset_library_path}cell/setupTable/setupTableGeo/New_Tables/setupTables/setupStationMiddle.usd"

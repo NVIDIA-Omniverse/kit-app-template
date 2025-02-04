@@ -14,7 +14,7 @@ class FactorySceneRequest(BaseModel):
     cnc_machine_count: int = Field(
         default=5,
         ge=0,
-        le=20,
+        le=7,
         title="CNC Machine Count",
         description="Number of CNC machines to include in the scene."
     )
