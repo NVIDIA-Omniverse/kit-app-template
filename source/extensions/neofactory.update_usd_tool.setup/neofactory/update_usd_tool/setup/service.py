@@ -10,7 +10,7 @@
 
 from pathlib import Path
 from pydantic import BaseModel, Field
-from math import floor
+from math import floor, ceil
 
 import omni.kit.commands
 import omni.usd
@@ -208,7 +208,8 @@ async def generate_scene(scene_data: FactorySceneRequest):
         print(single_track_range.GetSize())
         single_track_width = table_range.GetSize()[2]
         # Add additional tables
-        for i in range(1, floor(cell_width / single_track_width)):
+        single_track_buffer = 87
+        for i in range(1, ceil(cell_width / (single_track_width + single_track_buffer))):
             prim_path = omni.usd.get_stage_next_free_path(
                 stage,
                 single_track_asset_path,
@@ -221,9 +222,10 @@ async def generate_scene(scene_data: FactorySceneRequest):
                 Gf.Vec3d(
                     0,
                     0,
-                    starting_coordinate_x + 120 - ((single_track_width + 87)* i),
+                    starting_coordinate_x + 120 - ((single_track_width + single_track_buffer)* i),
                     )
                 )
+        # Add kuka
         # kuka_prim.GetPrim().GetReferences().AddReference(kuka_library_path)
         # xformable_kuka = UsdGeom.Xformable(kuka_prim)
         # Transate kuka
