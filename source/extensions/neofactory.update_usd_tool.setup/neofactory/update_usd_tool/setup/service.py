@@ -75,8 +75,8 @@ async def generate_scene(scene_data: FactorySceneRequest):
     cnc_asset_name = "UMA"
     cnc_asset_path = f"{asset_library_path}cell/UMC500/UMC500.usd"
     start_location = Gf.Vec3d(starting_coordinate_x, 202.92, 0.00)
-    cmc_spacing = 50
-    cmc_x_extent = 340
+    cnc_spacing = 50
+    cnc_x_extent = 340
     for i in range(scene_data.cnc_machine_count):
         prim_path = omni.usd.get_stage_next_free_path(
             stage,
@@ -86,9 +86,29 @@ async def generate_scene(scene_data: FactorySceneRequest):
         cnc_prim = UsdGeom.Xform.Define(stage, prim_path)
         cnc_prim.GetPrim().GetReferences().AddReference(cnc_asset_path)
         cnc_translate = cnc_prim.AddTranslateOp()
-        cnc_translate.Set(start_location -  Gf.Vec3d((cmc_spacing + cmc_x_extent) * i, 0, 0))
+        cnc_translate.Set(start_location -  Gf.Vec3d((cnc_spacing + cnc_x_extent) * i, 0, 0))
         cnc_rotate = cnc_prim.AddRotateXYZOp()
         cnc_rotate.Set((0, 0, 90))
+
+    # Add CMM next to last CNC
+    if scene_data.include_cmm:
+        cmm_asset_name = "HexagonGlobalS"
+        cmm_asset_path = f"{asset_library_path}cell/Hexagon Global/HexagonGlobalS_USD/HexagonGlobalS.usd"
+        cmm_prim_path = f"{cell_asset_path}/{cmm_asset_name}"
+    #     cmm_prim_path = omni.usd.get_stage_next_free_path(
+    #         stage,
+    #         f"/{cell_asset_name}/{cmm_asset_name}",
+    #         True
+    # )
+        cmm_prim = UsdGeom.Xform.Define(stage, cmm_prim_path)
+        cmm_prim.GetPrim().GetReferences().AddReference(cmm_asset_path)
+        last_cnc_location = cnc_prim.GetPrim().GetProperty("xformOp:translate").Get()
+        cmm_translate = cmm_prim.AddTranslateOp()
+        cmm_translate.Set(last_cnc_location - Gf.Vec3d(cnc_spacing + (cnc_x_extent / 2), -95, 0))
+        cmm_rotate = cmm_prim.AddRotateXYZOp()
+        cmm_rotate.Set((0, 0, -90))
+        cmm_scale = cmm_prim.AddScaleOp()
+        cmm_scale.Set((1.4, 1.4, 1.4))
 
     # Calculate Cell Width
     cell_range = compute_bbox(cell_prim)
@@ -107,7 +127,7 @@ async def generate_scene(scene_data: FactorySceneRequest):
     if scene_data.cnc_machine_count > 0:
         starting_x_buffer = 150
         middle_table_asset_name = "table"
-        middle_table_library_path = f"{asset_library_path}cell/setupTable/setupTableGeo/New_Tables/setupTables/st_Midle.usd"
+        middle_table_library_path = f"{asset_library_path}cell/setupTable/setupTableGeo/New_Tables/setupTables/setupStationMiddle.usd"
         middle_table_asset_path = f"{setup_table_asset_path}/{middle_table_asset_name}"
         middle_table_prim = UsdGeom.Xform.Define(stage, middle_table_asset_path)
         middle_table_prim.GetPrim().GetReferences().AddReference(middle_table_library_path)
@@ -139,18 +159,6 @@ async def generate_scene(scene_data: FactorySceneRequest):
             table_rotate = table_prim.AddRotateXYZOp()
             table_rotate.Set((0, 0, 180))
 
-
-        # Add CMM
-        if scene_data.include_cmm:
-            cmm_asset_name = "HexagonGlobalS"
-            cmm_asset_path = f"{asset_library_path}cell/Hexagon Global/HexagonGlobalS_USD/HexagonGlobalS.usd"
-            cmm_prim_path = f"/{cell_asset_name}/{cmm_asset_name}"
-            cmm_prim = UsdGeom.Xform.Define(stage, cmm_prim_path)
-            cmm_prim.GetPrim().GetReferences().AddReference(cmm_asset_path)
-            cmm_translate = cmm_prim.AddTranslateOp()
-            cmm_translate.Set(Gf.Vec3d(-100, 0, 0))
-            cmm_rotate = cmm_prim.AddRotateXYZOp()
-            cmm_rotate.Set((-90, 0, 0))
 
 
 
