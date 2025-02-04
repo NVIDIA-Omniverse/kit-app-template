@@ -124,9 +124,31 @@ async def generate_scene(scene_data: FactorySceneRequest):
     # setup_table_rotate = setup_table_prim.AddRotateXYZOp()
     # setup_table_rotate.Set((0, -90, -90))
 
-    # Add Middle Table
+    # Add Tables and Tools
     if scene_data.cnc_machine_count > 0 or scene_data.include_cmm:
         starting_x_buffer = 150
+        additional_tables = 0
+        # first add tool station
+        if scene_data.include_tool_station:
+            additional_tables = 2
+            # tool_cell_asset_name = "toolCell"
+            # tool_cell_asset_path = f"{cell_asset_path}/{tool_cell_asset_name}"
+            # tool_cell_prim = UsdGeom.Xform.Define(stage, tool_cell_asset_path)
+            tool_table_asset_name = "toolTable"
+            tool_table_library_path = f"{asset_library_path}cell/tools/toolCell.usd"
+            tool_table_asset_path = f"{cell_asset_path}/{tool_table_asset_name}"
+            tool_table_prim = UsdGeom.Xform.Define(stage, tool_table_asset_path)
+            tool_table_prim.GetPrim().GetReferences().AddReference(tool_table_library_path)
+            # Calculate tool extent
+            tool_range = compute_bbox(tool_table_prim)
+            tool_width = tool_range.GetSize()[2]
+            # Transate tools
+            tool_table_translate = tool_table_prim.AddTranslateOp()
+            tool_table_translate.Set(Gf.Vec3d(starting_coordinate_x + starting_x_buffer, -100, 0))
+            tool_table_rotate = tool_table_prim.AddRotateXYZOp()
+            tool_table_rotate.Set((0, 0, 180))
+            starting_x_buffer = -18.3
+        # Add first table
         middle_table_asset_name = "table"
         middle_table_library_path = f"{asset_library_path}cell/setupTable/setupTableGeo/New_Tables/setupTables/setupStationMiddle.usd"
         middle_table_asset_path = f"{setup_table_asset_path}/{middle_table_asset_name}"
@@ -141,7 +163,7 @@ async def generate_scene(scene_data: FactorySceneRequest):
         middle_table_rotate = middle_table_prim.AddRotateXYZOp()
         middle_table_rotate.Set((0, 0, 180))
         # Add additional tables
-        for i in range(1, floor(cell_width / table_width)):
+        for i in range(1, floor(cell_width / table_width) - additional_tables):
             prim_path = omni.usd.get_stage_next_free_path(
                 stage,
                 middle_table_asset_path,
