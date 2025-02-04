@@ -100,7 +100,7 @@ async def generate_scene(scene_data: FactorySceneRequest):
         cmm_prim.GetPrim().GetReferences().AddReference(cmm_asset_path)
         if cnc_prim:
             last_cnc_location = cnc_prim.GetPrim().GetProperty("xformOp:translate").Get()
-            cmm_translation = Gf.Vec3d(cnc_spacing + (cnc_x_extent / 2), -95, 0)
+            cmm_translation = Gf.Vec3d(cnc_spacing + (cnc_x_extent / 2), -125, 0)
         else:
             last_cnc_location = start_location
             cmm_translation = Gf.Vec3d(-100, 0, 0)
@@ -181,8 +181,74 @@ async def generate_scene(scene_data: FactorySceneRequest):
                 )
             table_rotate = table_prim.AddRotateXYZOp()
             table_rotate.Set((0, 0, 180))
+        # Add kuka
+        kuka_asset_name = "linear6AxisKuka"
+        kuka_library_path = f"{asset_library_path}cell/kuka/linear6AxisKuka.usd"
+        kuka_asset_path = f"{cell_asset_path}/{kuka_asset_name}"
+        kuka_prim = UsdGeom.Xform.Define(stage, kuka_asset_path)
+        # Add Track
+        track_asset_name = "track"
+        track_asset_path = f"{kuka_asset_path}/{track_asset_name}"
+        track_prim = UsdGeom.Xform.Define(stage, track_asset_path)
+        track_translate = track_prim.AddTranslateOp()
+        track_translate.Set((0, 65, 9.3))
+        track_rotate = track_prim.AddRotateXYZOp()
+        track_rotate.Set((90, 0, 90))
+        # Add single tracks
+        single_track_asset_name = "singleTrack"
+        single_track_library_path = f"{asset_library_path}cell/kuka/trackSingle/trackSingle.usd"
+        single_track_asset_path = f"{track_asset_path}/{single_track_asset_name}"
+        single_track_prim = UsdGeom.Xform.Define(stage, single_track_asset_path)
+        single_track_prim.GetPrim().GetReferences().AddReference(single_track_library_path)
+        # Transate first table
+        single_track_translate = single_track_prim.AddTranslateOp()
+        single_track_translate.Set(Gf.Vec3d(0, 0, starting_coordinate_x + 150))
+        # Calculate track extent
+        single_track_range = compute_bbox(single_track_prim)
+        print(single_track_range.GetSize())
+        single_track_width = table_range.GetSize()[2]
+        # Add additional tables
+        for i in range(1, floor(cell_width / single_track_width)):
+            prim_path = omni.usd.get_stage_next_free_path(
+                stage,
+                single_track_asset_path,
+                False
+            )
+            single_track_prim = UsdGeom.Xform.Define(stage, prim_path)
+            single_track_prim.GetPrim().GetReferences().AddReference(single_track_library_path)
+            single_track_translate = single_track_prim.AddTranslateOp()
+            single_track_translate.Set(
+                Gf.Vec3d(
+                    0,
+                    0,
+                    starting_coordinate_x + 62.6 - (single_track_width * i),
+                    )
+                )
+        # kuka_prim.GetPrim().GetReferences().AddReference(kuka_library_path)
+        # xformable_kuka = UsdGeom.Xformable(kuka_prim)
+        # Transate kuka
+        # kuka_xform_ops = kuka_prim.GetOrderedXformOps()
+        # for xform_op in kuka_xform_ops:
+        #     if xform_op.GetOpName() == "xformOp:translate":
+        #         xform_op.Set((940.95, 112.719, 36.96))
+        #     if xform_op.GetOpName() == "xformOp:rotateXYZ":
+        #         xform_op.Set((90, 0, -90))
+        # track_prim = kuka_prim.GetPrim().GetChild("track")
+        # for track_single in track_prim.GetPrim().GetAllChildren():
+        #     print(track_single)
 
-
+        # kuka_translate = kuka_prim.AddTranslateOp()
+        # kuka_translate.Set(Gf.Vec3d(starting_coordinate_x + starting_x_buffer, -100, 0))
+        # kuka_rotate = xformable_kuka.AddRotateXYZOp()
+        # print('*'*79)
+        # print(dir(kuka_prim))
+        # print(kuka_prim.GetXformOpOrderAttr())
+        # print('*'*79)
+        # print(kuka_xform_ops)
+        # print(kuka_xform_ops[1].GetOpName())
+        # print(dir(kuka_xform_ops[0]))
+        # kuka_rotate = xformable_kuka.GetRotateXYZOp()
+        # kuka_rotate = kuka_prim.GetProperty("xformOp:rotateXYZ")
 
 
 
