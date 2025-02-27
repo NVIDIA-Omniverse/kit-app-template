@@ -13,9 +13,11 @@ This NVIDIA Software License Agreement is entered into between the entity you re
 
 By registering to use or using the Software Offerings, Customer is affirming that it has read the Agreement and agrees to its terms. If Customer does not have the required authority to enter into the Agreement or if it does not accept all Agreement terms and conditions, Customer should not register to use or use the Software Offerings.
 
+You can find a short summary explaining how you can use certain Software Offerings here.
+
 LICENSE
 
-Grant. Subject to the terms of the Agreement, Customer’s Order Form and license parameters of an Enterprise Product Part Number, and payment of applicable fees, NVIDIA grants Customer a limited, non-exclusive, non-transferable, non-sublicensable (except as expressly granted in the Agreement) license during the Term to install, use and reproduce the Software.
+Grant. Subject to the terms of the Agreement, Customer’s Order Form and license parameters of an Enterprise Product Part Number, and payment of applicable fees, NVIDIA grants Customer a limited, worldwide, non-exclusive, non-transferable, non-sublicensable (except as expressly granted in the Agreement) license during the Term to install, use and reproduce the Software.
 
 Limited Grants. The grants in Section 1.1 above are further limited as follows:
 
@@ -23,7 +25,7 @@ Users that receive an Enterprise Product identified as “not for resale” or �
 
 Users that receive an Enterprise Product for trial may exercise the grants in Section 1.1 solely for the trial period.
 
-Authorized Users. Under the Agreement, Customer Personnel may access and use the Software Offerings and Persons may access and use Customer Products. As between NVIDIA and Customer, Customer is responsible for supporting the use of Customer Products. Customer is responsible for the compliance with the terms of the Agreement. Any act or omission that if committed by Customer would constitute a breach of the Agreement will be deemed to constitute a breach of the Agreement if committed by Customer’s Authorized Users.
+Authorized Users. Under the Agreement, Customer Personnel may access and use the Software Offerings and Customer End Users may access and use Customer Products. As between NVIDIA and Customer, Customer is responsible for supporting the use of Customer Products. Customer is responsible for the compliance with the terms of the Agreement. Any act or omission that if committed by Customer would constitute a breach of the Agreement will be deemed to constitute a breach of the Agreement if committed by Customer’s Authorized Users.
 
 License Types. The terms in this Section 1.4 apply only to Enterprise Products, not to Community Products. The license types below describe features that may be part of an Enterprise Product; and not all license types may be available for each Enterprise Product. Enterprise Products are licensed under the following license types: Subscription per CPU Socket, Subscription per GPU, Subscription per Node, Subscription per CCU, Subscription per HCA, Usage Based Subscription, or Perpetual license. Once Customer transitions from a Community Product to an Enterprise Product version under a paid Subscription or Perpetual license, any Customer use of such Enterprise Product must be under a paid Subscription or Perpetual license. Customer’s order, license key or the product description will indicate the parameters of Customer’s license.
 
@@ -53,7 +55,7 @@ COMPONENTS UNDER OTHER LICENSES.
 
 Component Licenses. The Software may include or be distributed with Separate Components. The Separate Components are subject to the applicable OSS Licenses or other license terms, including any proprietary notices, disclaimers, requirements and extended use rights; except that the Agreement will prevail regarding the use of third-party open source software, unless NVIDIA components are provided under an OSS License or a third-party OSS License requires its license terms to prevail.
 
-No License Provided. Customer acknowledges and agrees that it is Customer’s sole responsibility to obtain any additional third-party licenses required to make, have made, use, have used, sell, import, and offer for sale Customer’s products or services that include or incorporate any Separate Components, including, without limitation, audio and/or video encoders and decoders and implementations of technical standards. NVIDIA does not grant to Customer under the Agreement any necessary patent or other rights, including standard essential patent rights, with respect to any Separate Components.
+No License Provided. Customer acknowledges and agrees that it is Customer’s sole responsibility to obtain any additional third-party licenses required to make, have made, use, have used, sell, import, and offer for sale Customer’s products or services that include or incorporate any Separate Components, including, without limitation, audio or video encoders and decoders and implementations of technical standards. NVIDIA does not grant to Customer under the Agreement any necessary patent or other rights, including standard essential patent rights, with respect to any Separate Components.
 
 PAYMENT TERMS AND TAXES.
 
@@ -71,7 +73,7 @@ LIMITATIONS. The following limitations and restrictions apply to the Software, D
 
 Customer will use the Software exclusively for authorized purposes, consistent with the Agreement’s terms and all applicable laws, regulations and the rights of others.
 
-The Software, Derivative Samples and Derivative Models may run on any computing system, except that NVIDIA proprietary software governed by this Agreement (such as drivers, CUDA and TensorRT software) is licensed only to run on NVIDIA Platforms. For clarity, NVIDIA proprietary software may be present on systems without NVIDIA GPUs, if not running on such systems.
+Product-Specific Terms may indicate that NVIDIA proprietary Software, Derivative Samples and Derivative Models are licensed only to run on NVIDIA Platforms.
 
 Customer may not combine the use of paid and unpaid Software, Derivative Samples and Derivative Models in a way that avoids incurring fees or exceeding use limits or quotas.
 
@@ -85,13 +87,13 @@ Customer may not bypass, disable, or circumvent any technical limitation, encryp
 
 Customer may not use the Software in any manner that would cause components to become subject to an OSS License or other shareware license.
 
-Customer may not distribute or disclose to third parties the results of benchmarking, competitive analysis, regression or performance data relating to the Software without the prior written permission from NVIDIA.
+Customer may not distribute or disclose to third parties the results of benchmarking, competitive analysis, regression or performance data relating to the Software without the prior written permission from NVIDIA, except as described at  https://docs.nvidia.com/nvidia-containers-benchmarking.pdf.
 
 Customer may not replace any NVIDIA software components in the Software that are governed by the Agreement with other software that implements NVIDIA application programming interfaces (APIs).
 
-Customer may not reverse engineer, decompile or disassemble any portion of the output generated using the NVIDIA proprietary software for the purpose of translating such output artifacts to target a non-NVIDIA Platform.
+Customer may not reverse engineer, decompile or disassemble any portion of the output generated using an NVIDIA proprietary software development kit (e.g., NVIDIA CUDA toolkit), including their development tools and compilers.
 
-Customer may not use the Software for the purpose of developing competing products or technologies or assisting a third party in such activities.
+Customer may not use the Software or NVIDIA Confidential Information for the purpose of (i) developing competing products or technologies or assisting a third party in such activities, or (ii)identifying or supporting an assertion or potential assertion of any intellectual property rights against NVIDIA (including patent, copyright, or trade secret).
 
 Customer acknowledges that the Software as delivered under the Agreement is not tested or certified by NVIDIA for use in any Critical Application. Beyond NVIDIA delivering the Software in accordance with the Agreement, NVIDIA will not be liable to Customer or any third party, in whole or in part, for any claims or damages arising from such uses. Customer is solely responsible for ensuring that systems and applications developed or deployed with the Software include sufficient safety and redundancy features and comply with all applicable legal and regulatory standards and requirements.
 
@@ -107,9 +109,9 @@ Exceptions. Confidential Information does not and will not include information t
 
 TERMINATION.
 
-Automatic License Termination. For Enterprise Products NVIDIA designates as Perpetual or Subscription based, Customer license terminates automatically without notice from NVIDIA at the earlier of the expiration or termination of the applicable license or the Agreement (“Term”). Either party may terminate licenses for Community Products for convenience with thirty (30) days prior written notice to the other party
+Automatic License Termination. For Enterprise Products NVIDIA designates as Perpetual or Subscription based, Customer license terminates automatically without notice from NVIDIA at the earlier of the expiration or termination of the applicable license or the Agreement (“Term”). Either party may terminate licenses for Community Products for convenience with thirty (30) days prior written notice to the other party.
 
-Early Termination of the Agreement. NVIDIA may at any time with advance written notice terminate the Agreement or an Order Form (i) if use of a Software, Derivative Sample or Derivative Model materially breaches the terms of the Agreement, or violates the rights of others, or violates applicable laws and regulations, (ii) if Customer commences or participates in any legal proceeding against NVIDIA with respect to the Software, or NVIDIA intellectual property embodied in the Derivative Samples or Derivative Models, or (iii) as needed, in NVIDIA’s reasonable judgment, to comply with laws and regulations. Customer may terminate at any time the Agreement or an Order Form if NVIDIA does not timely cure a material breach of the Agreement. If the termination basis is breach and the breach is curable, the other party will have thirty (30) days from the date of notification to cure the breach, or five (5) days to cure if the breach is of a payment obligation.
+Early Termination of the Agreement. NVIDIA may at any time with advance written notice terminate the Agreement or an Order Form (i) if use of a Software, Derivative Sample or Derivative Model materially breaches the terms of the Agreement, or violates the rights of others, or violates applicable laws and regulations, or (ii) as needed, in NVIDIA’s reasonable judgment, to comply with laws and regulations. Customer may terminate at any time the Agreement or an Order Form if NVIDIA does not timely cure a material breach of the Agreement. If the termination basis is breach and the breach is curable, the other party will have thirty (30) days from the date of notification to cure the breach, or five (5) days to cure if the breach is of a payment obligation.
 
 Effects of Termination. Upon any expiration or termination of the Agreement or an Order Form, any fees owed to NVIDIA become immediately due and payable even if longer terms have been agreed earlier. NVIDIA or an NVIDIA reseller will also bill Customer for any outstanding payment obligations related to a Subscription or Perpetual license period in the event of early termination for any reason other than for NVIDIA’s uncured material breach. Customer agrees to promptly discontinue use of the affected Software and any NVIDIA intellectual property contained in the Derivative Samples and Derivative Models, and destroy all copies in Customer’s possession or control (including any licenses in use by Customer’s Authorized Users). Upon written request, Customer will certify in writing that Customer has complied with Customer’s commitments under this section.
 
@@ -123,7 +125,7 @@ Collection Purposes. Customer acknowledges that Software may collect data for th
 
 Third Party Privacy Practices. The Software may contain links to third party websites and services, and Customer’s use of third-party products and services may be subject to such third-party privacy statements or practices. NVIDIA is not responsible for the privacy statements or practices of third parties.
 
-Privacy Policy. The NVIDIA Privacy Policy, located at NVIDIA Privacy Policy explains NVIDIA’s policy for collecting and using data, and Customer can visit the NVIDIA Privacy Center, located at Privacy Center | NVIDIA, to manage Customer’s consent and privacy preferences. If Customer accesses the Software and Services through Customer’s enterprise organization, please contact Customer’s systems administrator with any questions relating to the collection and processing of Customer’s data. If Customer is its enterprise organization’s systems administrator, please contact enterprisesupport@nvidia.com to manage the organization’s privacy preferences.
+Privacy Policy. The NVIDIA Privacy Policy, located at NVIDIA Privacy Policy explains NVIDIA’s policy for collecting and using data, and Customer can visit the NVIDIA Privacy Center, located at Privacy Center | NVIDIA, to manage Customer’s consent and privacy preferences. If Customer accesses the Software and Services through Customer’s enterprise organization, please contact Customer’s systems administrator with any questions relating to the collection and processing of Customer’s data.  If Customer is its enterprise organization’s systems administrator, please contact enterprisesupport@nvidia.com to manage the organization’s privacy preferences.
 
 OWNERSHIP, ATTRIBUTION AND FEEDBACK.
 
@@ -133,15 +135,17 @@ Customer Ownership. Subject to the rights of NVIDIA and its suppliers in Softwar
 
 Attribution. Customer may not change or remove copyright or other proprietary notices in the Software or misrepresent the authorship of the Software, and Customer must cause any modified files to carry prominent notices stating that Customer changed the files such that modifications are not misrepresented as an original Software. Except as necessary to give attribution to works as described in this section, Customer is not granted any trademark license under the Agreement.
 
-Feedback. Customer may, but is not obligated to, provide Feedback to NVIDIA or an NVIDIA Affiliate. Feedback, even if designated as confidential by Customer, will not create any confidentiality obligation for NVIDIA or its Affiliates beyond not identifying Customer as the source of the Feedback. If Customer provides Feedback, Customer hereby grants NVIDIA, its Affiliates and its designees a non-exclusive, perpetual, irrevocable, sublicensable, worldwide, royalty-free, fully paid-up, and transferable license, under Customer’s Intellectual Property Rights, to publicly perform, publicly display, reproduce, use, make, have made, sell, offer for sale, distribute (through multiple tiers of distribution), import, create derivative works of, and otherwise commercialize and exploit the Feedback for any purpose at NVIDIA’s discretion. NVIDIA agrees that Customer Feedback is provided “as-is” without a warranty of any kind.
+Customer may, but is not obligated to, provide Feedback to NVIDIA or an NVIDIA Affiliate. Feedback, even if designated as confidential by Customer, will not create any confidentiality obligation for NVIDIA or its Affiliates beyond not identifying Customer as the source of the Feedback. If Customer provides Feedback, Customer hereby grants NVIDIA, its Affiliates and its designees a non-exclusive, perpetual, irrevocable, sublicensable, worldwide, royalty-free, fully paid-up, and transferable license, under Customer’s Intellectual Property Rights, to publicly perform, publicly display, reproduce, use, make, have made, sell, offer for sale, distribute (through multiple tiers of distribution), import, create derivative works of, and otherwise commercialize and exploit the Feedback for any purpose at NVIDIA’s discretion. NVIDIA agrees that Customer Feedback is provided “AS-IS” without a warranty of any kind.
 
-WARRANTY DISCLAIMER. THE SOFTWARE OFFERINGS ARE PROVIDED BY NVIDIA AS-IS AND WITH ALL FAULTS. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NVIDIA DISCLAIMS ALL WARRANTIES AND REPRESENTATIONS OF ANY KIND, WHETHER EXPRESS, IMPLIED OR STATUTORY, RELATING TO OR ARISING UNDER THE AGREEMENT, INCLUDING, WITHOUT LIMITATION, THE WARRANTIES OF TITLE, NONINFRINGEMENT, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, USAGE OF TRADE AND COURSE OF DEALING. WITHOUT LIMITING THE FOREGOING, NVIDIA DOES NOT WARRANT THAT THE SOFTWARE OFFERINGS WILL MEET CUSTOMER’S REQUIREMENTS, THAT ANY DEFECTS OR ERRORS WILL BE CORRECTED; THAT ANY CERTAIN CONTENT WILL BE AVAILABLE, OR THAT SOFTWARE OFFERINGS ARE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS. NO INFORMATION OR ADVICE GIVEN BY NVIDIA WILL IN ANY WAY INCREASE THE SCOPE OF ANY WARRANTY EXPRESSLY PROVIDED IN THE AGREEMENT.
+WARRANTY DISCLAIMER.
+
+THE SOFTWARE OFFERINGS ARE PROVIDED BY NVIDIA AS-IS AND WITH ALL FAULTS. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NVIDIA DISCLAIMS ALL WARRANTIES AND REPRESENTATIONS OF ANY KIND, WHETHER EXPRESS, IMPLIED OR STATUTORY, RELATING TO OR ARISING UNDER THE AGREEMENT, INCLUDING, WITHOUT LIMITATION, THE WARRANTIES OF TITLE, NONINFRINGEMENT, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, USAGE OF TRADE AND COURSE OF DEALING. WITHOUT LIMITING THE FOREGOING, NVIDIA DOES NOT WARRANT THAT THE SOFTWARE OFFERINGS WILL MEET CUSTOMER’S REQUIREMENTS, THAT ANY DEFECTS OR ERRORS WILL BE CORRECTED. THAT ANY CERTAIN CONTENT WILL BE AVAILABLE, OR THAT SOFTWARE OFFERINGS ARE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS. NO INFORMATION OR ADVICE GIVEN BY NVIDIA WILL IN ANY WAY INCREASE THE SCOPE OF ANY WARRANTY EXPRESSLY PROVIDED IN THE AGREEMENT.
 
 LIMITATION OF LIABILITY.
 
 Disclaimers. TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT WILL NVIDIA BE LIABLE FOR ANY (I) INDIRECT, SPECIAL, INCIDENTAL, PUNITIVE OR CONSEQUENTIAL DAMAGES, OR (II) DAMAGES FOR THE (A) COST OF PROCURING SUBSTITIVE GOODS, OR (B) LOST PROFITS, REVENUE, USE, DATA OR GOODWILL ARISING OUT OF OR IN CONNECTION WITH THE AGREEMENT OR THE USE OR THE PERFORMANCE OF SOFTWARE OFFERINGS WHETHER BASED ON BREACH OF CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY, OR OTHERWISE, AND EVEN IF NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES AND EVEN IF A PARTY’S REMEDIES FAIL THEIR ESSENTIAL PURPOSE.
 
-Damages Capped. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NVIDIA’S TOTAL CUMULATIVE AGGREGATE LIABILITY FOR ANY AND ALL LIABILITIES, OBLIGATIONS OR CLAIMS ARISING OUT OF OR RELATED TO THE AGREEMENT WILL NOT EXCEED THE NET AMOUNT PAID FOR CUSTOMER’S USE UNDER AN ACTIVE SUBSCRIPTION LICENSE FOR THE PARTICULAR SOFTWARE GIVING RISE TO THE CLAIM DURING THE TWELVE (12) MONTHS PERIOD PRIOR TO THE EVENT GIVING RISE TO THE LIABILITY (OR UP TO US$100.00 IF CUSTOMER OBTAINED SUCH SOFTWARE AT NO CHARGE).
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NVIDIA’S TOTAL CUMULATIVE AGGREGATE LIABILITY FOR ANY AND ALL LIABILITIES, OBLIGATIONS OR CLAIMS ARISING OUT OF OR RELATED TO THE AGREEMENT WILL NOT EXCEED THE NET AMOUNT NVIDIA WAS PAID FOR   THE SOFTWARE GIVING RISE TO THE CLAIM DURING THE TWELVE (12) MONTHS PERIOD BEFORE THE EVENT GIVING RISE TO THE LIABILITY (OR UP TO US$100.00 IF CUSTOMER OBTAINED SUCH SOFTWARE AT NO CHARGE).
 
 GOVERNING LAW. The Agreement will be governed in all respects by the laws of the United States and the laws of the State of Delaware, without regard to conflict of laws principles or the United Nations Convention on Contracts for the International Sale of Goods. The state and federal courts residing in Santa Clara County, California will have exclusive jurisdiction over any dispute or claim arising out of or related to the Agreement, and the parties irrevocably consent to personal jurisdiction and venue in those courts; except that either party may apply for injunctive remedies or an equivalent type of urgent legal relief in any jurisdiction.
 
@@ -159,7 +163,7 @@ Government Rights. The Software, including its documentation and technology (“
 
 Force Majeure. Except for payment of fees or taxes, neither party will be liable during an instance of Force Majeure.
 
-Audit. During the term of the Agreement and for a period of three (3) years thereafter, Customer will maintain complete and accurate information regarding Customer’s activities under the Agreement and NVIDIA or an independent auditor will have the right to audit Customer during regular business hours to validate and confirm Customer’s information and compliance with the terms of the Agreement. Audits will be conducted no more frequently than annually, unless non-compliance was previously found. If an audit reveals an underpayment, Customer will promptly remit the full amount of such underpayment to NVIDIA including interest that will accrue (without the requirement of a notice) at the lower of 1.5% per month or the highest rate permissible by law. If the underpaid amount exceeds five percent (5%) of the amounts payable to NVIDIA during the audited period or if the audit reveals a material non-conformance with the terms of the Agreement, then Customer will reimburse NVIDIA’s reasonable audit costs. Further, Customer agrees that the party transacting to sell Software Offerings to Customer may share with NVIDIA information regarding Customer’s compliance with the Agreement.
+Audit. During the term of the Agreement and for a period of three (3) years thereafter, Customer will maintain complete and accurate information regarding Customer’s activities under the Agreemen. NVIDIA or an independent auditor will have the right to audit Customer to validate and confirm Customer’s information and compliance with the terms of the Agreement. Audits will be conducted no more frequently than annually, unless non-compliance was previously found. If an audit reveals an underpayment, Customer will promptly remit the full amount of such underpayment to NVIDIA including interest that will accrue (without the requirement of a notice) at the lower of 1.5% per month or the highest rate permissible by law. If the underpaid amount exceeds five percent (5%) of the amounts payable to NVIDIA during the audited period or if the audit reveals a material non-conformance with the terms of the Agreement, then Customer will reimburse NVIDIA’s reasonable audit costs. Further, Customer agrees that the party transacting to sell Software Offerings to Customer may share with NVIDIA information regarding Customer’s compliance with the Agreement.
 
 Entire Agreement. Regarding the subject matter of the Agreement, the parties agree that the Agreement constitutes the entire and exclusive agreement between the parties regarding the Software Offerings and supersedes all prior and contemporaneous communications. Any additional or different terms or conditions, whether contained in purchase orders, order acknowledgments, invoices or otherwise, will not be binding and are null and void.
 
@@ -179,11 +183,11 @@ Definitions.
 
 “Affiliate” means an entity that owns or controls, is owned or controlled by, or is under common ownership or control with a party, where “control” is the possession, directly or indirectly, of the power to direct or cause the direction of the management and policies of an entity, whether through ownership of voting securities, by contract or otherwise.
 
-“Authorized Users” means Customer Personnel and Persons.
+“Authorized Users” means Customer Personnel and Customer End Users.
 
 “CCU” means a license that allows concurrent Authorized Users to use the Software, however the simultaneous number of Authorized Users cannot exceed the maximum number of CCUs authorized under the license.
 
-“Community Products” means the unsupported Software generally accessible to the public and free of charge, as updated from time to time, that Customer may use without a paid Subscription or Services.
+“Community Products” means Free SDKs and Supported SDKs.
 
 “Compatible Application” means an application that includes the Software, while not adversely affecting the functionality of the other components in the Software.
 
@@ -192,6 +196,8 @@ Definitions.
 “Confidential Information” means any non-public information provided, including the Order Form, in any format by one party to the other party under the Agreement during the term, that was designated or identified by the disclosing party as confidential or should be known by the receiving party when exercising reasonable business judgment to be confidential given the nature or circumstances of its disclosure.
 
 “Critical Application” means any system or application where the use or failure of such system or application could result in injury, death, or catastrophic damage. Examples of Critical Applications include, without limitation, use in avionics, navigation, autonomous vehicle applications, AI solutions for automotive products, military, medical, or life support or other life or mission critical application.
+
+“Customer End User” means any end user that receives access from Customer or its Affiliates to a service or a Compatible Application that includes, in whole or in part, the Software.
 
 “Customer Infrastructure” means Customer owned or leased infrastructure.
 
@@ -217,6 +223,8 @@ Definitions.
 
 “Force Majeure” means an event or circumstance that prevents or delays a party from performing its obligations under the Agreement and that event or circumstance: (i) is not within the reasonable control of that party and is not the result of that party’s negligence (including, without limitation, acts of God, natural disaster, acts of government, flood, fire, earthquakes, pandemics, civil unrest, war, acts of terror or general labor or delivery chain disturbances such as strikes), and (ii) cannot be overcome or avoided by that party using reasonably diligent efforts.
 
+“Free SDKs” means the unsupported Software generally accessible to the public and free of charge, as updated from time to time, that Customer may use without a paid Subscription or Services.
+
 “GPU” means (i) for on-premise deployments, the number of physical GPUs in the computing environment which is accessed by the Enterprise Product, or (ii) in a cloud computing environment, the number and type of GPUs attached to the compute instance on which the Enterprise Product is installed. For per GPU licenses, NVIDIA requires one Enterprise Product license for each GPU. For per GPU licenses that run on computing environments or compute instances without an NVIDIA GPU, NVIDIA requires one Enterprise Product license for each computing environment, or compute instance.
 
 “HCA” means an NVIDIA host channel adapter in a Node.
@@ -239,8 +247,6 @@ Definitions.
 
 “Perpetual” means a license to an Enterprise Product that is exclusive of Services, however NVIDIA may require Customer to separately purchase certain Services for a minimum period.
 
-“Person” means any person that receives access from Customer or its Affiliates to a service or a Compatible Application that includes, in whole or in part, the Software. 
-
 “Pre-Release” means a version or feature of the Software that is identified by NVIDIA as beta, developer preview, early access or otherwise as pre-release.
 
 “Product Specific Terms” means the then-current terms that apply to a particular Software Offering, which are incorporated into this Agreement by reference.
@@ -251,11 +257,13 @@ Definitions.
 
 “Software” means a Community Product or an Enterprise Product and their associated materials (such as AI Enterprise and NVIDIA Omniverse), all of which is available for on-premises use.
 
-“Software Offering” means a specific Software together with Enterprise Support, as applicable.
+“Software Offering” means a specific Software together with Services, as applicable.
 
 “Subscription” means Customer’s fixed duration Software license, inclusive of Services, unless otherwise expressly stated in this Agreement or an Order Form.
 
 “Supported Products” has the meaning assigned to it in the Enterprise Support Policy.
+
+“Supported SDKs” means Software generally accessible to the public and free of charge, as updated from time to time, that Customer may use without a paid Subscription or Services and that NVIDIA will provide support for as long as Customer has a valid paid Subscription to other Enterprise Products in the same product family. Examples of NVIDIA product families are NVIDIA AI Enterprise products and Omniverse products.
 
 “Usage Based” means a license to an Enterprise Product that is metered and billed based on consumption, such as by the hour, and is inclusive of certain Enterprise Support for the duration of the license.
 
@@ -263,4 +271,4 @@ Definitions.
 
 “Workaround” has the meaning assigned to it in the Enterprise Support Policy.
 
-(v. June 5, 2024)
+(v. January 30, 2025)
