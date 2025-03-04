@@ -207,9 +207,9 @@ async def generate_scene(scene_data: FactorySceneRequest):
         single_track_range = compute_bbox(single_track_prim)
         print(single_track_range.GetSize())
         single_track_width = table_range.GetSize()[2]
-        # Add additional tables
+        # Add single tracks
         single_track_buffer = 87
-        for i in range(1, ceil(cell_width / (single_track_width + single_track_buffer))):
+        for i in range(1, floor(cell_width / (single_track_width + single_track_buffer))):
             prim_path = omni.usd.get_stage_next_free_path(
                 stage,
                 single_track_asset_path,
@@ -226,7 +226,15 @@ async def generate_scene(scene_data: FactorySceneRequest):
                     )
                 )
         # Add kuka
-        # kuka_prim.GetPrim().GetReferences().AddReference(kuka_library_path)
+        kuka_demo_asset_name = "kuka_demo"
+        kuka_demo_path = f"{kuka_asset_path}/{kuka_demo_asset_name}"
+        kuka_demo_prim = UsdGeom.Xform.Define(stage, kuka_demo_path)
+        kuka_demo_library_path = f"{asset_library_path}KUKA_demo/kuka_demo.usd"
+        kuka_demo_prim.GetPrim().GetReferences().AddReference(kuka_demo_library_path)
+        kuka_demo_translate = kuka_demo_prim.AddTranslateOp()
+        kuka_demo_translate.Set((527, 70, 30))
+        kuka_demo_rotate = kuka_demo_prim.AddRotateXYZOp()
+        kuka_demo_rotate.Set((90, 0, -90))
         # xformable_kuka = UsdGeom.Xformable(kuka_prim)
         # Transate kuka
         # kuka_xform_ops = kuka_prim.GetOrderedXformOps()
