@@ -1,4 +1,4 @@
-# Kit App Template Tooling Guide
+# Kit SDK Tooling Guide
 
 This document provides an overview of the practical aspects of using the tooling provided in the `kit-app-template`. Intended for users with a basic familiarity with command-line operations, this guide offers typical usage patterns and recommendations for effective tool use. For a complete list of options for a given tool, use the help command: `./repo.sh [tool] -h` or `.\repo.bat [tool] -h`.
 
@@ -50,7 +50,7 @@ Creates new applications or extensions from templates with interactive prompts g
 ```
 
 #### `replay`
-In cases where automation is required for CI pipelines or other scripted workflows, it is possible to record and replay the `template new` configuration.  
+In cases where automation is required for CI pipelines or other scripted workflows, it is possible to record and replay the `template new` configuration.
 
 To achieve this first run template new with the `--generate-playback` flag:
 
@@ -119,7 +119,7 @@ Select and run a built .kit file from the `source/apps` directory:
 ```
 
 Additional launch options:
-- **`-d` or `--dev-bundle`:** Launches with a suite of developer tools enabled in UI-based applications.
+- **`-d` or `--dev-bundle`:** By default, the templates in the Kit App Template repository include `omni.kit.developer.bundle` in their `.kit` file definitions. If you want to exclude it from your application definition, you can still enable it at launch by using the `-d` or `--dev-bundle` flags. This approach prevents the developer bundle extensions from being packaged and sent to customers, while allowing you to use them during development.
 
 - **`-p` or `--package`:** Launches a packaged application from a specified path.
 
@@ -231,4 +231,4 @@ Additional launch options:
 :warning: **Important Note for Packaging:** Because the packaging operation will package everything within the `source/` directory the package version will need to be set independently of a given `kit` file.  **The version is set within the `tools/VERSION.md` file.**
 
 ## Additional Resources
-- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)
+- [Kit SDK Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)

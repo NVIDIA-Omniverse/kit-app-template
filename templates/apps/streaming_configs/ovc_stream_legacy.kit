@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = "{{ application_display_name }} Omniverse Cloud Streaming"
+version = "{{ version }}"
+description = "Configuration for Omniverse Cloud streaming deployments of {{ application_display_name }}"
+keywords = ["experience", "app", "dev", "streaming", "ovc"]
+template_name = "omni.ovc_streaming_configuration"
+
+[dependencies]
+"{{ application_name }}" = {}  # Application kit file
+"omni.kit.livestream.webrtc" = {}  # Livestream extension
+"omni.ujitso.client" = {} # Caching
+"omni.cloud.open_stage" = {}  # Nucleus Connection
+
+
+[settings.app]
+fastShutdown = true
+name = "{{ application_display_name }} OVC Streaming"  # Application Display Name
+ovc_deployment = true
+renderer.skipWhileMinimized = true
+renderer.resolution.height = 1080
+renderer.resolution.width = 1920
+useFabricSceneDelegate = false
+vsync = false  # Vsync disabled by default, can be set to true for L40 or similar
+window.scaleToMonitor = true
+window.height = 1080
+window.width = 1920
+
+[settings]
+rtx.post.aa.op = 3
+rtx.hydra.geometrystreaming.gpuBudgetMB = 64000
+rtx.hydra.geometrystreaming.instanceBudget = 14388608
+rtx.verifyDriverVersion.enabled = false
+rtx-transient.dlssg.enabled = true
+rtx-transient.scenedb.forceMaxTLASInstancesLimit = 15000000
+rtx-transient.scenedb.instanceBudget=1000000
+
+[settings.app.extensions]
+registryEnabled = true
+supportedTargets.platform = []  # Skip checking supported platform/config when building
+excluded = [
+    "omni.kit.developer.bundle",
+]
+
+[settings.app.exts]
+folders.'++' = [  # Search paths for extensions.
+    "${app}/../exts",
+    "${app}/../apps",
+    "${app}/../extscache"
+]
+
+[settings.app.file]
+ignoreUnsavedOnExit = true
+
+[settings.app.livestream]
+maxPushStreamDataAttempts = 1  # Number of attempts to push stream data
+skipCapture = 1  # livestream skipCapture ON for local streaming
+webrtcEtli = true  # Only log error or critical level issues.
+
+[settings.app.rendergraph]
+maxFramesInFlight = 2
+
+[settings.exts."omni.kit.renderer.core"]
+present.enabled = true  # Enable the present thread
+present.presentAfterRendering = true  # Ensure the present thread waits for the rendering to complete[settings]
+
+[settings.exts."omni.kit.window.filepicker"]
+show_only_collections.2 = ""
+show_add_new_connection = false  # Do not allow connections to new servers when running on OVC.
+
+[settings.exts."omni.kit.window.content_browser"]
+show_only_collections.2 = ""
+
+[settings.UJITSO]
+# UJITSO supports loading cached representations of assets.
+# These settings controls what is loaded from cache and where from.
+datastore.localCachePath = "/home/ubuntu/.nvidia-omniverse/ujitso/localCachePath"
+enabled = true	# Enable or disable the use of UJITSO cache.
+geometry = true
+
+[settings.persistent.UJITSO]
+geometry = true

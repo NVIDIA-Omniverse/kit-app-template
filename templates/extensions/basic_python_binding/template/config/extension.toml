@@ -1,0 +1,44 @@
+[package]
+version = "1.0.1" # Semantic Versioning is used: https://semver.org/
+
+# These fields are used primarily for display in the extension browser UI.
+title = "Example C++ Extension: pybind"
+description = "Demonstrates how to reflect C++ code using pybind11 so that it can be called from Python code."
+category = "Example"
+keywords = ["example", "C++", "cpp", "pybind"]
+icon = "data/icon.png"
+preview_image = "data/preview.png"
+changelog = "docs/CHANGELOG.md"
+readme  = "docs/README.md"
+authors = ["David Bosnich <dbosnich@nvidia.com>"]
+repository = "https://github.com/NVIDIA-Omniverse/kit-extension-template-cpp"
+
+# Disable hot-reloading due to generated python bindings.
+[core]
+reloadable = false
+
+# Define the Python modules that this extension provides.
+[[python.module]]
+name = "{{ extension_name }}"
+
+# Define the C++ plugins that this extension provides.
+[[native.plugin]]
+path = "bin/*.plugin"
+
+# Define any test specific properties of this extension.
+[[test]]
+cppTests.libraries = [
+    "bin/${lib_prefix}{{ extension_name }}.tests${lib_ext}"
+]
+
+# Define the documentation that will be generated for this extension.
+[documentation]
+pages = [
+    "docs/Overview.md",
+    "docs/CHANGELOG.md",
+]
+cpp_api = [
+     "include/{{ python_module_path }}/{{ interface_name }}.h",
+     "include/{{ python_module_path }}/{{ object_interface_name }}.h",
+     "include/{{ python_module_path }}/{{ object_name }}.h",
+]

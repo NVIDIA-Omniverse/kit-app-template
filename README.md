@@ -33,7 +33,7 @@ The `kit-app-template` repository is designed to abstract complexity, jumpstarti
 
 #### Companion Tutorial
 
-**[Explore the Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)**: This tutorial offers detailed insights into the underlying structure and mechanisms, providing a thorough grasp of both the Kit SDK and the development process.
+**[Explore the Kit SDK Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)**: This tutorial offers detailed insights into the underlying structure and mechanisms, providing a thorough grasp of both the Kit SDK and the development process.
 
 ### New Developers
 
@@ -62,9 +62,9 @@ These resources empower developers at all experience levels to fully utilize the
 
 Ensure your system is set up with the following to work with Omniverse Applications and Extensions:
 
-- **Operating System**: Windows 10/11 or Linux (Ubuntu 20.04/22.04 recommended)
+- **Operating System**: Windows 10/11 or Linux (Ubuntu 22.04 or newer)
 
-- **GPU**: NVIDIA RTX capable GPU (Turing or newer recommended)
+- **GPU**: NVIDIA RTX capable GPU (RTX 3070 or Better recommended)
 
 - **Driver**: Minimum and recommended - 537.58. Newer versions may work but are not equally validated.
 
@@ -147,12 +147,25 @@ Run the following command to initiate the configuration wizard:
 > **NOTE:** If this is your first time running the `template new` tool, you'll be prompted to accept the Omniverse Licensing Terms.
 
 Follow the prompt instructions:
-- **? Select with arrow keys what you want to create:** Application
-- **? Select with arrow keys your desired template:** Kit Base Editor
+- **? Select what you want to create with arrow keys ↑↓:** Application
+- **? Select desired template with arrow keys ↑↓:** Kit Base Editor
 - **? Enter name of application .kit file [name-spaced, lowercase, alphanumeric]:** [set application name]
 - **? Enter application_display_name:** [set application display name]
-- **? Enter version:**: [set application version]
+- **? Enter version:** [set application version]
 
+  Application [application name] created successfully in [path to project]/source/apps/[application name]
+
+- **? Do you want to add application layers?** No
+
+#### Explanation of Example Selections
+
+• **`.kit` file name:** This file defines the application according to Kit SDK guidelines. The file name should be lowercase and alphanumeric to remain compatible with Kit’s conventions.
+
+• **display name:** This is the application name users will see. It can be any descriptive text.
+
+• **version:** The version number of the application. While you can use any format, semantic versioning (e.g., 0.1.0) is recommended for clarity and consistency.
+
+• **application layers:** These optional layers add functionality for features such as streaming to web browsers. For this quick-start, we skip adding layers, but choosing “yes” would let you enable and configure streaming capabilities.
 
 ### 3. Build
 
@@ -197,22 +210,6 @@ Initiate your newly created application using:
 
 > **NOTE:** The initial startup may take 5 to 8 minutes as shaders compile for the first time. After initial shader compilation, startup time will reduce dramatically
 
-**Launch with Developer Bundle (Alternative):** Instead of running the default launch command, developers might prefer to include the developer bundle for access to developer-specific extensions, such as the Script Editor, Extension Manager, and more.
-
-To launch with the developer bundle, use the `--dev-bundle` or `-d` flag:
-
-**Linux:**
-```bash
-./repo.sh launch -d
-```
-
-**Windows:**
-```powershell
-.\repo.bat launch -d
-```
-
-For more information on the extensions available in the developer bundle, see the [Developer Bundle Extensions](readme-assets/additional-docs/developer_bundle_extensions.md) document.
-
 ## Templates
 
 `kit-app-template` features an array of configurable templates for `Extensions` and `Applications`, catering to a range of desired development starting points from minimal to feature rich.
@@ -237,15 +234,33 @@ Enhance Omniverse capabilities with extension templates:
 
 - **[Basic Python](./templates/extensions/basic_python)**: The minimal definition of an Omniverse Python Extension.
 
+- **[Python UI](./templates/extensions/python_ui)**: An extension that provides an easily extendable Python-based user interface.
+
 - **[Basic C++](./templates/extensions/basic_cpp)**: The minimal definition of an Omniverse C++ Extension.
+
+- **[Basic C++ w/ Python Bindings](./templates/extensions/basic_python_binding)**: The minimal definition of an Omniverse C++ Extension that also exposes a Python interface via Pybind11.
 
    **Note for Windows C++ Developers** : This template requires `"platform:windows-x86_64".enabled` and `link_host_toolchain` within the `repo.toml` file be set to `true`. For additional C++ configuration information [see here](readme-assets/additional-docs/windows_developer_configuration.md).
 
-- **[Python UI](./templates/extensions/python_ui)**: An extension that provides an easily extendable Python-based user interface.
+
+## Application Streaming
+
+The Omniverse Platform supports streaming Kit-based applications directly to a web browser. You can either manage your own deployment or use an NVIDIA-managed service:
+
+### Self-Managed
+- **Omniverse Kit App Streaming :** A reference implementation on GPU-enabled Kubernetes clusters for complete control over infrastructure and scalability.
+
+### NVIDIA-Managed
+- **Omniverse Cloud (OVC):** Offloads hardware, streaming, and network complexities for secure, large scale deployments.
+
+- **Graphics Delivery Network (GDN):** Streams high-fidelity 3D content worldwide with just a shared URL.
+
+[Configuring and packaging streaming-ready Kit applications](readme-assets/additional-docs/kit_app_streaming_config.md)
+
 
 ## Tools
 
-The `kit-app-template` includes a suite of tools to aid in the development, testing, and deployment of your projects. For a more detailed overview of available tooling, see the [Kit App Template Tooling Guide](readme-assets/additional-docs/kit_app_template_tooling_guide.md).
+The Kit SDK includes a suite of tools to aid in the development, testing, and deployment of your projects. For a more detailed overview of available tooling, see the [Kit SDK Tooling Guide](readme-assets/additional-docs/kit_app_template_tooling_guide.md).
 
 Here's a brief overview of some key tools:
 
@@ -272,7 +287,7 @@ To learn more about what data is collected, how we use it and how you can change
 
 ## Additional Resources
 
-- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)
+- [Kit SDK Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)
 
 - [Usage and Troubleshooting](readme-assets/additional-docs/usage_and_troubleshooting.md)
 

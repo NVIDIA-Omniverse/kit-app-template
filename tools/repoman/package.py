@@ -15,7 +15,7 @@ from tempfile import TemporaryDirectory
 from typing import List
 
 import omni.repo.man
-from omni.repo.kit_template.frontend.template_tool import CLIInput
+from omni.repo.kit_template.frontend.template_tool import CLIInputColorPalette
 from omni.repo.man import resolve_tokens
 from omni.repo.man.exceptions import QuietExpectedError, StorageError
 from omni.repo.man.utils import change_cwd
@@ -60,13 +60,14 @@ def _quiet_error(err_msg: str):
 
 
 def _run_command(command):
-    console.print("\[ctrl+c to Exit]", style=INFO_COLOR)
+    console.print("\[CTRL+C to Exit]", style=INFO_COLOR)
     try:
-        omni.repo.man.run_process(resolve_tokens(command), exit_on_error=True)
-    except (KeyboardInterrupt, SystemExit):
+        omni.repo.man.run_process(resolve_tokens(command), exit_on_error=False)
+    except KeyboardInterrupt:
         console.print("Exiting", style=INFO_COLOR)
-        # exit(0) for now due to non-zero exit reporting.
-        sys.exit(0)
+        raise QuietExpectedError("Exiting")
+    except Exception:
+        raise QuietExpectedError(f"Failure to execute: {resolve_tokens(command)}")
 
 
 def package_container(options: argparse.Namespace, config: dict, build_path: pathlib.Path):
@@ -158,7 +159,7 @@ def _in_place_replace(file: pathlib.Path, replacements: dict):
 
 
 def _select(apps: list) -> str:
-    cli_input = CLIInput()
+    cli_input = CLIInputColorPalette()
     return cli_input.select(
         message="Select with arrow keys which App would you like to containerize:", choices=apps, default=apps[0]
     )

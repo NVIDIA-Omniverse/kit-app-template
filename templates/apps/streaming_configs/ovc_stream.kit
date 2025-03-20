@@ -17,7 +17,7 @@ template_name = "omni.ovc_streaming_configuration"
 
 [dependencies]
 "{{ application_name }}" = {}  # Application kit file
-"omni.kit.livestream.webrtc" = {}  # Livestream extension
+"omni.services.livestream.nvcf" = {}  # NVCF Livestream extension
 "omni.ujitso.client" = {} # Caching
 "omni.cloud.open_stage" = {}  # Nucleus Connection
 
@@ -47,6 +47,9 @@ rtx-transient.scenedb.instanceBudget=1000000
 [settings.app.extensions]
 registryEnabled = true
 supportedTargets.platform = []  # Skip checking supported platform/config when building
+excluded = [
+    "omni.kit.developer.bundle",
+]
 
 [settings.app.exts]
 folders.'++' = [  # Search paths for extensions.

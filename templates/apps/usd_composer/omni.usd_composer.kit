@@ -50,6 +50,7 @@ template_name = "omni.usd_composer"
 "omni.kit.collaboration.viewport.camera" = {}
 "omni.kit.context_menu" = {}
 "omni.kit.converter.cad" = {order = 1000} # allow other deps like asset_importer to load first
+"omni.kit.developer.bundle" = {}
 "omni.kit.graph.delegate.default" = {}
 "omni.kit.hotkeys.window" = {}
 "omni.kit.manipulator.prim" = {}
@@ -69,7 +70,6 @@ template_name = "omni.usd_composer"
 "omni.kit.property.bundle" = {}
 "omni.kit.property.collection" = {}
 "omni.kit.property.layer" = {}
-"omni.kit.property.sbsar" = {}
 "omni.kit.quicklayout" = { order = 1000 }
 "omni.kit.renderer.capture" = {}
 "omni.kit.renderer.core" = {}
@@ -84,7 +84,6 @@ template_name = "omni.usd_composer"
 "omni.kit.stage_templates" = {}
 "omni.kit.telemetry" = {}
 "omni.kit.thumbnails.mdl" = {}
-"omni.kit.thumbnails.usd" = {}
 "omni.kit.tool.asset_exporter" = {}
 "omni.kit.tool.asset_importer" = {}
 "omni.kit.tool.collect" = {}
@@ -119,12 +118,10 @@ template_name = "omni.usd_composer"
 "omni.kit.window.environment" = {}
 "omni.kit.window.file" = {}
 "omni.kit.window.filepicker" = {}
-"omni.kit.window.imageviewer" = {}
 "omni.kit.window.material" = {}
 "omni.kit.window.material_graph" = {}
 "omni.kit.window.movie_capture" = {}
 "omni.kit.window.preferences" = { order = 1000 } # so the menu is in the correct place
-"omni.kit.window.privacy" = {}
 "omni.kit.window.property" = {}
 "omni.kit.window.quicksearch" = {}
 "omni.kit.window.script_editor" = {}
@@ -143,7 +140,6 @@ template_name = "omni.usd_composer"
 "omni.scene.optimizer.bundle" = {}
 "omni.scene.visualization.bundle" = {}
 "omni.stats" = {}
-"omni.usd.fileformat.sbsar" = {}
 "omni.usd.metrics.assembler.ui" = {}
 "omni.usd.schema.metrics.assembler" = {}
 "omni.warp" = {}
@@ -245,6 +241,9 @@ experience = "{{ application_display_name }}"
 "omni.ui".raster.default_rasterpolicy_enabled = true
 "omni.usd".enableUsdMaterialWatcherForFsd = true
 "omni.warp".enable_menu = false
+
+[settings.exts."omni.anim.window.timeline"]
+show = false
 
 [settings.exts."omni.kit.browser.material"]
 enabled = false

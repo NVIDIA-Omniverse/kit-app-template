@@ -64,11 +64,11 @@ cd kit-app-template
 > **NOTE:** If this is your first time running the `template new` tool, you'll be prompted to accept the Omniverse Licensing Terms.
 
 Follow the prompt instructions:
-- **? Select with arrow keys what you want to create:** Application
-- **? Select with arrow keys your desired template:** USD Explorer
+- **? Select what you want to create with arrow keys ↑↓:** Application
+- **? Select desired template with arrow keys ↑↓:** USD Explorer
 - **? Enter name of application .kit file [name-spaced, lowercase, alphanumeric]:** [set application name]
 - **? Enter application_display_name:** [set application display name]
-- **? Enter version:** [set app version]
+- **? Enter version:** [set application version]
 
 *The application template you have selected requires a setup extension.
 Setup Extension -> omni_usd_explorer_setup*
@@ -110,7 +110,7 @@ Note that the build step will build all applications contained in the `source` d
 ![Launched USD Explorer](../../../readme-assets/usd_explorer_default_launch.png)
 
 ### Where to Go From Here
-For more guidance on modifying the USD Explorer Template, visit the [Kit App Template Companion Tutorial - Extending Reference Applications](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/customize_reference_apps.html). This tutorial offers a step-by-step guide to help you understand the template's structure and customize it to suit your needs.
+For more guidance on modifying the USD Explorer Template, visit the [Kit SDK Companion Tutorial - Extending Reference Applications](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/customize_reference_apps.html). This tutorial offers a step-by-step guide to help you understand the template's structure and customize it to suit your needs.
 
 ### Testing
 Applications and their associated extensions can be tested using the `repo test` tooling provided. Each application template includes an initial test suite that can be run to verify the application's functionality.
@@ -130,16 +130,7 @@ Applications and their associated extensions can be tested using the `repo test`
 ### Customization
 
 #### Enable Extension
-- On launch of the Application enable the developer bundle by adding the `--dev-bundle` or `-d` flag to the launch command.
 
-    **Linux:**
-    ```bash
-    ./repo.sh launch --dev-bundle
-    ```
-    **Windows:**
-    ```powershell
-    .\repo.bat launch --dev-bundle
-    ```
 - From the running application select `Developer` > `Extensions`
 
 - Browse and enable extensions of interest from the Extension Manager.
@@ -163,11 +154,11 @@ Applications and their associated extensions can be tested using the `repo test`
 ```
 
 Follow the prompt instructions:
-- **? Select with arrow keys what you want to create:** Extension
-- **? Select with arrow keys your desired template:**: [choose extension template]
+- **? Select what you want to create with arrow keys ↑↓:** Extension
+- **? Select desired template with arrow keys ↑↓:**: [choose extension template]
 - **? Enter name of extension [name-spaced, lowercase, alphanumeric]:**: [set extension name]
 - **? Enter extension_display_name:**: [set extension display name]
-- **? Enter version:**: [set extension version]
+- **? Enter version:** [set extension version]
 
 
 #### Adding Extension to .kit File
@@ -265,7 +256,7 @@ If only a single container image exists, it will launch automatically. If multip
 
 ### Local Streaming
 
-The UI-based template applications in this repository produce more than a single `.kit` file. For the USD Explorer template application, this includes `{your-app-name}_streaming.kit` which we will use for local streaming. This file inherits from the base application and adds necessary streaming components like `omni.kit.livestream.webrtc`. To try local streaming, you need a web client to connect to the streaming server.
+During the creation of a new application, you can enable streaming by selecting the desired streaming layer(s) for your application.  Selecting the **Omniverse Kit App Streaming (Default)** layer will create a `{your-app-name}_streaming.kit` which we will use for local streaming. This file inherits from the base application and adds necessary streaming components like `omni.kit.livestream.webrtc`. To try local streaming, you need a web client to connect to the streaming server.
 
 #### 1. Clone Web Viewer Sample
 
@@ -275,27 +266,9 @@ The web viewer sample can be found [here](https://github.com/NVIDIA-Omniverse/we
 git clone https://github.com/NVIDIA-Omniverse/web-viewer-sample.git
 ```
 
-Follow the instructions in the README to install the necessary dependencies.
+Follow the [Quick Start instructions in the README](https://github.com/NVIDIA-Omniverse/web-viewer-sample#quick-start) to install the necessary dependencies.
 
-#### 2. Modify the Web Viewer Sample
-
-The Web Viewer Sample is configured by default to connect to the USD Viewer application template and includes web UI elements for sending API calls to a running Kit application. This is necessary for the Viewer template, which has limited functionality for driving application behavior directly. However, for the USD Explorer template, this messaging UI functionality isn't needed as the USD Explorer Template includes menus and other UI elements that can be interacted with directly.
-
-When connecting the Web Viewer Sample to the USD Explorer application template, it is recommended to modify the source code. Make the following change to the web viewer sample:
-
-**In `web-viewer-sample/src/App.tsx`**
-
-- Change:
-```typescript
-import Window from './Window';
-```
-
-- To:
-```typescript
-import Window from './ViewportOnly';
-```
-
-#### 3. Start the streaming Kit Application
+#### 2. Start the streaming Kit Application
 
 :warning: **Important**: Launching the streaming application with `--no-window` passes an argument directly to Kit allowing it to run without the main application window to prevent conflicts with the streaming client.
 
@@ -325,15 +298,15 @@ If only a single container image exists, it will launch automatically. If multip
 
 > **NOTE:** The `--no-window` flag is not required for containerized applications as it is the default launch behavior.
 
-#### 4. Start the Streaming Client
-```bash
-npm run dev
-```
-
-In a Chromium-based browser, navigate to [http://localhost:5173/](http://localhost:5173/) and you should see the streaming client connect to the running Kit application.
+#### 3. Start the Streaming Client
+Follow the [Quick Start instructions in the web-viewer-sample README](https://github.com/NVIDIA-Omniverse/web-viewer-sample#quick-start) to start the streaming client (**stream only no UI overlay**) and connect via a Chromium-based browser. You should see the streaming client connect to the running Kit application.
 
 ![Streaming Explorer Image](../../../readme-assets/streaming_explorer.png)
 
 ## Additional Learning
 
-- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)
+- [Usage and Troubleshooting](../../../readme-assets/additional-docs/usage_and_troubleshooting.md)
+
+- [Developer Bundle Extensions](../../../readme-assets/additional-docs/developer_bundle_extensions.md)
+
+- [Kit SDK Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)

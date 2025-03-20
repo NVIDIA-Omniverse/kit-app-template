@@ -51,7 +51,6 @@ pages = [
 [[test]]
 dependencies = [
     "{{ application_name }}",
-    "omni.kit.mainwindow",
     "omni.kit.ui_test",
 ]
 

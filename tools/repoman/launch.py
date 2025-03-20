@@ -13,7 +13,7 @@ from typing import Callable, Dict, List, Optional
 
 import omni.repo.man
 from omni.repo.kit_template.backend import read_toml
-from omni.repo.kit_template.frontend import CLIInput, Separator
+from omni.repo.kit_template.frontend import CLIInputColorPalette, Separator
 from omni.repo.man.exceptions import QuietExpectedError
 from omni.repo.man.fileutils import rmtree
 from omni.repo.man.guidelines import get_host_platform
@@ -49,7 +49,7 @@ def _quiet_error(err_msg: str):
 
 
 def _select(query: str, apps: list) -> str:
-    cli_input = CLIInput()
+    cli_input = CLIInputColorPalette()
     return cli_input.select(message=query, choices=apps, default=apps[0])
 
 

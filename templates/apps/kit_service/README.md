@@ -54,11 +54,11 @@ cd kit-app-template
 > **NOTE:** If this is your first time running the `template new` tool, you'll be prompted to accept the Omniverse Licensing Terms.
 
 Follow the prompt instructions:
-- **? Select with arrow keys what you want to create:** Application
-- **? Select with arrow keys your desired template:** Kit Service
+- **? Select what you want to create with arrow keys ↑↓:** Application
+- **? Select desired template with arrow keys ↑↓:** Kit Service
 - **? Enter name of application .kit file [name-spaced, lowercase, alphanumeric]:** [set application name]
 - **? Enter application_display_name:** [set application display name]
-- **? Enter version:** [set app version]
+- **? Enter version:** [set application version]
 
 *The application template you have selected requires a setup extension.
 Setup Extension -> kit_service_setup*
@@ -102,7 +102,7 @@ Note that the build step will build all applications contained in the `source` d
 ![Launched Service](../../../readme-assets/kit_service.png)
 
 ### Where to Go From Here
-For more guidance on extending the Kit Service Template, visit the [Kit App Template Companion Tutorial - Extending Services](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/extending_services.html). This tutorial offers a step-by-step guide to help you understand the template's structure and customize it to suit your needs.
+For more guidance on extending the Kit Service Template, visit the [Kit SDK Companion Tutorial - Extending Services](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/extending_services.html). This tutorial offers a step-by-step guide to help you understand the template's structure and customize it to suit your needs.
 
 ### Testing
 Applications and their associated extensions can be tested using the `repo test` tooling provided. Each application template includes an initial test suite that can be run to verify the application's functionality.
@@ -136,11 +136,11 @@ You can customize your Service Setup extension by adding new endpoints to, modif
 ```
 
 Follow the prompt instructions:
-- **? Select with arrow keys what you want to create:** Extension
-- **? Select with arrow keys your desired template:**: [choose extension template]
+- **? Select what you want to create with arrow keys ↑↓:** Extension
+- **? Select desired template with arrow keys ↑↓:**: [choose extension template]
 - **? Enter name of extension [name-spaced, lowercase, alphanumeric]:**: [set extension name]
 - **? Enter extension_display_name:**: [set extension display name]
-- **? Enter version:**: [set extension version]
+- **? Enter version:** [set extension version]
 
 
 #### Adding Extension to .kit File
@@ -238,4 +238,8 @@ If only a single container image exists, it will launch automatically. If multip
 
 ## Additional Learning
 
-- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)
+- [Usage and Troubleshooting](../../../readme-assets/additional-docs/usage_and_troubleshooting.md)
+
+- [Developer Bundle Extensions](../../../readme-assets/additional-docs/developer_bundle_extensions.md)
+
+- [Kit SDK Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)

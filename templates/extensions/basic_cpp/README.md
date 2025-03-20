@@ -53,8 +53,8 @@ cd kit-app-template
 ```
 
 Follow the prompt instructions:
-- **? Select with arrow keys what you want to create:** Extension
-- **? Select with arrow keys your desired template:** Basic C++ Extension
+- **? Select what you want to create with arrow keys ↑↓:** Extension
+- **? Select desired template with arrow keys ↑↓:** Basic C++ Extension
 - **? Enter name of extension [name-spaced, lowercase, alphanumeric]:** [set extension name]
 - **? Enter extension_display_name:** [set extension display name]
 - **? Enter version:** [set extension version]
@@ -82,9 +82,9 @@ After a new extension has been added to the `.kit` file, the application should 
 
 Customization of a C++ Extension might involve writing new C++ classes or functions, or integrating existing libraries.
 
-As is the case with Applications, extensions can also depend on and be depended on by other extensions. These can be custom developed extensions or those provided by the NVIDIA managed extension registry. **It should be noted that a limited number of registry extensions expose a C++ API**. A view of available registry extensions can be found within the Extension Manager accessible via the developer bundle available when running `./repo.sh launch --dev-bundle`(Linux) or `.\repo.bat launch --dev-bundle`(Windows) to launch the Base Editor or USD Explorer Application Templates (select `Developer` > `Utilities` > `Extensions`)
+As is the case with Applications, extensions can also depend on and be depended on by other extensions. These can be custom developed extensions or those provided by the NVIDIA managed extension registry. **It should be noted that a limited number of registry extensions expose a C++ API**. A view of available registry extensions can be found within the Extension Manager accessible via the developer bundle (select `Developer` > `Utilities` > `Extensions`).
 
 ## Additional Learning
 - [Kit Manual Extension Docs](https://docs.omniverse.nvidia.com/kit/docs/kit-manual)
 - [C++ Extension Examples](https://github.com/NVIDIA-Omniverse/kit-extension-template-cpp)
-- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)
+- [Kit SDK Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)

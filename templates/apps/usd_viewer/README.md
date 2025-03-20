@@ -53,11 +53,11 @@ cd kit-app-template
 > **NOTE:** If this is your first time running the `template new` tool, you'll be prompted to accept the Omniverse Licensing Terms.
 
 Follow the prompt instructions:
-- **? Select with arrow keys what you want to create:** Application
-- **? Select with arrow keys your desired template:** USD Viewer
+- **? Select what you want to create with arrow keys ↑↓:** Application
+- **? Select desired template with arrow keys ↑↓:** USD Viewer
 - **? Enter name of application .kit file [name-spaced, lowercase, alphanumeric]:** [set application name]
 - **? Enter application_display_name:** [set application display name]
-- **? Enter version:** [set app version]
+- **? Enter version:** [set application version]
 
 *For each required extension you will be prompted
 [display name] -> [extension name]:*
@@ -147,11 +147,11 @@ Applications and their associated extensions can be tested using the `repo test`
 ```
 
 Follow the prompt instructions:
-- **? Select with arrow keys what you want to create:** Extension
-- **? Select with arrow keys your desired template:**: [choose extension template]
+- **? Select what you want to create with arrow keys ↑↓:** Extension
+- **? Select desired template with arrow keys ↑↓:**: [choose extension template]
 - **? Enter name of extension [name-spaced, lowercase, alphanumeric]:**: [set extension name]
 - **? Enter extension_display_name:**: [set extension display name]
-- **? Enter version:**: [set extension version]
+- **? Enter version:** [set extension version]
 
 
 #### Adding Extension to .kit File
@@ -249,7 +249,7 @@ If only a single container image exists, it will launch automatically. If multip
 
 ### Local Streaming
 
-The UI-based template applications in this repository produce more than a single `.kit` file. For the USD Viewer template application, this includes `{your-app-name}_gdn.kit` and `{your-app-name}_streaming.kit`. For local streaming, we'll use the `{your-app-name}_streaming.kit` file. This file inherits from the base application and adds necessary streaming components like `omni.kit.livestream.webrtc`. To try local streaming, you need a web client to connect to the streaming server.
+During the creation of a new application, you can enable streaming by selecting the desired streaming layer(s) for your application.  Selecting the **Omniverse Kit App Streaming (Default)** layer will create a `{your-app-name}_streaming.kit` which we will use for local streaming. This file inherits from the base application and adds necessary streaming components like `omni.kit.livestream.webrtc`. To try local streaming, you need a web client to connect to the streaming server.
 
 #### 1. Clone Web Viewer Sample
 
@@ -259,7 +259,7 @@ The web viewer sample can be found [here](https://github.com/NVIDIA-Omniverse/we
 git clone https://github.com/NVIDIA-Omniverse/web-viewer-sample.git
 ```
 
-Follow the instructions in the README to install the necessary dependencies.
+Follow the [Quick Start instructions in the README](https://github.com/NVIDIA-Omniverse/web-viewer-sample#quick-start) to install the necessary dependencies.
 
 #### 2. Start the streaming Kit Application
 
@@ -292,19 +292,15 @@ If only a single container image exists, it will launch automatically. If multip
 > **NOTE:** The `--no-window` flag is not required for containerized applications as it is the default launch behavior.
 
 #### 3. Start the Streaming Client
-```bash
-npm run dev
-```
-
-In a Chromium-based browser, navigate to [http://localhost:5173/](http://localhost:5173/) and you should see the streaming client connect to the running Kit application.
+Follow the [Quick Start instructions in the web-viewer-sample README](https://github.com/NVIDIA-Omniverse/web-viewer-sample#quick-start) to start the streaming client (**with Web UI overlay for messaging**) and connect via a Chromium-based browser. You should see the streaming client connect to the running Kit application.
 
 ![Streaming Viewer Image](../../../readme-assets/streaming_viewer.png)
 
 
 ## Additional Learning
 
-- [Usage and Troubleshooting](readme-assets/additional-docs/usage_and_troubleshooting.md)
+- [Usage and Troubleshooting](../../../readme-assets/additional-docs/usage_and_troubleshooting.md)
 
-- [BETA - Developer Bundle Extensions](readme-assets/additional-docs/developer_bundle_extensions.md)
+- [Developer Bundle Extensions](../../../readme-assets/additional-docs/developer_bundle_extensions.md)
 
 - [Omniverse Kit SDK Manual](https://docs.omniverse.nvidia.com/kit/docs/kit-manual/latest/index.html)

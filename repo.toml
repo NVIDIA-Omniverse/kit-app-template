@@ -85,7 +85,7 @@ apps = [
 ]
 
 registries = [
-    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/106/shared" },
+    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/107/shared" },
     { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
     { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
 ]
@@ -105,6 +105,7 @@ omniverse_flow_version_scheme=true
 package_per_config = true                   # By default we only build + package release.
 append_config = true                        # Set to true to append release/debug config to package name.
 archive_format = "zip"                      # We support "7z", "zip", "tar.gz", "tar.bz2"
+windows_max_path_length = 0
 #build_version = "${file:${config_root}/tools/VERSION.md}"  # It's ignored when omniverse_flow_version_scheme is true
 
 
@@ -123,6 +124,7 @@ files_exclude = [
     ["logs/**"],
     ["apps/kit.portable"],
     ["**/__pycache__"],
+    ["**/_repo/**"],
 ]
 "linux-x86_64".files_strip = []
 
@@ -134,6 +136,7 @@ omniverse_flow_version_scheme=true
 package_per_config = true
 append_config = true
 archive_format = "zip"
+windows_max_path_length = 0
 #build_version = "${file:${config_root}/tools/VERSION.md}"
 
 files = [
@@ -153,6 +156,7 @@ files_exclude = [
     ["logs/**"],
     ["apps/kit.portable"],
     ["**/__pycache__"],
+    ["**/_repo/**"],
 ]
 "linux-x86_64".files_strip = []
 

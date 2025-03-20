@@ -27,4 +27,4 @@ This extension is automatically created and configured when you generate a new s
 
 ## Additional Learning
 - [Omniverse Kit Service Documentation](https://docs.omniverse.nvidia.com/services/latest/index.html)
-- [Kit App Template Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)
+- [Kit SDK Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)

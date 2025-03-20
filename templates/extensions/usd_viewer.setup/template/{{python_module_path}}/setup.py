@@ -16,7 +16,6 @@ import carb.tokens
 import omni.ext
 import omni.kit.app
 import omni.kit.imgui as _imgui
-import omni.kit.viewport
 import omni.usd
 from omni.kit.mainwindow import get_main_window
 from omni.kit.quicklayout import QuickLayout

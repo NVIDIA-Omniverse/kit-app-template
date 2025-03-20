@@ -2,11 +2,12 @@
 
 ## Overview
 
-The Developer Bundle Extensions provide a suite of tools designed to enhance the development and debugging process within Omniverse Kit applications. Each of these extensions aims streamline a specific aspects of Omniverse application and extension development.
+The Developer Bundle Extension (`omni.kit.developer.bundle`) provides a set of developer focused tools designed to enhance the development and debugging process within Omniverse Kit applications. Each of the extensions within the bundle aims streamline a specific aspects of Omniverse application and extension development.
 
 ---
 
-## Enabling Developer Bundle Extensions
+## Enabling the Developer Bundle
+Application templates within the Kit App Template repository have `omni.kit.developer.bundle` configured within the `.kit` file by default.  For applications that do not, the Developer Bundle can be added temporarily at launch time using the `--dev-bundle` or `-d` flag.
 
 **Linux**
 ```bash

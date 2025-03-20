@@ -15,6 +15,8 @@
 
 #include <carb/PluginUtils.h>
 #include <carb/logging/Log.h>
+#include <carb/eventdispatcher/IEventDispatcher.h>
+#include <carb/events/IEvents.h>
 #include <carb/events/EventsUtils.h>
 
 #include <omni/ext/IExt.h>
@@ -32,7 +34,7 @@ const struct carb::PluginImplDesc kPluginImpl = {
     EXTENSION_NAME,  // Name of the plugin (e.g. "carb.dictionary.plugin"). Must be globally unique.
     "Example of a native plugin extension.",  // Helpful text describing the plugin.  Used for debugging/tools.
     "NVIDIA",  // Author
-    carb::PluginHotReload::eEnabled,  // If hot reloading is supported by the plugin.  (Note: hot reloading is deprecated)
+    carb::PluginHotReload::eDisabled,
     "dev"  // Build version of the plugin.
 };
 
@@ -46,14 +48,13 @@ public:
     void onStartup(const char* extId) override
     {
         printf(EXTENSION_NAME ": in onStartup\n");
-        // Get app interface using Carbonite Framework
-        omni::kit::IApp* app = carb::getFramework()->acquireInterface<omni::kit::IApp>();
-
-        // Subscribe to update events and count them
-        m_holder = carb::events::createSubscriptionToPop(
-            app->getUpdateEventStream(),
-            [this](carb::events::IEvent* event)
-            {
+        // Get event dispatch interface using Carbonite Framework
+        auto ed = carb::getCachedInterface<carb::eventdispatcher::IEventDispatcher>();
+        m_subscription = ed->observeEvent(
+            carb::RStringKey("cpp.example.update"),
+            0,
+            omni::kit::kGlobalEventUpdate,
+            [this](const carb::eventdispatcher::Event& e) {
                 if (m_counter % 100 == 0)
                 {
                     printf(EXTENSION_NAME ": %d updates passed.\n", m_counter);
@@ -66,13 +67,14 @@ public:
     void onShutdown() override
     {
         // Unsubscribes from the event stream
-        m_holder = nullptr;
+        m_subscription.reset();
     }
 
 private:
     int m_counter = 0;
-    carb::ObjectPtr<carb::events::ISubscription> m_holder;
+    carb::eventdispatcher::ObserverGuard m_subscription;
 };
+
 
 // Generate boilerplate code
 CARB_PLUGIN_IMPL(kPluginImpl, NativeExtensionExample)

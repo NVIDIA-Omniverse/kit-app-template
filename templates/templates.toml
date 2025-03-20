@@ -9,8 +9,7 @@ variables.application_display_name = "My Editor"
 variables.version = "0.1.0"
 
 [[templates."kit_base_editor".applications]]
-template = "omni_default_streaming"
-type = "streaming"
+link_all = true
 
 
 [templates."omni_usd_composer"]
@@ -24,16 +23,9 @@ variables.version = "0.1.0"
 
 [[templates."omni_usd_composer".extensions]]
 template = "omni_usd_composer_setup"
-type = "setup"
 
 [[templates."omni_usd_composer".applications]]
-template = "omni_default_streaming"
-type = "streaming"
-
-
-[[templates."omni_usd_composer".applications]]
-template = "ovc_streaming"
-type = "ovc"
+link_all = true
 
 
 [templates."omni_usd_explorer"]
@@ -47,16 +39,9 @@ variables.version = "0.1.0"
 
 [[templates."omni_usd_explorer".extensions]]
 template = "omni_usd_explorer_setup"
-type = "setup"
 
 [[templates."omni_usd_explorer".applications]]
-template = "omni_default_streaming"
-type = "streaming"
-
-
-[[templates."omni_usd_explorer".applications]]
-template = "ovc_streaming"
-type = "ovc"
+link_all = true
 
 
 [templates."omni_usd_viewer"]
@@ -70,20 +55,13 @@ variables.version = "0.1.0"
 
 [[templates."omni_usd_viewer".extensions]]
 template = "omni_usd_viewer_messaging"
-type = "extra"
 
 [[templates."omni_usd_viewer".extensions]]
 template = "omni_usd_viewer_setup"
-type = "setup"
-
 
 [[templates."omni_usd_viewer".applications]]
-template = "omni_gdn_streaming"
-type = "gdn"
+link_all = true
 
-[[templates."omni_usd_viewer".applications]]
-template = "omni_default_streaming"
-type = "streaming"
 
 [templates."kit_service"]
 class = "ApplicationTemplate"
@@ -96,31 +74,40 @@ variables.version = "0.1.0"
 
 [[templates."kit_service".extensions]]
 template = "kit_service_setup"
-type = "setup"
 
 
 # -- Application Layer templates --
 [templates."omni_default_streaming"]
 class = "ApplicationLayerTemplate"
-name = "Default Streaming"
+name = "Omniverse Kit App Streaming (Default)"
 url = "."
 subpath = "apps/streaming_configs/default_stream.kit"
+type = "streaming"
 variables.version = "0.1.0"
 
+
+[templates."ovc_streaming"]
+class = "ApplicationLayerTemplate"
+name = "Omniverse Cloud Streaming"
+url = "."
+subpath = "apps/streaming_configs/ovc_stream.kit"
+type = "ovc"
+variables.version = "0.1.0"
 
 [templates."omni_gdn_streaming"]
 class = "ApplicationLayerTemplate"
 name = "GDN Streaming"
 url = "."
 subpath = "apps/streaming_configs/gdn_stream.kit"
+type = "gdn_streaming"
 variables.version = "0.1.0"
 
-
-[templates."omni_ovc_streaming"]
+[templates."ovc_streaming_legacy"]
 class = "ApplicationLayerTemplate"
-name = "Omniverse Cloud Streaming"
+name = "Omniverse Cloud Streaming (Legacy)"
 url = "."
-subpath = "apps/streaming_configs/ovc_stream.kit"
+subpath = "apps/streaming_configs/ovc_stream_legacy.kit"
+type = "ovc_legacy"
 variables.version = "0.1.0"
 
 
@@ -134,6 +121,14 @@ variables.extension_name = "my_company.my_python_extension"
 variables.extension_display_name = "My Python Extension"
 variables.version = "0.1.0"
 
+[templates."basic_python_ui_extension"]
+class = "ExtensionTemplate"
+name = "Python UI Extension"
+url = "."
+subpath = "extensions/python_ui/template"
+variables.extension_name = "my_company.my_python_ui_extension"
+variables.extension_display_name = "My Python UI Extension"
+variables.version = "0.1.0"
 
 [templates."basic_cpp_extension"]
 class = "ExtensionTemplate"
@@ -144,14 +139,13 @@ variables.extension_name = "my_company.my_cpp_extension"
 variables.extension_display_name = "My C++ Extension"
 variables.version = "0.1.0"
 
-
-[templates."basic_python_ui_extension"]
-class = "ExtensionTemplate"
-name = "Python UI Extension"
+[templates."basic_python_binding"]
+class = "BindingExtensionTemplate"
+name = "Basic C++ w/ Python Binding Extension"
 url = "."
-subpath = "extensions/python_ui/template"
-variables.extension_name = "my_company.my_python_ui_extension"
-variables.extension_display_name = "My Python UI Extension"
+subpath = "extensions/basic_python_binding/template"
+variables.extension_name = "my_company.my_python_binding"
+variables.extension_display_name = "My Pybind11 Extension"
 variables.version = "0.1.0"
 
 
@@ -160,6 +154,7 @@ class = "SetupExtensionTemplate"
 name = "Service Setup"
 url = "."
 subpath = "extensions/service.setup/template"
+type = "setup"
 variables.extension_name = "my_company.my_service_setup_extension"
 variables.extension_display_name = "My Service Setup Extension"
 variables.version = "0.1.0"
@@ -170,6 +165,7 @@ class = "SetupExtensionTemplate"
 name = "Omni USD Composer Setup"
 url = "."
 subpath = "extensions/usd_composer.setup/template"
+type = "setup"
 variables.extension_name = "my_company.my_usd_composer_setup_extension"
 variables.extension_display_name = "My USD Composer Setup Extension"
 variables.version = "0.1.0"
@@ -180,6 +176,7 @@ class = "SetupExtensionTemplate"
 name = "Omni USD Explorer Setup"
 url = "."
 subpath = "extensions/usd_explorer.setup/template"
+type = "setup"
 variables.extension_name = "my_company.my_usd_explorer_setup_extension"
 variables.extension_display_name = "My USD Explorer Setup Extension"
 variables.version = "0.1.0"
@@ -190,6 +187,7 @@ class = "SetupExtensionTemplate"
 name = "Omni USD Viewer Setup"
 url = "."
 subpath = "extensions/usd_viewer.setup/template"
+type = "setup"
 variables.extension_name = "my_company.my_usd_viewer_setup_extension"
 variables.extension_display_name = "My USD Viewer Setup Extension"
 variables.version = "0.1.0"
@@ -200,6 +198,7 @@ class = "SetupExtensionTemplate"
 name = "Omni USD Viewer Messaging"
 url = "."
 subpath = "extensions/usd_viewer.messaging/template"
+type = "extra"
 variables.extension_name = "my_company.my_usd_viewer_messaging_extension"
 variables.extension_display_name = "My USD Viewer Messaging Extension"
 variables.version = "0.1.0"

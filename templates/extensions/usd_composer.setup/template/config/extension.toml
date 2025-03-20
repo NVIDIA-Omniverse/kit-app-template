@@ -56,7 +56,6 @@ pages = [
 
 [[test]]
 dependencies = [
-    "omni.kit.mainwindow",
     "omni.kit.ui_test",
 ]
 

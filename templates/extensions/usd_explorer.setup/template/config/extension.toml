@@ -74,11 +74,7 @@ pages = [
 
 [[test]]
 dependencies = [
-    "omni.kit.mainwindow",
-    "omni.kit.stage_templates",
     "omni.kit.ui_test",
-    "omni.kit.viewport.window",
-    "omni.kit.viewport.utility",
 ]
 
 args = [

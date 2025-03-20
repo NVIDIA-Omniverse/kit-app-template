@@ -29,6 +29,26 @@ import platform
 import sys
 
 
+MIN_PYTHON_VERSION = (3, 10, 0)
+MAX_PYTHON_VERSION = (3, 11, 2)
+
+
+def is_valid_python_version(version: tuple[int, int, int] = sys.version_info[:3]):
+    return MIN_PYTHON_VERSION <= version <= MAX_PYTHON_VERSION
+
+
+def validate_python_version(version: tuple[int, int, int] = sys.version_info[:3]):
+    if not is_valid_python_version(version):
+
+        def ver_str(pyver):
+            return ".".join(str(x) for x in pyver)
+
+        raise RuntimeError(
+            f"This version of packman requires Python {ver_str(MIN_PYTHON_VERSION)} "
+            f"up to {ver_str(MAX_PYTHON_VERSION)}, but {ver_str(version)} was provided"
+        )
+
+
 def init():
     """Call this function to initialize the packman configuration.
 
@@ -46,17 +66,7 @@ def init():
         >>> import packmanapi
         >>> packmanapi.set_verbosity_level(packmanapi.VERBOSITY_HIGH)
     """
-    major = sys.version_info.major
-    minor = sys.version_info.minor
-    patch = sys.version_info.micro
-    if major == 3 and (minor == 10 or (minor == 11 and patch <= 2)):
-        # we are good
-        pass
-    else:
-        raise RuntimeError(
-            f"This version of packman requires Python 3.10.0 up to 3.11.2, "
-            f"but {major}.{minor}.{patch} was provided"
-        )
+    validate_python_version()
     conf_dir = os.path.dirname(os.path.abspath(__file__))
     os.environ["PM_INSTALL_PATH"] = conf_dir
     packages_root = get_packages_root(conf_dir)

@@ -12,7 +12,7 @@
 :: See the License for the specific language governing permissions and
 :: limitations under the License.
 
-set PM_PACKMAN_VERSION=7.24.3
+set PM_PACKMAN_VERSION=7.27
 
 :: Specify where packman command is rooted
 set PM_INSTALL_PATH=%~dp0..
@@ -59,7 +59,7 @@ if defined PM_PYTHON_EXT (
 	goto PACKMAN
 )
 
-set PM_PYTHON_VERSION=3.10.5-1-windows-x86_64
+set PM_PYTHON_VERSION=3.10.16-nv3-windows-x86_64
 set PM_PYTHON_BASE_DIR=%PM_PACKAGES_ROOT%\python
 set PM_PYTHON_DIR=%PM_PYTHON_BASE_DIR%\%PM_PYTHON_VERSION%
 set PM_PYTHON=%PM_PYTHON_DIR%\python.exe

@@ -168,7 +168,7 @@ class CreateSetupExtension(omni.ext.IExt):
         imgui_style_applied = False
         try:
             # using imgui directly to adjust some color and Variable
-            import carb.imgui as _imgui
+            import omni.kit.imgui as _imgui
             imgui = _imgui.acquire_imgui()
             if imgui.is_valid():
                 imgui.push_style_color(_imgui.StyleColor.ScrollbarGrab, carb.Float4(0.4, 0.4, 0.4, 1))
