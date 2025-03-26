@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [107.0.3] - 2025-03-26
+
+### Fixed
+- Fixed issues with run time available registries by adding them directly to `.kit` templates
+- Fixed issues with test time available registries by adding user.toml registry configurations
+
 ## [107.0.3] - 2025-03-20
 
 ### Added
