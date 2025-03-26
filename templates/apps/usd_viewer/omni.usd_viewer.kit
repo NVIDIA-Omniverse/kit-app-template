@@ -124,6 +124,13 @@ rtx-transient.dlssg.enabled=false  # Disable DLSS otherwise it can push the fram
 listenF11 = false
 listenF7 = false
 
+[settings.exts."omni.kit.registry.nucleus"]
+registries = [
+    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/107/shared" },
+    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
+]
+
 [settings.telemetry]
 # Anonymous Kit application usage telemetry
 enableAnonymousData = true
