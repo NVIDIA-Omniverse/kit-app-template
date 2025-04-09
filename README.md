@@ -207,6 +207,7 @@ Initiate your newly created application using:
 
 ![Kit Base Editor Image](readme-assets/kit_base_editor.png)
 
+The `-dev-bundle` or `-d` flag can be used to launch the application with the [Developer Bundle Extensions](readme-assets/additional-docs/developer_bundle_extensions.md).
 
 > **NOTE:** The initial startup may take 5 to 8 minutes as shaders compile for the first time. After initial shader compilation, startup time will reduce dramatically
 
