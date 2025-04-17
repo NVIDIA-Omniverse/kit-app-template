@@ -6,6 +6,14 @@
     "configurations": [
         
         {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        
+        {
             "name": "Python: Remote Attach",
             "type": "debugpy",
             "request": "attach",
@@ -21,7 +29,7 @@
             ],
             "justMyCode": true,
             "subProcess": true,
-            "runtimeArgs" : [
+            "runtimeArgs": [
                 "--preserve-symlinks",
                 "--preserve-symlinks-main"
             ]
