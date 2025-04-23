@@ -109,12 +109,12 @@ To display content in the desktop application, you can pass an argument to the `
 
 **Linux:**
 ```bash
-./repo.sh launch -- --/app/auto_load_usd={replace-with-full-path-to-kit-app-template}/_build/linux-x86_64/release/samples/stage01.usd
+./repo.sh launch -- --/app/auto_load_usd='${omni.usd_viewer.samples}/samples_data/stage01.usd'
 ```
 
 **Windows:**
 ```powershell
-.\repo.bat launch -- --/app/auto_load_usd={replace-with-full-path-to-kit-app-template}\_build\windows-x86_64\release\samples\stage01.usd
+.\repo.bat launch -- --/app/auto_load_usd='${omni.usd_viewer.samples}/samples_data/stage01.usd'
 ```
 
 ![USD Viewer Asset Launch](../../../readme-assets/usd_viewer_load_asset_desktop.png)
