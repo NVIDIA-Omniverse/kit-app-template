@@ -11,7 +11,7 @@
     <filter include="fmt" />
     <filter include="python" />
     <filter include="carb_sdk_plugins" />
-    <!-- <filter include="premake" /> Temporarily commented out. kit-kernel needs to include premake 5.0.0-beta4-0 w/ manylinux builds -->
+-    <!-- <filter include="premake" /> Temporarily commented out. kit-kernel needs to include premake 5.0.0-beta4-0 w/ manylinux builds -->
   </import>
 
   <!-- Pull those deps of the same version as in Kit SDK. Override linkPath to point correctly, other properties can also be override, including version. -->
@@ -19,11 +19,11 @@
   <dependency name="pybind11" linkPath="../../_build/target-deps/pybind11" />
   <dependency name="fmt" linkPath="../../_build/target-deps/fmt" />
   <dependency name="python" linkPath="../../_build/target-deps/python" />
-  <!-- <dependency name="premake" linkPath="../../_build/host-deps/premake" /> -->
 
   <!-- The doctest package imported from kit-kernel is not yet available. -->
   <dependency name="doctest" linkPath="../../_build/target-deps/doctest">
     <package name="doctest" version="2.4.5+nv1-3" />
   </dependency>
 
+-  <!-- <dependency name="premake" linkPath="../../_build/host-deps/premake" /> -->
 </project>

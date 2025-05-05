@@ -67,8 +67,8 @@ class LoadingManager:
         message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
         for event_type, handler in incoming.items():
             self._subscriptions.append(
-                message_bus.create_subscription_to_pop(
-                    handler, name=event_type
+                message_bus.create_subscription_to_pop_by_type(
+                    carb.events.type_from_string(event_type), handler
                 )
             )
 

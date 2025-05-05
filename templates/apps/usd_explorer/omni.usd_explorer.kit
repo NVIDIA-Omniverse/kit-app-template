@@ -36,7 +36,6 @@ template_name = "omni.usd_explorer"
 "omni.kit.manipulator.prim" = {}
 "omni.kit.manipulator.selection" = {}
 "omni.kit.manipulator.transform" = {}
-"omni.kit.manipulator.viewport" = {}
 "omni.kit.menu.common" = { order = 1000 }
 "omni.kit.menu.edit" = {}
 "omni.kit.menu.file" = {}
@@ -57,6 +56,7 @@ template_name = "omni.usd_explorer"
 "omni.kit.tool.remove_unused.controller" = {}
 "omni.kit.uiapp" = {}  # The Main UI App. Bring everything needed for UI application.
 "omni.kit.usd_explorer.main.menubar" = { order = 12000 }
+"omni.kit.usd_explorer.render" = {}
 "omni.kit.usd_explorer.window.welcome" = { order = 10 }
 "omni.kit.viewport.legacy_gizmos" = {}
 "omni.kit.viewport.menubar.camera" = {}
@@ -367,13 +367,6 @@ smooth_with_time_sampling = true
 [settings.exts."omni.kit.property.usd"]
 show_prefs = false
 
-[settings.exts."omni.kit.registry.nucleus"]
-registries = [
-    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/107/shared" },
-    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
-    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
-]
-
 [settings.exts."omni.kit.renderer.core".imgui]
 enableMips = true
 
@@ -589,13 +582,13 @@ autoLightRig.enabled = true
 cameraSpeedMessage.showFlyViewLock = true
 
 [settings.privacy]
-externalBuild = false
+externalBuild = true
 
 [settings.renderer]
 active = "rtx"  # RTX As the default renderer always
 enabled = "rtx"  # only enable rtx renderer by default
 
-[setetings.renderer.multiGpu]
+[settings.renderer.multiGpu]
 enabled = false  # do not enable Multi-GPU, will choose the "best" GPU
 maxGpuCount = 1  # this ensures at most one GPU is enabled even if /persistent/renderer/multiGpu/enabled=true was saved in user.config.json
 

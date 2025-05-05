@@ -10,7 +10,7 @@
 
 [package]
 title = "{{ extension_display_name }}"
-version = "{{ version }}"  # Semantic Versionning is used: https://semver.org/
+version = "{{ version }}"  # Semantic Versioning is used: https://semver.org/
 description = "The simplest python UI extension example. Use it as a starting point for your extensions."
 category = "Example"  # How to categorize this in the Extension Manager
 changelog = "docs/CHANGELOG.md"

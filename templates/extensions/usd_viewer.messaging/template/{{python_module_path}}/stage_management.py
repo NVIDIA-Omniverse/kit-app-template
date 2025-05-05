@@ -61,7 +61,9 @@ class StageManager:
         for event_type, handler in incoming.items():
             self._subscriptions.append(
                 omni.kit.app.get_app().get_message_bus_event_stream().
-                create_subscription_to_pop(handler, name=event_type)
+                create_subscription_to_pop_by_type(
+                    carb.events.type_from_string(event_type), handler
+                )
             )
 
         # -- subscribe to stage events

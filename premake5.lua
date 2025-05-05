@@ -11,7 +11,7 @@ kit.setup_all({ cppdialect = "C++17" })
 
 -- Registries config for testing
 repo_build.prebuild_copy {
-    { "%{root}/tools/deps/user.toml", "%{root}/_build/%{platform}/%{config}/deps/user.toml" },
+    { "%{root}/tools/deps/user.toml", "%{root}/_build/deps/user.toml" },
 }
 
 -- Apps: for each app generate batch files and a project based on kit files (e.g. my_name.my_app.kit)
