@@ -2,6 +2,25 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [107.2.0] - 2025-04-29
+
+### Added 
+- Added tooltip information to the VSCode debug extensions to clarify usage.
+- Added tooling checks for path whitespace and OneDrive paths to improve developer experience.
+
+### Changes
+- Updated to `Kit 107.2.0`
+  - [Kit 107.2 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/107_2.html)
+  - [Kit 107.2 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/107_2_highlights.html)
+- Remove hard .git dependency from tooling
+- Exclude `_repo` from packaging operations.
+
+### Fixed
+- Fixed nondeterministic tool loading behavior raised in [Issue #65](https://github.com/NVIDIA-Omniverse/kit-app-template/issues/65)
+- Addressed spelling errors raised in [Issue #63](https://github.com/NVIDIA-Omniverse/kit-app-template/issues/63)
+- Addressed default repository definition causing issues with bootstrapping thin packages from [Issue #70](https://github.com/NVIDIA-Omniverse/kit-app-template/issues/70)
+
+
 ## [107.0.3] - 2025-03-26
 
 ### Fixed
