@@ -27,7 +27,7 @@ else
 	PM_CURL_SILENT="-s -S"
 	PM_WGET_QUIET="--quiet"
 fi
-export PM_PACKMAN_VERSION=7.27
+export PM_PACKMAN_VERSION=7.29
 
 
 cleanup() {
@@ -117,7 +117,7 @@ main() {
     fetch_file_from_s3()
     {
         local SOURCE=$1
-        local SOURCE_URL=http://bootstrap.packman.nvidia.com/$SOURCE
+        local SOURCE_URL=https://bootstrap.packman.nvidia.com/$SOURCE
         local TARGET=$2
         echo "Fetching $SOURCE from bootstrap.packman.nvidia.com ..."
         local CMD="curl -o $TARGET $SOURCE_URL $PM_CURL_SILENT"
@@ -142,7 +142,7 @@ main() {
     {
         PLATFORM=`uname`
         PROCESSOR=`uname -m`
-        PYTHON_VERSION=3.10.16-nv3
+        PYTHON_VERSION=3.10.17-nv1
 
         if [ $PLATFORM == 'Darwin' ]; then
             PYTHON_PACKAGE=3.10.5-1-macos-x86_64

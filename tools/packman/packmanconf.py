@@ -108,13 +108,10 @@ def get_module_dir(conf_dir, packages_root: str, version: str) -> str:
         tf = tempfile.NamedTemporaryFile(delete=False)
         target_name = tf.name
         tf.close()
-        # Using http here and not https is by design. Unfortunately SSL keeps getting revised
-        # which breaks old clients when servers are forced to upgrade to newer version of TLS
-        # and refuse to downgrade when asked. Instead of relying on SSL for transport security
-        # packman does SHA256 verification of the downloaded package in the `install_package`
-        # method. We therefore inform SonarQube to stop complaining about the line below.
-        # See issue #367 for more detail.
-        url = f"http://bootstrap.packman.nvidia.com/packman-common@{version}.zip"  # NOSONAR
+        # Forced to change to https because some customers will simply not allow http,
+        # even when it's used in a safe way (with download checksum verification).
+        # See issue #367 for more background.
+        url = f"https://bootstrap.packman.nvidia.com/packman-common@{version}.zip"
         print(f"Downloading '{url}' ...")
         import urllib.request
 

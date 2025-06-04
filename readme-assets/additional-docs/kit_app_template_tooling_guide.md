@@ -23,7 +23,7 @@ Each tool plays a specific role in the development workflow:
 The template tool facilitates the initiation of new projects by generating scaffolds for applications or extensions based on predefined templates located in `/templates/templates.toml`.
 
 ### Usage
-The template tool has three main commands: `list`, `new`, `replay`.
+The template tool has three main commands: `list`, `new`, `replay`, `modify`.
 
 #### `list`
 Lists available templates without initiating the configuration wizard.
@@ -75,6 +75,24 @@ After the configuration has been generated, the configuration can be replayed us
 ```powershell
 .\repo.bat template replay {playback_file_name}.toml
 ```
+
+#### `modify`
+The `modify` command lets you add one or more Application Template Layers (for example, streaming support) to an existing application that was not originally configured with them.
+
+**Linux:**
+```bash
+./repo.sh template modify
+```
+**Windows:**
+```powershell
+.\repo.bat template modify
+```
+
+When prompted, select the Application `.kit` file you want to update.
+
+Next, select (using Space) the Template Layer(s) to add. Enter to confirm.
+
+After the operation completes, rebuild (`./repo.sh build` or `.\repo.bat build`) the project to pull in the new extensions.
 
 ## Build Tool
 

@@ -29,8 +29,5 @@ if [[ -f "${OMNI_REPO_ROOT}/repo-cache.json" ]]; then
     fi
 fi
 
-SCRIPT_DIR=$(dirname ${BASH_SOURCE})
-cd "$SCRIPT_DIR"
-
-# Use "exec" to ensure that envrionment variables don't accidentally affect other processes.
-exec "tools/packman/python.sh" tools/repoman/repoman.py "$@"
+# Use "exec" to ensure that environment variables don't accidentally affect other processes.
+exec "${OMNI_REPO_ROOT}/tools/packman/python.sh" "${OMNI_REPO_ROOT}/tools/repoman/repoman.py" "$@"
