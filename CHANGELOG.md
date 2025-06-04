@@ -1,14 +1,24 @@
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## [107.3.0] - 2025-06-04
+
+### Added
+- Added `repo template modify` tooling enabling developers to add Template Layers to existing applications created with 107.3 or newer.
+
+### Changed
+- Updated to `Kit 107.3.0`
+  - [Kit 107.3 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/107_3.html)
+  - [Kit 107.3 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/107_3_highlights.html)
+- Updated packman version to 7.29 to address customer issues with network restrictions [Issue #80](https://github.com/NVIDIA-Omniverse/kit-app-template/issues/80)
 
 ## [107.2.0] - 2025-05-05
 
-### Added 
+### Added
 - Added tooltip information to the VSCode debug extensions to clarify usage.
 - Added tooling checks for path whitespace and OneDrive paths to improve developer experience.
 
-### Changes
+### Changed
 - Updated to `Kit 107.2.0`
   - [Kit 107.2 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/107_2.html)
   - [Kit 107.2 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/107_2_highlights.html)

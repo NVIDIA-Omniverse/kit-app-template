@@ -50,4 +50,4 @@ echo "Starting Kit with $$CMD $${ARGS[@]} $$@"
 chown -R ubuntu:ubuntu /home/ubuntu/.cache/ov
 chown -R ubuntu:ubuntu /home/ubuntu/.local/share/ov
 
-exec "$$CMD" "$${ARGS[@]}" "$$@"
+eval "$$CMD" "$${ARGS[@]}" "$$@"

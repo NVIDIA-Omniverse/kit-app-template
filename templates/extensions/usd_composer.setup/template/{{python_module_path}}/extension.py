@@ -70,39 +70,6 @@ class CreateSetupExtension(omni.ext.IExt):
         # adjust couple of viewport settings
         self._settings.set("/app/viewport/boundingBoxes/enabled", True)
 
-        # Force enable Axis, Grid, Outline and Lights
-        if self._settings.get("/app/create/forceViewportSettings"):
-            display_options = self._settings.get(
-                "/persistent/app/viewport/displayOptions"
-            )
-            # Note: flags are from omni/kit/ViewportTypes.h
-            show_flag_axis = 1 << 1
-            show_flag_grid = 1 << 6
-            show_flag_selection_outline = 1 << 7
-            show_flag_light = 1 << 8
-            display_options = (
-                display_options | (show_flag_axis) | (show_flag_grid) |
-                (show_flag_selection_outline) | (show_flag_light)
-            )
-            self._settings.set(
-                "/persistent/app/viewport/displayOptions", display_options
-            )
-            # Make sure these are in sync from changes above
-            self._settings.set("/app/viewport/show/lights", True)
-            self._settings.set("/app/viewport/grid/enabled", True)
-            self._settings.set("/app/viewport/outline/enabled", True)
-
-            # Make sure any action-graph setup locking out user from HUD does
-            # not persist across re-launch
-            self._settings.set(
-                "/persistent/app/viewport/Viewport/Viewport0/hud/visible",
-                True
-            )
-            self._settings.set(
-                "/persistent/app/viewport/Viewport 2/Viewport0/hud/visible",
-                True
-            )
-
         # These two settings do not co-operate well on ADA cards, so for
         # now simulate a toggle of the present thread on startup to work around
         if self._settings.get("/exts/omni.kit.renderer.core/present/enabled") \
