@@ -133,7 +133,8 @@ template_name = "omni.usd_composer"
 "omni.light_rigs" = {}
 "omni.mdl.usd_converter" = {}
 "omni.no_code_ui.authoring" = {}
-"omni.physx.stageupdate" = {}
+"omni.physics.physx" = {}
+"omni.physics.stageupdate" = {}
 "omni.resourcemonitor" = {}
 "omni.rtx.settings.core" = {} # this is the new Render Settings 2.0
 "omni.scene.optimizer.bundle" = {}
@@ -146,9 +147,8 @@ template_name = "omni.usd_composer"
 "{{ setup_extension_name }}" = { order = 1000 } # we are running that at the end
 
 
-# Windows only extensions
 [dependencies."filter:platform"."windows-x86_64"]
-"omni.kit.window.modifier.titlebar" = {}
+"omni.kit.window.modifier.titlebar" = {version = "=107.0.1"}  # Use exact version to avoid supported target platform check
 
 
 [settings.app]
@@ -176,8 +176,8 @@ excluded = [
 	"omni.kit.window.modifier.titlebar",
 ]
 
-[settings.app.exts]
-folders.'++' = [
+[settings.app.exts.folders]
+'++' = [
     "${app}/../exts",
     "${app}/../extscache"
 ]
@@ -208,7 +208,7 @@ mergeMaterials = false
 
 [settings.app.window]
 title = "{{ application_display_name }}"
-iconPath = "${% raw %}{{% endraw %}{{ setup_extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-create.png"
+iconPath = "${% raw %}{{% endraw %}{{ setup_extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-usd_composer.png"
 saveSizeOnExit = false
 width = 1920
 height = 1080
@@ -216,6 +216,7 @@ x = -1
 y = -1
 
 [settings.app.viewport]
+autoFrame.mode = "first_open"  # Auto frame the first time the viewport is opened
 defaults.fillViewport = true
 
 [settings.crashreporter.data]
@@ -235,7 +236,6 @@ experience = "{{ application_display_name }}"
 "omni.kit.window.file".useNewFilePicker = true
 "omni.kit.window.material".load_after_startup = true
 "omni.light_rigs".setup_extension_name = "{{ setup_extension_name }}"
-"omni.services.transport.server.http".port = 8111
 "omni.ui".raster.default_rasterpolicy_enabled = true
 "omni.usd".enableUsdMaterialWatcherForFsd = true
 "omni.warp".enable_menu = false
@@ -270,7 +270,7 @@ colors.client = 0x0F0F0F
 defaultFont.name = "Arial"
 defaultFont.size = 16
 defaultFont.color = 0xD0D0D0
-icon.file = "${omni.create.app.resources}/data/nvidia-omniverse-create.ico"
+icon.file = "${% raw %}{{% endraw %}{{ setup_extension_name }}{% raw %}}{% endraw %}/data/nvidia-omniverse-usd_composer.ico"
 icon.size = 256
 respondOnMouseUp = true
 separator.color = 0x00B976
@@ -330,11 +330,12 @@ mdltranslator.distillMaterial = true  # Render Preferences - Material Distilling
 
 [settings.rtx]
 ecoMode.enabled = true
-hydra.readTransformsFromFabricInRenderDelegate = true
+hydra.readTransformsFromFabricInRenderDelegate = false
 
 
 [settings]
 communityTabEnabled = true
+crashreporter.compressDumpFiles = true
 foundation.verifyOsVersion.enabled = false
 plugins.'carb.profiler-cpu.plugin'.filePath = "${shared_documents}/create_profile.ct.json.gz"
 privacy.externalBuild = true

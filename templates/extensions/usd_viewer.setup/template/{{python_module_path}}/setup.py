@@ -42,7 +42,9 @@ class SetupExtension(omni.ext.IExt):
         """This is called every time the extension is activated. It is used to
         set up the application and load the stage."""
         self._settings = carb.settings.get_settings()
-
+        if self._settings and self._settings.get("/app/warmupMode"):
+            # if warmup mode is enabled, we don't want to load the stage just return
+            return
         # get auto load stage name
         stage_url = self._settings.get_as_string("/app/auto_load_usd")
 

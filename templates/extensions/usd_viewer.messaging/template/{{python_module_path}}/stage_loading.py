@@ -14,8 +14,7 @@ import os
 import carb
 import carb.events
 import carb.tokens
-import omni.ext
-import omni.log
+
 import omni.kit.app
 import omni.kit.livestream.messaging as messaging
 import omni.usd
@@ -66,6 +65,14 @@ class LoadingManager:
 
         message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
         for event_type, handler in incoming.items():
+            # Registering event aliases for incoming events that now leverage Events 2.0
+            # TODO: Remove this when all clients have migrated to Events 2.0
+            # This is a temporary solution to ensure compatibility with existing clients
+            if event_type.startswith("omni.kit.window.status_bar@"):
+                omni.kit.app.register_event_alias(
+                    carb.events.type_from_string(event_type),
+                    event_type
+                )
             self._subscriptions.append(
                 message_bus.create_subscription_to_pop_by_type(
                     carb.events.type_from_string(event_type), handler

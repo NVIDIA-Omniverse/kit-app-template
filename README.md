@@ -251,7 +251,7 @@ The Omniverse Platform supports streaming Kit-based applications directly to a w
 - **Omniverse Kit App Streaming :** A reference implementation on GPU-enabled Kubernetes clusters for complete control over infrastructure and scalability.
 
 ### NVIDIA-Managed
-- **Omniverse Cloud (OVC):** Offloads hardware, streaming, and network complexities for secure, large scale deployments.
+- **NVIDIA Cloud Functions (NVCF):** Offloads hardware, streaming, and network complexities for secure, large scale deployments.
 
 - **Graphics Delivery Network (GDN):** Streams high-fidelity 3D content worldwide with just a shared URL.
 

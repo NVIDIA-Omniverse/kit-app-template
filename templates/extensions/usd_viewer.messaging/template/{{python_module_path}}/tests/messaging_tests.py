@@ -53,7 +53,6 @@ async def wait_stage_loading(wait_frames: int = 2, usd_context=None, timeout=100
         continue
 
 
-
 class MessagingTest(AsyncTestCase):
     async def setUp(self):
         self._app = omni.kit.app.get_app()
@@ -68,29 +67,25 @@ class MessagingTest(AsyncTestCase):
         """
         Simulate incoming events of the stage loading messaging system
         """
-        import omni.kit.livestream.messaging as messaging
 
         def on_message_event(event: carb.events.IEvent) -> None:
             if event.type == carb.events.type_from_string("updateProgressAmount"):
-                    outgoing["updateProgressAmount"] = True
+                outgoing["updateProgressAmount"] = True
             elif event.type == carb.events.type_from_string("updateProgressActivity"):
-                    outgoing["updateProgressActivity"] = True
-
-
-        # Register the open stage request type
-        messaging.register_event_type_to_send("openStageRequest")
+                outgoing["updateProgressActivity"] = True
 
         outgoing: Dict[str, bool] = {
-            "updateProgressAmount": False,  # Status bar event denoting progress
-            "updateProgressActivity": False  # Status bar event denoting current activity
+            "updateProgressAmount": False,   # Status bar event denoting progress
+            "updateProgressActivity": False, # Status bar event denoting current activity
         }
 
         subscriptions: List[int] = []
         for event in outgoing.keys():
             subscriptions.append(
-                self._message_bus.create_subscription_to_pop(
+                self._message_bus.create_subscription_to_pop_by_type(
+                    carb.events.type_from_string(event),
                     on_message_event,
-                    name=event
+                    name=event,
                 )
             )
             await self._app.next_update_async()
@@ -103,12 +98,10 @@ class MessagingTest(AsyncTestCase):
         await wait_stage_loading(wait_frames=300)
         self.assertTrue(all(outgoing.values()))
 
-
     async def test_stage_management_incoming(self):
         """
         Simulate incoming events of the stage management messaging system
         """
-        import omni.kit.livestream.messaging as messaging
 
         subscriptions: List[int] = []
 
@@ -129,21 +122,17 @@ class MessagingTest(AsyncTestCase):
             elif event.type == carb.events.type_from_string("resetStageResponse"):
                 outgoing["resetStageResponse"] = True
 
-        incoming: List[str] = [
-            'getChildrenRequest',
-            'selectPrimsRequest',
-            'makePrimsPickable',
-            'resetStage'
-        ]
-
         # Register outgoing event
         # Subscribe to messaging events
         # Send event to validate
         for event in outgoing.keys():
-            subscriptions.append(self._message_bus.create_subscription_to_pop(
-                on_message_event,
-                name=event
-            ))
+            subscriptions.append(
+                self._message_bus.create_subscription_to_pop_by_type(
+                    carb.events.type_from_string(event),
+                    on_message_event,
+                    name=event,
+                )
+            )
 
             event_type = carb.events.type_from_string(event)
             self._message_bus.dispatch(event_type, payload={})

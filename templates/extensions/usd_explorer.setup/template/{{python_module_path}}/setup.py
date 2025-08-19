@@ -120,6 +120,11 @@ class SetupExtension(omni.ext.IExt):
 
     def on_startup(self, ext_id: str):
         """Setup the extension on startup."""
+        if self._settings and self._settings.get("/app/warmupMode"):
+            # if warmup mode is enabled, we don't want to load the stage or
+            # layout, just return
+            return
+
         self._ext_id = ext_id
         self._menubar_helper = MenubarHelper()
         self._menu_helper = MenuHelper()
