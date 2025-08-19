@@ -58,7 +58,8 @@ template_name = "kit_base_editor"
 "omni.kit.window.stage" = {}  # Stage tree
 "omni.kit.window.status_bar" = {}  # Status Bar
 "omni.kit.window.toolbar" = {}  # Manipular Toolbar
-"omni.physx.stageupdate" = {} # Physics runtime support - will pull in physx dependencies.
+"omni.physics.physx" = {}
+"omni.physics.stageupdate" = {} # Physics runtime support - will pull in physx dependencies.
 "omni.rtx.settings.core" = {} # RTX Settings
 "omni.uiaudio" = {} # for audio playback.
 "omni.usd.metrics.assembler.ui" = {}
@@ -66,7 +67,12 @@ template_name = "kit_base_editor"
 "omni.warp.core" = {} # Warp support
 
 
+[settings.persistent.app]
+viewport.autoFrame.mode = "first_open"  # Auto frame the first time the viewport is opened
+
+
 [settings]
+crashreporter.compressDumpFiles = true
 exts."omni.kit.material.library".ui_show_list = ["OmniPBR", "OmniGlass", "OmniSurface", "USD Preview Surface"]
 exts."omni.rtx.window.settings".window_menu = "Window" # Where to put the render settings menuitem
 exts."omni.kit.viewport.menubar.lighting".defaultRigIgnorePattern = "" # Allows auto light rig with anon layers
@@ -85,6 +91,7 @@ font.size = 16
 hangDetector.enabled = true
 hangDetector.timeout = 120
 renderer.skipWhileMinimized = true
+useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 window.title = "{{ application_display_name }}"
 
 

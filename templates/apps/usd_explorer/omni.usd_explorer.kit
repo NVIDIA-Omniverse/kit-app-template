@@ -103,7 +103,7 @@ template_name = "omni.usd_explorer"
 "{{ setup_extension_name }}" = { order = 10000 }  # This is your application setup Extensions. order = 10000 makes it run last
 
 [dependencies."filter:platform"."windows-x86_64"]
-"omni.kit.window.modifier.titlebar" = {version = "=105.2.16"}  # Use exact version to avoid supported target platform check
+"omni.kit.window.modifier.titlebar" = {version = "=107.0.1"}  # Use exact version to avoid supported target platform check
 
 [settings.app]
 name = "{{ application_display_name }}"
@@ -138,8 +138,8 @@ excluded = [
 	"omni.kit.window.modifier.titlebar",
 ]
 
-[settings.app.exts]
-folders.'++' = [   # Search paths for extensions.
+[settings.app.exts.folders]
+'++' = [   # Search paths for extensions.
 	"${app}/../exts",
 	"${app}/../extscache/"]
 
@@ -177,7 +177,7 @@ resolution.width = 1920
 skipWhileMinimized = true
 
 [settings.app.settings]
-dev_build = true
+dev_build = false
 persistent = true
 
 [settings.app.startup]
@@ -269,6 +269,9 @@ uiStyle = 'NvidiaDark'
 width = 1920
 x = -1
 y = -1
+
+[settings.crashreporter]
+compressDumpfiles = true
 
 [settings.crashreporter.data]
 experience = "{{ application_display_name }}"
@@ -509,9 +512,6 @@ hud.hostMemory.perProcess = true
 [settings.exts."omni.light_rigs"]
 setup_extension_name="{{ setup_extension_name }}"
 
-[settings.exts."omni.services.transport.server.http"]
-port = 8311 # Setting the port for the embedded http server, using custom port for your application make sure not to collide with other apps
-
 [settings.exts."omni.ui".raster]
 default_rasterpolicy_enabled = true # reduce overhead of UI in Layout mode
 
@@ -532,6 +532,7 @@ defaultTemplate = "SunnySky"  # Change default stage template to what we have in
 upAxis = 'Z'
 
 [settings.persistent.app.viewport]
+autoFrame.mode = "first_open"  # Auto frame the first time the viewport is opened
 camMoveVelocity = 1.5
 camVelocityMax = 50
 camVelocityMin = 0.01

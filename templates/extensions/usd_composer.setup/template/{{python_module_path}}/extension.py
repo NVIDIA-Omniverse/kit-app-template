@@ -58,6 +58,11 @@ class CreateSetupExtension(omni.ext.IExt):
         of the extensions etc
         """
         self._settings = carb.settings.get_settings()
+        if self._settings and self._settings.get("/app/warmupMode"):
+            # if warmup mode is enabled, we don't want to load the stage or
+            # layout, just return
+            return
+
         self._menu_layout = []
 
         telemetry_logger = logging.getLogger("idl.telemetry.opentelemetry")

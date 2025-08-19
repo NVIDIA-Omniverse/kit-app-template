@@ -86,12 +86,12 @@ type = "streaming"
 variables.version = "0.1.0"
 
 
-[templates."ovc_streaming"]
+[templates."nvcf_streaming"]
 class = "ApplicationLayerTemplate"
-name = "Omniverse Cloud Streaming"
+name = "NVCF Streaming"
 url = "."
-subpath = "apps/streaming_configs/ovc_stream.kit"
-type = "ovc"
+subpath = "apps/streaming_configs/nvcf_stream.kit"
+type = "nvcf"
 variables.version = "0.1.0"
 
 [templates."omni_gdn_streaming"]
@@ -100,14 +100,6 @@ name = "GDN Streaming"
 url = "."
 subpath = "apps/streaming_configs/gdn_stream.kit"
 type = "gdn_streaming"
-variables.version = "0.1.0"
-
-[templates."ovc_streaming_legacy"]
-class = "ApplicationLayerTemplate"
-name = "Omniverse Cloud Streaming (Legacy)"
-url = "."
-subpath = "apps/streaming_configs/ovc_stream_legacy.kit"
-type = "ovc_legacy"
 variables.version = "0.1.0"
 
 

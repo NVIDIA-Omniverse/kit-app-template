@@ -4,7 +4,7 @@
 
 Kit SDK templates and tooling enable the creation streaming-ready Omniverse Kit applications and aid in the packaging/containerization in preparation for deployment. This document outlines how to set up, configure, and package Kit applications for a streaming deployment.
 
-:warning: **Important :** For **Omniverse Kit App Streaming** or **Omniverse Cloud (OVC)**, you must containerize your application in a Linux environment to enable streaming.
+:warning: **Important :** Creation of containerized streaming applications must be done from a Linux environment.
 
 ## Create and Configure an Application
 
@@ -27,15 +27,14 @@ Answer `yes` to enable streaming for your application. You can then pick from th
 ? Do you want to add application layers? Yes
 ? Browse layers with arrow keys ↑↓: [SPACE to toggle selection, ENTER to confirm selection(s)]
 ❯ [ ] [omni_default_streaming]: Omniverse Kit App Streaming (Default)
-  [ ] [ovc_streaming]: Omniverse Cloud Streaming
+  [ ] [nvcf_streaming]: NVCF Streaming
   [ ] [omni_gdn_streaming]: GDN Streaming
-  [ ] [ovc_streaming_legacy]: Omniverse Cloud Streaming (Legacy)
 ```
 
 - **Omniverse Kit App Streaming (Default):** Ideal for self-managed streaming deployments or local streaming during development.
-- **Omniverse Cloud Streaming:** Suited for applications streamed through Omniverse Cloud, enabling Omniverse Connect and Omniverse Create (new or migrating customers should use this layer).
+- **NVCF Streaming:** Intended for applications streamed via NVIDIA Cloud Functions.
 - **GDN Streaming:** Streams applications through NVIDIA GDN; especially useful for configurator workflows.
-- **Omniverse Cloud Streaming (Legacy):** For existing customers on the legacy Omniverse Cloud platform.
+
 
 After creating your application, you’ll find two `.kit` files in the `/source/apps/` directory:
 - `{app_name}.kit`: The main application configuration file.

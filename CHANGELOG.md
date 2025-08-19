@@ -1,7 +1,26 @@
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
-## [107.3.0] - 2025-06-04
+## [108.0.0] - 2025-08-19
+
+### Changed
+- Updated to `Kit 108.0.0`
+  - [Kit 108.0 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/108_0.html)
+  - [Kit 108.0 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/108_0_highlights.html)
+- Changed "Omniverse Cloud Streaming" application layer to "NVCF Streaming" to align underlying technology and use case.
+- Updated streaming extensions to `omni.kit.livestream.app` and `omni.services.livestream.session` to support NVCF Streaming.
+- Removed omni.services.transport.server.http.port overrides.  Aligned all template applications to use default ports.
+- Updated repository documentation to reflect changes in streaming changes.
+- Updated crash reporter settings to compress crash reports.
+- Update Windows `omni.kit.window.modifier.titlebar` extension version
+- Update repo tooling to most recent versions
+- Updated application icon images for Composer and Explorer templates
+- Enabled testing for USD Viewer Template messaging extension
+
+### Fixed
+- Fix duplicate key `.kit` file issues related to `settings.app.exts`
+
+## [107.3.0] - 2025-05-27
 
 ### Added
 - Added `repo template modify` tooling enabling developers to add Template Layers to existing applications created with 107.3 or newer.

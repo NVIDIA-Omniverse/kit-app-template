@@ -29,8 +29,8 @@ name = "{{ application_display_name }}"
 name = "{{ application_display_name }}"
 
 
-[settings.app.exts]
-folders.'++' = [  # Search paths for extensions.
+[settings.app.exts.folders]
+'++' = [  # Search paths for extensions.
     "${app}/../exts",
     "${app}/../extscache/"
 ]

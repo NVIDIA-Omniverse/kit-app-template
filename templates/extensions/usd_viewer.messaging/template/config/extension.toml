@@ -24,7 +24,7 @@ repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of th
 [dependencies]
 "omni.kit.livestream.messaging" = {}
 "omni.usd" = {}
-
+"omni.kit.viewport.utility" = {}
 
 [settings]
 
@@ -41,14 +41,11 @@ pages = [
 
 
 [[test]]
-name = "startup"
-enabled = false
 
 dependencies = [
     "omni.activity.ui",
     "omni.kit.stage_templates",
     "omni.kit.ui_test",
-    "omni.kit.viewport.utility",
     "omni.kit.viewport.window",
 ]
 

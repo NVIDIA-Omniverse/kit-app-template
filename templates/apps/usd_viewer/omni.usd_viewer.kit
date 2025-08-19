@@ -39,6 +39,7 @@ template_name = "omni.usd_viewer"
 
 
 [settings.persistent.app]
+viewport.autoFrame.mode = "first_open"  # Auto frame the first time the viewport is opened
 viewport.defaults.tickRate = 60  # Lock to 60fps
 viewport.noPadding = true  # Remove default frame around viewport
 
@@ -78,8 +79,8 @@ hud.visible = false
 scene.cameras.visible = false
 scene.lights.visible = false
 
-[settings.app.exts]
-folders.'++' = [  # Search paths for extensions.
+[settings.app.exts.folders]
+'++' = [  # Search paths for extensions.
     "${app}/../exts",
     "${app}/../extscache/"
 ]
@@ -113,6 +114,7 @@ experience = "{{ application_display_name }}"
 "omni.kit.window.viewport".showContextMenu = false  # Disable context menu, viewer not editor.
 
 [settings]
+crashreporter.compressDumpFiles = true
 renderer.enabled = "rtx"  # enable rtx renderer
 # By default rtx is setup to be mgpu but in some context you might want to run on
 # a single gpu if so set this setting to false
