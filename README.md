@@ -1,3 +1,8 @@
+:warning: **Kit App Template Branch Removal Notice:** Kit App Template branches **less than 106.5** have reached the end of their support window. Content associated with these branches will be **removed on September 30, 2025**.
+
+**Action Required:** If you want to continue using the latest features, move to `main` branch (preferred) or more recent (`>=106.5` branch) version before September 30, 2025.
+
+
 # Omniverse Kit App Template
 
 <p align="center">
