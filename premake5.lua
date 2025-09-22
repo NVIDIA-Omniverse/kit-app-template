@@ -15,3 +15,12 @@ repo_build.prebuild_copy {
 }
 
 -- Apps: for each app generate batch files and a project based on kit files (e.g. my_name.my_app.kit)
+
+define_app("my_company.my_usd_composer.kit")
+define_app("my_company.my_usd_composer_streaming.kit")
+define_app("schneider.kit")
+define_app("schneider_streaming.kit")
+define_app("my_company.my_usd_viewer09_15.kit")
+define_app("my_company.my_usd_viewer09_15_streaming.kit")
+define_app("my_company.my_usd_viewer17_09.kit")
+define_app("my_company.my_usd_viewer17_09_streaming.kit")

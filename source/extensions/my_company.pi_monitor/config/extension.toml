@@ -1,0 +1,14 @@
+[package]
+title = "PI System Monitor"
+version = "1.0.0"
+description = "Automatically fetches PI system data and displays it in 3D scene"
+authors = ["Your Company"]
+repository = ""
+category = "Visualization"
+keywords = ["pi", "monitor", "data", "industrial"]
+
+[dependencies]
+"omni.usd" = {}
+
+[python]
+module = "my_company.pi_monitor"

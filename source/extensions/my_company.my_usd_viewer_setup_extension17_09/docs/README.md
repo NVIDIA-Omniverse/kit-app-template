@@ -1,0 +1,1 @@
+# My USD Viewer Setup Extension17_09 [my_company.my_usd_viewer_setup_extension17_09]

@@ -1,0 +1,126 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = "My USD Viewer17_09 Streaming"
+version = "0.1.0"
+description = "Configuration for streaming deployments of My USD Viewer17_09"
+keywords = ["experience", "app", "dev", "streaming"]
+template_name = "omni.streaming_configuration"
+
+[dependencies]
+"my_company.my_usd_viewer17_09" = {}  # Application kit file
+"omni.kit.livestream.webrtc" = {}  # Livestream extension
+
+[settings.app]
+fastShutdown = true
+name = "My USD Viewer17_09 Streaming"  # Application Display Name
+ovc_deployment = true
+renderer.skipWhileMinimized = true
+renderer.resolution.height = 1080
+renderer.resolution.width = 1920
+vsync = false  # Vsync disabled by default, can be set to true for L40 or similar
+window.scaleToMonitor = true
+window.showStartup = false
+window.height = 1080
+window.width = 1920
+
+[settings]
+rtx.post.aa.op = 3
+rtx.verifyDriverVersion.enabled = false
+rtx-transient.dlssg.enabled = false  # Disable DLSS otherwise it can push the framerate above the locked limit
+
+[settings.app.extensions]
+registryEnabled = true
+supportedTargets.platform = []  # Skip checking supported platform/config when building
+excluded = [
+    "omni.kit.developer.bundle",
+]
+
+[settings.app.exts]
+folders.'++' = [  # Search paths for extensions.
+    "${app}/../exts",
+    "${app}/../apps",
+    "${app}/../extscache"
+]
+
+[settings.app.file]
+ignoreUnsavedOnExit = true
+
+[settings.app.livestream]
+skipCapture = 1  # livestream skipCapture ON for local streaming
+webrtcEtli = true  # Only log error or critical level issues.
+
+[settings.app.rendergraph]
+maxFramesInFlight = 2
+
+[settings.app.runLoops]
+main.rateLimitEnabled = true  # Enable rate limiting on the main thread
+main.rateLimitFrequency = 60  # Lock it to 60fps
+main.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+main.syncToPresent = true  # Sync with the present thread, smooths UI updates
+present.rateLimitEnabled = true  # Rate limit the present thread
+present.rateLimitFrequency = 60  # Lock it to 60fps
+present.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+rendering_0.rateLimitEnabled = true  # Enable rate limiting for the rendering thread
+rendering_0.rateLimitFrequency = 60  # Lock it to 60fps
+rendering_0.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+rendering_0.syncToPresent = true  # Sync with the present tread, smooths UI updates
+rendering_1.rateLimitEnabled = true  # Enable rate limiting for the rendering thread
+rendering_1.rateLimitFrequency = 60  # Lock it to 60fps
+rendering_1.rateLimitUsePrecisionSleep = true  # Use precise sleep values to ensure threads sync
+rendering_1.syncToPresent = true  # Sync with the present tread, smooths UI updates
+
+[settings.app.runLoopsGlobal]
+syncToPresent = true  # Sync everything with the present thread
+
+[settings.app.viewport]
+defaults.tickRate = 60  # Lock to 60fps[settings.app]
+
+[settings.exts."omni.kit.renderer.core"]
+present.enabled = true  # Enable the present thread
+present.presentAfterRendering = true  # Ensure the present thread waits for the rendering to complete[settings]
+
+[template]
+type = "ApplicationLayerTemplate" # Repo Template Metadata
+
+
+########################################################################################################################
+# BEGIN GENERATED PART (Remove from 'BEGIN' to 'END' to regenerate)
+########################################################################################################################
+
+# Kit SDK Version: 107.3.0+feature.199947.b0a86421.gl
+
+# Version lock for all dependencies:
+[settings.app.exts]
+enabled = [
+	"omni.anim.curve.core-1.3.1",
+	"omni.anim.timeline-107.0.0",
+	"omni.graph.action-1.130.0",
+	"omni.graph.action_nodes-1.50.4",
+	"omni.graph.nodes-1.170.10",
+	"omni.graph.scriptnode-1.50.0",
+	"omni.graph.ui_nodes-1.50.5",
+	"omni.kit.data2ui.core-1.1.2",
+	"omni.kit.data2ui.usd-1.1.2",
+	"omni.kit.livestream.core-7.5.0",
+	"omni.kit.livestream.messaging-1.1.1",
+	"omni.kit.livestream.webrtc-7.0.0",
+	"omni.kit.sequencer.core-108.0.2",
+	"omni.kit.sequencer.usd-108.0.2",
+	"omni.kit.streamsdk.plugins-7.6.3",
+	"omni.no_code_ui.bundle-1.1.2",
+	"omni.usd.schema.sequence-3.0.1",
+	"omni.usd_viewer.samples-106.3.3",
+]
+
+########################################################################################################################
+# END GENERATED PART
+########################################################################################################################

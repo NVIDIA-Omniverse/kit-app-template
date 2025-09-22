@@ -81,8 +81,7 @@ publish_pip_cache = false
 
 [repo_precache_exts]
 # Apps to run and precache
-apps = [
-]
+apps = ["${root}/source/apps/my_company.my_usd_composer.kit", "${root}/source/apps/my_company.my_usd_composer_streaming.kit", "${root}/source/apps/schneider.kit", "${root}/source/apps/schneider_streaming.kit", "${root}/source/apps/my_company.my_usd_viewer09_15.kit", "${root}/source/apps/my_company.my_usd_viewer09_15_streaming.kit", "${root}/source/apps/my_company.my_usd_viewer17_09.kit", "${root}/source/apps/my_company.my_usd_viewer17_09_streaming.kit"]
 
 registries = [
     { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/${kit_version_major}/shared" },

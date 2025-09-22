@@ -1,0 +1,193 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = "My USD Viewer09_15"
+version = "0.1.0"
+description = """This application presents an interactive experience authored with OpenUSD. The application can be hosted on RTX hardware and streamed to other devices. Messaging supports bi-directional communication between this application and the client that incorporates the stream"""
+keywords = ["app"]  # Extension Manager keyword for filtering.
+template_name = "omni.usd_viewer"
+
+[dependencies]
+"omni.anim.curve.core" = {}
+"omni.anim.timeline" = {}
+"omni.graph.action" = {}
+"omni.graph.nodes" = {}
+"omni.graph.scriptnode" = {}
+"omni.graph.ui_nodes" = {}
+"omni.hydra.rtx" = {}
+"omni.hydra.usdrt_delegate" = {}
+"omni.kit.manipulator.camera" = {}
+"omni.kit.manipulator.selection" = {}
+"omni.kit.renderer.core" = {}
+"omni.kit.sequencer.core" = {}
+"omni.kit.uiapp" = {}
+"omni.kit.viewport.utility" = {}
+"omni.kit.viewport.window" = {}
+"omni.no_code_ui.bundle" = {}
+"omni.ujitso.client" = {}
+"omni.usd_viewer.samples" = {}
+"usdrt.scenegraph" = {}
+"my_company.my_usd_viewer_setup_extension09_15" = { order = 1000 }
+
+
+[settings.persistent.app]
+viewport.defaults.tickRate = 60  # Lock to 60fps
+viewport.noPadding = true  # Remove default frame around viewport
+
+[settings.persistent.exts]
+"omni.kit.window.sequencer".useSequencerCamera = true  # Sequencer Camera Sync ON
+
+[settings.persistent]
+metricsAssembler.showUnitsOverlay = false
+omnigraph.useSchemaPrims = true
+omnigraph.disablePrimNodes = false
+rtx.mdltranslator.distillMaterial = true  # Render Preferences - Material Distilling ON
+rtx-transient.resourcemanager.enableTextureStreaming = true  # Texture Streaming
+[settings.app]
+titleVersion = "0.1.0"
+content.emptyStageOnStart = true  # Ensure creation of an empty stage on application startup.
+fastShutdown = true  # Skip long full shutdown and exit quickly
+livestream.allowResize = 1
+livestream.skipCapture = 1  # livestream skipCapture ON for local streaming
+name = "My USD Viewer09_15"
+renderer.resolution.width = 1920
+renderer.resolution.height = 1080
+useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
+
+[settings.app.environment]
+name = "My USD Viewer09_15"
+
+[settings.app.usdrt.population.utils]
+mergeInstances = false
+mergeMaterials = false
+
+[settings.app.viewport.defaults]
+fillViewport = true
+guide.grid.visible = false
+guide.axis.visible = false
+hud.visible = false
+scene.cameras.visible = false
+scene.lights.visible = false
+
+[settings.app.exts]
+folders.'++' = [  # Search paths for extensions.
+    "${app}/../exts",
+    "${app}/../extscache/"
+]
+
+[settings.app.file]
+ignoreUnsavedOnExit = true  # enable quitting without confirmation
+
+[settings.app.font]
+file = "${fonts}/OpenSans-SemiBold.ttf"
+size = 16
+
+[settings.app.layout]  # this is a custom setting used in our app setup to choose the Layout
+name = "default"
+
+[settings.app."omni.graph.scriptnode"]
+opt_in = true
+
+[settings.app.window]
+title = "My USD Viewer09_15"
+width = 1920
+height = 1080
+x = -1
+y = -1
+
+[settings.crashreporter.data]
+experience = "My USD Viewer09_15"
+
+[settings.exts]
+"omni.kit.renderer.core".present.enabled = true  # Enable the present thread
+"omni.kit.renderer.core".present.presentAfterRendering = true  # Ensure the present thread waits for the rendering to complete
+"omni.kit.window.viewport".showContextMenu = false  # Disable context menu, viewer not editor.
+
+[settings]
+renderer.enabled = "rtx"  # enable rtx renderer
+# By default rtx is setup to be mgpu but in some context you might want to run on
+# a single gpu if so set this setting to false
+renderer.multiGpu.enabled = true
+rendergraph.maxFramesInFlight = 2
+rtx-transient.dlssg.enabled=false  # Disable DLSS otherwise it can push the framerate above the locked limit
+
+[settings.exts."omni.appwindow"]
+listenF11 = false
+listenF7 = false
+
+[settings.telemetry]
+# Anonymous Kit application usage telemetry
+enableAnonymousData = true
+enableAnonymousAppName = true
+
+[settings.UJITSO]
+# UJITSO supports loading cached representations of assets.
+# These settings controls what is loaded from cache and where from.
+enabled = true	# Enable or disable the use of UJITSO cache.
+textures = true
+geometry = true
+materials = true
+datastore.localCachePath=""	# The absolute path to the root directory containing cached assets.
+readCacheWithAssetRoot=""	# The absolute path to the root directory containing the original non-cached assets.
+
+[settings.privacy]
+externalBuild = true
+
+# Tests
+################################
+[[test]]
+
+dependencies = [
+    "my_company.my_usd_viewer_setup_extension09_15.tests"
+]
+
+args = [
+	"--/app/window/width=480",
+    "--/app/window/height=480",
+    "--/app/extensions/registryEnabled=0", # Make sure we can run without registry and everything is precached
+]
+
+[template]
+type = "ApplicationTemplate" # Repo Template Metadata
+
+# --- PI Panel extension enable ---
+[settings.exts."my.pi_panel"]
+enabled = true
+# ---------------------------------
+########################################################################################################################
+# BEGIN GENERATED PART (Remove from 'BEGIN' to 'END' to regenerate)
+########################################################################################################################
+
+# Kit SDK Version: 107.3.0+feature.199947.b0a86421.gl
+
+# Version lock for all dependencies:
+[settings.app.exts]
+enabled = [
+	"omni.anim.curve.core-1.3.1",
+	"omni.anim.timeline-107.0.0",
+	"omni.graph.action-1.130.0",
+	"omni.graph.action_nodes-1.50.4",
+	"omni.graph.nodes-1.170.10",
+	"omni.graph.scriptnode-1.50.0",
+	"omni.graph.ui_nodes-1.50.5",
+	"omni.kit.data2ui.core-1.1.2",
+	"omni.kit.data2ui.usd-1.1.2",
+	"omni.kit.livestream.messaging-1.1.1",
+	"omni.kit.sequencer.core-108.0.2",
+	"omni.kit.sequencer.usd-108.0.2",
+	"omni.no_code_ui.bundle-1.1.2",
+	"omni.usd.schema.sequence-3.0.1",
+	"omni.usd_viewer.samples-106.3.3",
+]
+
+########################################################################################################################
+# END GENERATED PART
+########################################################################################################################
