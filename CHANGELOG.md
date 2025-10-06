@@ -1,7 +1,23 @@
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
-## [108.0.0] - 2025-08-19
+
+## [108.1.0] - 2025-10-06
+
+### Added
+- Added `omni.kit.primitive.mesh` extension to Kit Base Editor and USD Explorer Templates to enable Create Mesh in viewport by default
+- Added `omni.hydra.usdrt_delegate` extension to Kit Base Editor as dep needed for `useFabricSceneDelegate=true`
+
+### Changed
+- Updated to `Kit 108.1.0`
+  - [Kit 108.1 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/108_1.html)
+  - [Kit 108.1 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/108_1_highlights.html)
+
+### Deprecated
+- Deprecated `omni.kit.ngsearch` extension, no longer available after Kit 108
+
+
+## [108.0.0] - 2025-08-12
 
 ### Changed
 - Updated to `Kit 108.0.0`

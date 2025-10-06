@@ -1,0 +1,9 @@
+[omni_usd_explorer]
+application_name = "my_company.my_usd_explorer"
+application_display_name = "My USD Explorer"
+version = "0.1.0"
+
+[omni_usd_explorer.extensions.omni_usd_explorer_setup]
+extension_name = "my_company.my_usd_explorer_setup_extension"
+extension_display_name = "My USD Explorer Setup Extension"
+version = "0.1.0"

@@ -5,11 +5,12 @@ set -u
 write_omniverse_toml() {
   # Write out an omniverse.toml configuration file for Kit that contains a bookmark
   # for a custom provided nucleus server.
-  local nucleus_server=$$1
+  local bookmark_name=$$1
+  local bookmark_value=$$2
   mkdir --parents /home/ubuntu/.nvidia-omniverse/config
   cat <<EOF > /home/ubuntu/.nvidia-omniverse/config/omniverse.toml
 [bookmarks]
-"$${nucleus_server}" = "omniverse://$${nucleus_server}"
+"$${bookmark_name}" = "$${bookmark_value}"
 EOF
 }
 
@@ -21,7 +22,7 @@ fi
 
 # if NVDA_KIT_NUCLEUS is set, write out the omniverse.toml value
 if [ -n "$${NVDA_KIT_NUCLEUS:-}" ]; then
-  write_omniverse_toml "$${NVDA_KIT_NUCLEUS}"
+  write_omniverse_toml "$${NVDA_KIT_BOOKMARK_NAME:-$${NVDA_KIT_NUCLEUS}}" "$${NVDA_KIT_BOOKMARK_VALUE:-omniverse://$${NVDA_KIT_NUCLEUS}}"
   # Additionally set the Nucleus server address to the provided address.
   nucleus_cmd="--/ovc/nucleus/server=$${NVDA_KIT_NUCLEUS}"
 fi

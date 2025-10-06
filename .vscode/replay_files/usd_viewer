@@ -1,0 +1,14 @@
+[omni_usd_viewer]
+application_name = "my_company.my_usd_viewer"
+application_display_name = "My USD Viewer"
+version = "0.1.0"
+
+[omni_usd_viewer.extensions.omni_usd_viewer_messaging]
+extension_name = "my_company.my_usd_viewer_messaging_extension"
+extension_display_name = "My USD Viewer Messaging Extension"
+version = "0.1.0"
+
+[omni_usd_viewer.extensions.omni_usd_viewer_setup]
+extension_name = "my_company.my_usd_viewer_setup_extension"
+extension_display_name = "My USD Viewer Setup Extension"
+version = "0.1.0"

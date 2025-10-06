@@ -19,8 +19,9 @@ template_name = "omni.usd_explorer"
 "omni.activity.ui" = {}
 "omni.activity.usd_resolver" = {}
 "omni.hydra.engine.stats" = {}
-"omni.hydra.pxr" = {}
 "omni.hydra.pxr.settings" = {}
+"omni.hydra.pxr" = {}
+"omni.hydra.usdrt_delegate" = {}  # Necessary since FabricSceneDelegate is True
 "omni.kit.asset_converter" = {} # File format conversion
 "omni.kit.browser.asset" = {}  # Enable the NVIDIA asset Browsing only
 "omni.kit.browser.sample" = {}  # Examples
@@ -39,6 +40,7 @@ template_name = "omni.usd_explorer"
 "omni.kit.menu.common" = { order = 1000 }
 "omni.kit.menu.edit" = {}
 "omni.kit.menu.file" = {}
+"omni.kit.primitive.mesh" = {} # Primitive mesh
 "omni.kit.property.bundle" = {}
 "omni.kit.property.layer" = {}
 "omni.kit.quicklayout" = {} # Quicklayout is on enabling custom layouts
@@ -177,7 +179,7 @@ resolution.width = 1920
 skipWhileMinimized = true
 
 [settings.app.settings]
-dev_build = false
+dev_build = true
 persistent = true
 
 [settings.app.startup]
@@ -271,7 +273,7 @@ x = -1
 y = -1
 
 [settings.crashreporter]
-compressDumpfiles = true
+compressDumpFiles = true
 
 [settings.crashreporter.data]
 experience = "{{ application_display_name }}"

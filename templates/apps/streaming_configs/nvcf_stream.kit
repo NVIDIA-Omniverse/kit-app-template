@@ -28,7 +28,6 @@ name = "{{ application_display_name }} NVCF Streaming"  # Application Display Na
 ovc_deployment = true
 renderer.resolution.height = 1080
 renderer.resolution.width = 1920
-useFabricSceneDelegate = false
 window.height = 1080
 window.width = 1920
 
@@ -64,13 +63,3 @@ show_add_new_connection = false  # Do not allow connections to new servers when 
 
 [settings.exts."omni.kit.window.content_browser"]
 show_only_collections.2 = ""
-
-[settings.UJITSO]
-# UJITSO supports loading cached representations of assets.
-# These settings controls what is loaded from cache and where from.
-datastore.localCachePath = "/home/ubuntu/.nvidia-omniverse/ujitso/localCachePath"
-enabled = true	# Enable or disable the use of UJITSO cache.
-geometry = true
-
-[settings.persistent.UJITSO]
-geometry = true

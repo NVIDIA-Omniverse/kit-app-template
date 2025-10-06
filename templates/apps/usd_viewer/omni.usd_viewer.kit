@@ -62,7 +62,6 @@ livestream.skipCapture = 1  # livestream skipCapture ON for local streaming
 name = "{{ application_display_name }}"
 renderer.resolution.width = 1920
 renderer.resolution.height = 1080
-useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 
 [settings.app.environment]
 name = "{{ application_display_name }}"
@@ -134,12 +133,8 @@ enableAnonymousAppName = true
 [settings.UJITSO]
 # UJITSO supports loading cached representations of assets.
 # These settings controls what is loaded from cache and where from.
-enabled = true	# Enable or disable the use of UJITSO cache.
-textures = true
 geometry = true
-materials = true
-datastore.localCachePath=""	# The absolute path to the root directory containing cached assets.
-readCacheWithAssetRoot=""	# The absolute path to the root directory containing the original non-cached assets.
+
 
 [settings.privacy]
 externalBuild = true
