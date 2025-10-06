@@ -16,30 +16,25 @@ SHELL_EXT = "sh" if platform.system() == "Linux" else "bat"
 def _template_new_all(repo_path: Path) -> None:
     """Creates all K-A-T templates"""
 
+    REPLAY_FILES = (
+        ".vscode/replay_files/base_editor",
+        ".vscode/replay_files/usd_composer",
+        ".vscode/replay_files/usd_explorer",
+        ".vscode/replay_files/usd_viewer",
+    )
+
     print("\n----------------------------------------------------------------------------------------")
     print("*** Creating all templates...")
     print("----------------------------------------------------------------------------------------\n")
 
-    company = "my_company"
-    commands = (
-        f"--input=Application>;[kit_base_editor]: Kit Base Editor;{company}.kit_base_editor;DEFAULT;DEFAULT",
-        f"--input=Application>;[omni_usd_composer]: USD Composer;{company}.usd_composer;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT",
-        f"--input=Application>;[omni_usd_explorer]: USD Explorer;{company}.usd_explorer;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT",
-        f"--input=Application>;[omni_usd_viewer]: USD Viewer;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT",
-        f"--input=Application>;[kit_service]: Kit Service;{company}.kit_service;DEFAULT;DEFAULT;DEFAULT;DEFAULT;DEFAULT",
-        f"--input=Extension>;[basic_python_extension]: Basic Python Extension;{company}.basic_python_extension;DEFAULT;DEFAULT",
-        f"--input=Extension>;[basic_cpp_extension]: Basic C++ Extension;{company}.basic_cpp_extension;DEFAULT;DEFAULT",
-        f"--input=Extension>;[basic_python_ui_extension]: Python UI Extension;{company}.basic_python_ui_extension;DEFAULT;DEFAULT",
-    )
-
-    for cmd in commands:
-        repo_args = [
+    for rf in REPLAY_FILES:
+        cmd = [
             f"{repo_path}",  # shell ext has already been appended.
             "template",
-            "new",
-            f"{cmd}",
+            "replay",
+            f"{rf}",
         ]
-        subprocess.run(repo_args, check=False)
+        subprocess.run(cmd, check=True, capture_output=False, text=True, timeout=300)
 
 
 def create_and_build_templates(
@@ -100,6 +95,12 @@ if __name__ == "__main__":
     if not is_valid_kat_repo(parser, args.source_dir):
         print("This tool can only process Kit-App-Template repositories. Exiting...")
         sys.exit(1)
+
+    # Check to see if .omniverse_eula_accepted.txt exists. If not, make it.
+    eula_file = Path(".omniverse_eula_accepted.txt")
+    if not eula_file.exists():
+        print("Creating .omniverse_eula_accepted.txt to accept EULA")
+        eula_file.touch()
 
     create_and_build_templates(parser, args.source_dir)
 

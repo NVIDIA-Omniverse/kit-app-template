@@ -14,6 +14,9 @@ import packmanapi
 
 logger = logging.getLogger(__name__)
 
+if sys.version_info < (3, 10):
+    logger.warning("This version of repo_man currently requires Python 3.10 or later.")
+
 REPO_ROOT = os.path.join(os.path.dirname(os.path.normpath(__file__)), "../..")
 REPO_CACHE_FILE = os.path.join(REPO_ROOT, "repo-cache.json")
 

@@ -38,6 +38,7 @@ template_name = "omni.usd_composer"
 "omni.graph.telemetry" = {}
 "omni.hsscclient" = {}
 "omni.hydra.engine.stats" = {}
+"omni.hydra.usdrt_delegate" = {}  # Necessary since FabricSceneDelegate is True
 "omni.kit.actions.window" = {}
 "omni.kit.asset_converter" = {}
 "omni.kit.browser.configurator_samples" = {}
@@ -133,8 +134,7 @@ template_name = "omni.usd_composer"
 "omni.light_rigs" = {}
 "omni.mdl.usd_converter" = {}
 "omni.no_code_ui.authoring" = {}
-"omni.physics.physx" = {}
-"omni.physics.stageupdate" = {}
+"omni.physx.stageupdate" = {}
 "omni.resourcemonitor" = {}
 "omni.rtx.settings.core" = {} # this is the new Render Settings 2.0
 "omni.scene.optimizer.bundle" = {}
@@ -285,12 +285,16 @@ ui_show_list = [
 	"OmniEmissive",
 	"OmniGlass",
 	"OmniPBR",
-	"OmniPBRBase",
 	"OmniPBR ClearCoat",
 	"USD Preview Surface",
 	"USD Preview Surface Texture",
 	"Add MDL File",
 	"Create MDL Graph",
+	"OmniSurface",
+	"OmniSurfacePresets",
+	"OpenPBR Surface",
+	"Standard Surface",
+	"Add MaterialX Reference",
 ]
 
 [settings.exts."omni.kit.viewport.menubar.framerate"]

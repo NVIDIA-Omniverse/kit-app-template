@@ -1,0 +1,4 @@
+[kit_base_editor]
+application_name = "my_company.my_editor"
+application_display_name = "My Editor"
+version = "0.1.0"

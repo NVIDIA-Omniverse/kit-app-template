@@ -172,6 +172,11 @@ You can pass through arguments to your targeted Kit executable by appending `--`
     ```powershell
     .\repo.bat launch -- --clear-cache
     ```
+    
+:warning: **Important Notes When Launching Applications:** 
+- **Launching an application with path specific arguments:** When launching application with path specific args (for example `--/app/auto_load_usd` using the USD Viewer Template), the path provided should either be absolute (full path from root) or if the asset is within an extension use a tokenized path (e.g. `./repo.sh launch -- --/app/auto_load_usd='${omni.usd_viewer.samples}/samples_data/stage01.usd'` )
+
+- **Launching directly from an uncompressed package:** The `launch` utility is accessible from the project repository and can be used to launch packages from the project repository.  **However**, if launching an application from within a uncompressed packaged the `launch` utility is not available and any arguments passed should be passed to the `.bat` or `.sh` script directly (e.g. `my.app.kit.sh --/app/auto_load_usd=path/to/asset.usd`).
 
 ## Test Tool
 
