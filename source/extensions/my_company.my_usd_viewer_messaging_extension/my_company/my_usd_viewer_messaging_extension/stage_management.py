@@ -164,8 +164,8 @@ class StageManager:
 
     def _on_switch_camera(self, event: carb.events.IEvent) -> None:
         """
-        FIXED: Handler for `switchCameraRequest` event.
-        Switches the viewport camera to the specified camera path.
+        UPDATED: Handler for `switchCameraRequest` event.
+        Switches the viewport camera to the specified camera path or free camera mode.
         """
         if event.type == carb.events.type_from_string("switchCameraRequest"):
             # Fix: Use bracket notation instead of .get() for carb.dictionary.Item
@@ -177,11 +177,21 @@ class StageManager:
 
     async def _handle_camera_switch(self, camera_path):
         """
-        Handle the actual camera switching asynchronously
+        UPDATED: Handle the actual camera switching asynchronously with free camera support
         """
         try:
             if not camera_path:
                 self._send_camera_response("error", "No camera path provided")
+                return
+
+            # NEW: Handle free camera mode
+            if camera_path == "FREE_CAMERA":
+                success = await self._switch_to_free_camera()
+                if success:
+                    self._send_camera_response("success", "", "FREE_CAMERA")
+                    carb.log_info("Successfully switched to free camera mode")
+                else:
+                    self._send_camera_response("error", "Failed to switch to free camera")
                 return
 
             # Get the current stage
@@ -214,6 +224,49 @@ class StageManager:
         except Exception as e:
             carb.log_error(f"Error in camera switching: {e}")
             self._send_camera_response("error", str(e))
+
+    async def _switch_to_free_camera(self):
+        """
+        CLEANED UP: Simplified free camera approach based on what actually works
+        """
+        try:
+            carb.log_info("Starting free camera reset...")
+            
+            viewport_window = get_active_viewport_window()
+            if not viewport_window:
+                carb.log_error("No active viewport window found")
+                return False
+
+            viewport_api = viewport_window.viewport_api
+            if not viewport_api:
+                carb.log_error("No viewport API found")
+                return False
+
+            app = omni.kit.app.get_app()
+            
+            # Method 1: Clear camera path first
+            viewport_api.camera_path = ""
+            carb.log_info("Cleared camera path")
+            
+            for _ in range(3):
+                await app.next_update_async()
+            
+            # Method 2: Set to perspective camera (this is what actually works for free navigation)
+            viewport_api.camera_path = "/OmniverseKit_Persp"
+            carb.log_info("Set to perspective camera for free navigation")
+            
+            for _ in range(5):
+                await app.next_update_async()
+            
+            # Note: /OmniverseKit_Persp actually enables free navigation in Kit
+            # This is the expected behavior - the perspective camera allows user control
+            
+            carb.log_info("Free camera mode activated - navigation enabled")
+            return True
+            
+        except Exception as e:
+            carb.log_error(f"Error in free camera reset: {e}")
+            return False
 
     async def _switch_viewport_camera(self, camera_path):
         """
