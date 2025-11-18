@@ -54,6 +54,7 @@ template_name = "kit_base_editor"
 "omni.kit.viewport.ready" = {} # Show RTX loading information during startup
 "omni.kit.viewport.scene_camera_model" = {} # Sync camera to scene UI
 "omni.kit.viewport.window" = {}  # Load the actual ViewportWindow extension
+"omni.kit.widget.cache_indicator" = {}  # Displays the status of Hub Cache
 "omni.kit.window.console" = {}  # Console/log
 "omni.kit.window.content_browser" = {} # Add content browser to UI
 "omni.kit.window.property" = {} # Property editor window
@@ -83,6 +84,10 @@ renderer.gpuEnumeration.glInterop.enabled = false # Improves startup speed.
 renderer.asyncInit = true # Don't block while renderer inits
 rtx.ecoMode.enabled = true
 rtx.hydra.mdlMaterialWarmup = true # start loading the MDL shaders needed before any delegate is actually created.
+telemetry.disableInternalSessionCheck = true
+telemetry.enableAnonymousAppName = true
+telemetry.enableAnonymousData = true
+privacy.externalBuild = true
 
 
 [settings.app]
@@ -92,7 +97,6 @@ font.size = 16
 hangDetector.enabled = true
 hangDetector.timeout = 120
 renderer.skipWhileMinimized = true
-useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 window.title = "{{ application_display_name }}"
 
 
@@ -109,12 +113,6 @@ folders.'++' = [  # Search paths for extensions.
 
 [settings.app.viewport.defaults]
 fillViewport = true  # default to fill viewport
-
-
-[settings.telemetry]
-# Anonymous Kit application usage telemetry
-enableAnonymousData = true
-enableAnonymousAppName = true
 
 
 [[test]]

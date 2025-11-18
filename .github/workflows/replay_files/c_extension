@@ -1,0 +1,4 @@
+[basic_cpp_extension]
+extension_name = "pointers.suck"
+extension_display_name = "No Garbage Collection?"
+version = "14.0.0"

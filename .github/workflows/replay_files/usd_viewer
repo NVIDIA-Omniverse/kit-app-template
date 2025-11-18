@@ -1,0 +1,14 @@
+[omni_usd_viewer]
+application_name = "mattel.viewmaster"
+application_display_name = "Remember These?"
+version = "3.1.4"
+
+[omni_usd_viewer.extensions.omni_usd_viewer_messaging]
+extension_name = "viewmasters.werent.internet.capable"
+extension_display_name = "Do Extensions Really Need Names"
+version = "5.1.5"
+
+[omni_usd_viewer.extensions.omni_usd_viewer_setup]
+extension_name = "usd.viewer.has.too.many.extensions"
+extension_display_name = "Why Is Setup The Last Extension Made"
+version = "8.0.8"

@@ -14,7 +14,9 @@ import os
 import carb
 import carb.events
 import carb.tokens
+from carb.eventdispatcher import get_eventdispatcher
 
+import omni.client
 import omni.kit.app
 import omni.kit.livestream.messaging as messaging
 import omni.usd
@@ -52,6 +54,10 @@ class LoadingManager:
 
         for o in outgoing:
             messaging.register_event_type_to_send(o)
+            omni.kit.app.register_event_alias(
+                carb.events.type_from_string(o),
+                o,
+            )
 
         # -- register incoming events/messages
         incoming = {
@@ -62,50 +68,53 @@ class LoadingManager:
             "omni.kit.window.status_bar@activity": self._on_activity,
             "loadingStateQuery": self._on_load_state_query,
         }
-
-        message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
+        ed = get_eventdispatcher()
         for event_type, handler in incoming.items():
             # Registering event aliases for incoming events that now leverage Events 2.0
             # TODO: Remove this when all clients have migrated to Events 2.0
             # This is a temporary solution to ensure compatibility with existing clients
-            if event_type.startswith("omni.kit.window.status_bar@"):
-                omni.kit.app.register_event_alias(
-                    carb.events.type_from_string(event_type),
-                    event_type
-                )
+            omni.kit.app.register_event_alias(
+                carb.events.type_from_string(event_type),
+                event_type,
+            )
             self._subscriptions.append(
-                message_bus.create_subscription_to_pop_by_type(
-                    carb.events.type_from_string(event_type), handler
+                ed.observe_event(
+                    observer_name=f"LoadingManager:{event_type}",
+                    event_name=event_type,
+                    on_event=handler
                 )
             )
-
+        usd_context = omni.usd.get_context()
         # -- subscribe to stage events
-        event_stream = omni.usd.get_context().get_stage_event_stream()
-        self._subscriptions.append(
-            event_stream.create_subscription_to_pop(self._on_stage_event)
-        )
+        self._subscriptions.extend([
+            ed.observe_event(
+                observer_name="LoadingManager:stage:opening",
+                event_name=usd_context.stage_event_name(omni.usd.StageEventType.OPENING),
+                on_event=self._on_stage_event_opening,
+            ),
+            ed.observe_event(
+                observer_name="LoadingManager:stage:assets_loaded",
+                event_name=usd_context.stage_event_name(omni.usd.StageEventType.ASSETS_LOADED),
+                on_event=self._on_stage_event_assets_loaded,
+            ),
+        ])
 
-        # -- subscribe to RTX streaming status events
-        RTX_STREAMING_STATUS_EVENT: int = carb.events.type_from_string(
-            "omni.rtx.StreamingStatus"
-        )
         self._subscriptions.append(
-            event_stream.create_subscription_to_pop_by_type(
-                RTX_STREAMING_STATUS_EVENT, self._on_rxt_streaming_event
+            ed.observe_event(
+                observer_name="LoadingManager:stage:streaming_status",
+                event_name="omni.streamingstatus:streaming_status",
+                on_event=self._on_rxt_streaming_event,
             )
         )
 
     def _on_load_state_query(self, event: carb.events.IEvent) -> None:
-        if event.type == carb.events.type_from_string("loadingStateQuery"):
-            message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
-            event_type = carb.events.type_from_string("loadingStateResponse")
-            payload = {"loading_state": "idle", "url": self._opened_stage_url}
-            if self._stage_is_opening:
-                payload = { "loading_state": "busy", "url": self._requested_stage_url }
-            elif self._stage_has_opened:
-                payload = { "loading_state": "idle", "url": self._requested_stage_url }
+        payload = {"loading_state": "idle", "url": self._opened_stage_url}
+        if self._stage_is_opening:
+            payload = { "loading_state": "busy", "url": self._requested_stage_url }
+        elif self._stage_has_opened:
+            payload = { "loading_state": "idle", "url": self._requested_stage_url }
 
-            message_bus.dispatch(event_type, payload=payload)
+        get_eventdispatcher().dispatch_event("loadingStateResponse", payload=payload)
 
 
     def _on_open_stage(self, event: carb.events.IEvent) -> None:
@@ -115,73 +124,68 @@ class LoadingManager:
         Starts loading a given URL, will send success if the layer is already
         loaded, and an error on any failure.
         """
-        if event.type == carb.events.type_from_string("openStageRequest"):
 
-            if "url" not in event.payload:
-                carb.log_error(
-                    f"Unexpected message payload: missing \"url\" key. Payload: '{event.payload}'")
-                return
+        if "url" not in event.payload:
+            carb.log_error(
+                f"Unexpected message payload: missing \"url\" key. Payload: '{event.payload}'")
+            return
 
-            self._requested_stage_url = event.payload["url"]
-            carb.log_info(
-                f"Received message to load '{self._requested_stage_url}'"
-            )
+        self._requested_stage_url = event.payload["url"]
+        carb.log_info(
+            f"Received message to load '{self._requested_stage_url}'"
+        )
 
-            def process_url(url):
-                # Using a single leading `.` to signify that the path is relative to the ${app} token's parent directory
-                # Because we've moved the samples out of the app directory, we need to check for that here
-                # in the samples extension directory.
-                # If that doesn't exist (using older version of the extension), we fall back to old behavior.
-                if url.startswith(("./", ".\\")):
-                    if url.startswith(("./samples", ".\\samples")):
-                        sample_url = carb.tokens.acquire_tokens_interface().resolve(
-                            "${omni.usd_viewer.samples}/" + url[1:].replace("samples", "samples_data")
-                        )
-                        if os.path.exists(sample_url):
-                            return sample_url
-                    return carb.tokens.acquire_tokens_interface().resolve(
-                        "${app}/.." + url[1:]
+        def process_url(url):
+            # Using a single leading `.` to signify that the path is relative to the ${app} token's parent directory
+            # Because we've moved the samples out of the app directory, we need to check for that here
+            # in the samples extension directory.
+            # If that doesn't exist (using older version of the extension), we fall back to old behavior.
+            if url.startswith(("./", ".\\")):
+                if url.startswith(("./samples", ".\\samples")):
+                    sample_url = carb.tokens.acquire_tokens_interface().resolve(
+                        "${omni.usd_viewer.samples}/" + url[1:].replace("samples", "samples_data")
                     )
-                return carb.tokens.acquire_tokens_interface().resolve(url)
+                    if os.path.exists(sample_url):
+                        return sample_url
+                return carb.tokens.acquire_tokens_interface().resolve(
+                    "${app}/.." + url[1:]
+                )
+            return carb.tokens.acquire_tokens_interface().resolve(url)
 
-            # Check to see if we've already loaded the current stage.
-            url = process_url(self._requested_stage_url)
+        # Check to see if we've already loaded the current stage.
+        url = process_url(self._requested_stage_url)
 
-            stage = omni.usd.get_context().get_stage()
-            current_stage = stage.GetRootLayer().identifier if stage else ''
+        stage = omni.usd.get_context().get_stage()
+        current_stage = stage.GetRootLayer().identifier if stage else ''
 
-            # If we are, we don't need to reload the file, instead we'll just send the success message.
-            if omni.client.utils.equal_urls(url, current_stage):
-                carb.log_info(f'Client requested to open a stage that is already open: {url}')
-                message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
-                event_type = carb.events.type_from_string("openedStageResult")
-                payload = {"url": self._requested_stage_url, "result": "success", "error": ''}
-                message_bus.dispatch(event_type, payload=payload)
+        # If we are, we don't need to reload the file, instead we'll just send the success message.
+        if omni.client.utils.equal_urls(url, current_stage):
+            carb.log_info(f'Client requested to open a stage that is already open: {url}')
+            payload = {"url": self._requested_stage_url, "result": "success", "error": ''}
+            get_eventdispatcher().dispatch_event("openedStageResult", payload=payload)
+            self._reset_state()
+            return
+
+        # Asynchronously load the incoming stage
+        async def open_stage():
+            carb.log_info(f'Opening stage per client request: {url}')
+            usd_context = omni.usd.get_context()
+            if url:
+                result, error = await usd_context.open_stage_async(url, omni.usd.UsdContextInitialLoadSet.LOAD_ALL)
+            else:
+                result, error = await usd_context.new_stage_async()
+
+            if result is not True:
+                # Send message to client that loading failed.
+                carb.log_warn(f'The file that the client requested failed to load: {url} (error: {error})')
+                payload = {"url": url, "result": "error", "error": error}
+                get_eventdispatcher().dispatch_event("openedStageResult", payload=payload)
                 self._reset_state()
                 return
 
-            # Asynchronously load the incoming stage
-            async def open_stage():
-                carb.log_info(f'Opening stage per client request: {url}')
-                usd_context = omni.usd.get_context()
-                if url:
-                    result, error = await usd_context.open_stage_async(url, omni.usd.UsdContextInitialLoadSet.LOAD_ALL)
-                else:
-                    result, error = await usd_context.new_stage_async()
+        asyncio.ensure_future(open_stage())
 
-                if result is not True:
-                    message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
-                    event_type = carb.events.type_from_string("openedStageResult")
-                    # Send message to client that loading failed.
-                    carb.log_warn(f'The file that the client requested failed to load: {url} (error: {error})')
-                    payload = {"url": url, "result": "error", "error": error}
-                    message_bus.dispatch(event_type, payload=payload)
-                    self._reset_state()
-                    return
-
-            asyncio.ensure_future(open_stage())
-
-    def _on_stage_event(self, event: carb.events.IEvent) -> None:
+    def _on_stage_event_opening(self, event) -> None:
         """Manage extension state via the stage event stream.
         When a new stage is open we reload the data model and
         set the state for the UI.
@@ -189,28 +193,34 @@ class LoadingManager:
         Args:
             event (carb.events.IEvent): Event type
         """
-        if event.type == int(omni.usd.StageEventType.OPENING):
-            self._stage_is_opening = True
-            payload: dict = event.payload.get_dict()
-            if 'val' in payload.keys():
-                self._opened_stage_url = payload['val']
-            else:
-                self._opened_stage_url = ''
-            self._persisted_stage = True if self._opened_stage_url else False
+        self._stage_is_opening = True
+        payload: dict = dict(event.payload)
+        if 'val' in payload.keys():
+            self._opened_stage_url = payload['val']
+        else:
+            self._opened_stage_url = ''
+        self._persisted_stage = True if self._opened_stage_url else False
+        return
+
+    def _on_stage_event_assets_loaded(self, event) -> None:
+        """Manage extension state via the stage event stream.
+        When a new stage is open we reload the data model and
+        set the state for the UI.
+
+        Args:
+            event (carb.events.IEvent): Event type
+        """
+        # Check that a stage is opening. Assets can load after stage has opened.
+        if not self._stage_is_opening:
             return
+        self._stage_is_opening = False
+        self._stage_has_opened = True
 
-        if event.type == int(omni.usd.StageEventType.ASSETS_LOADED):
-            # Check that a stage is opening. Assets can load after stage has opened.
-            if not self._stage_is_opening:
-                return
-            self._stage_is_opening = False
-            self._stage_has_opened = True
+        # Async call to evaluate opened state
+        asyncio.ensure_future(self._evaluate_load_status())
+        return
 
-            # Async call to evaluate opened state
-            asyncio.ensure_future(self._evaluate_load_status())
-            return
-
-    def _on_rxt_streaming_event(self, event: carb.events.IEvent) -> None:
+    def _on_rxt_streaming_event(self, event) -> None:
         """
         Notes streaming manager's busy state
 
@@ -241,14 +251,12 @@ class LoadingManager:
             await omni.kit.app.get_app().next_update_async()
 
         # Stage has loaded with all dependencies. Send message to client.
-        message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
-        event_type = carb.events.type_from_string("openedStageResult")
         url = self._requested_stage_url if self._requested_stage_url  else '[obfuscated]'
         carb.log_info(
             f'Sending message to client that stage has loaded: {url}'
         )
         payload = {"url": url, "result": "success", "error": ''}
-        message_bus.dispatch(event_type, payload=payload)
+        get_eventdispatcher().dispatch_event("openedStageResult", payload=payload)
 
         # reset
         self._is_evaluating_loading_status = False
@@ -262,16 +270,10 @@ class LoadingManager:
         # Only notify for stage loaded from storage.
         if not self._persisted_stage:
             return
-        if event.type == carb.events.type_from_string(
-            "omni.kit.window.status_bar@progress"
-        ):
-            message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
-            # Send progress message
-            carb.log_info('Sending message to client about loading progress.')
-            event_type = carb.events.type_from_string("updateProgressAmount")
-            # event.payload.get_dict() is used to capture a copy of the
-            # incoming event's payload as a python dictionary
-            message_bus.dispatch(event_type, payload=event.payload.get_dict())
+
+        # Send progress message
+        carb.log_info('Sending message to client about loading progress.')
+        get_eventdispatcher().dispatch_event("updateProgressAmount", payload=dict(event.payload))
 
     def _on_activity(self, event: carb.events.IEvent):
         """
@@ -281,15 +283,11 @@ class LoadingManager:
         # Only notify for stage loaded from storage.
         if not self._persisted_stage:
             return
-        if event.type == carb.events.type_from_string(
-            "omni.kit.window.status_bar@activity"
-        ):
-            carb.log_info('Storing message about loading activity.')
-            message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
-            # Send activity message
-            carb.log_info('Sending message to client about loading activity.')
-            event_type = carb.events.type_from_string("updateProgressActivity")
-            message_bus.dispatch(event_type, payload=event.payload.get_dict())
+
+        carb.log_info('Storing message about loading activity.')
+        # Send activity message
+        carb.log_info('Sending message to client about loading activity.')
+        get_eventdispatcher().dispatch_event("updateProgressActivity", payload=dict(event.payload))
 
     def on_shutdown(self) -> None:
         """

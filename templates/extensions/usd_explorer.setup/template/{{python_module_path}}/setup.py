@@ -39,6 +39,7 @@ import carb.dictionary
 import carb.events
 import carb.tokens
 import carb.input
+from carb.eventdispatcher import get_eventdispatcher
 
 import omni.kit.imgui as _imgui
 
@@ -198,10 +199,13 @@ class SetupExtension(omni.ext.IExt):
         asyncio.ensure_future(_clear_startup_scene_edits())
 
         self._usd_context = omni.usd.get_context()
-        self._stage_event_sub = \
-            self._usd_context.get_stage_event_stream().create_subscription_to_pop(
-                self._on_stage_open_event, name="TeleportDefaultOn"
-            )
+
+        self._stage_event_sub = get_eventdispatcher().observe_event(
+            observer_name="TeleportDefaultOn",
+            event_name="omni.usd::stage:opened",
+            on_event=self._on_stage_open_event,
+        )
+
         if self._settings.get_as_bool(SETTINGS_STARTUP_EXPAND_VIEWPORT):
             self._set_viewport_fill_on()
 
@@ -235,23 +239,22 @@ class SetupExtension(omni.ext.IExt):
         ]
         omni.kit.menu.utils.add_menu_items(self._help_menu_items, name="Help")
 
-    def _on_stage_open_event(self, event: carb.events.IEvent):
+    def _on_stage_open_event(self, event):
         """Callback to clear tools and switch the app mode after a new stage
         is opened."""
-        if event.type == int(omni.usd.StageEventType.OPENED):
-            app_mode = self._settings.get_as_string(
-                APPLICATION_MODE_PATH
-            ).lower()
+        app_mode = self._settings.get_as_string(
+            APPLICATION_MODE_PATH
+        ).lower()
 
-            # exit all tools
-            self._settings.set(CURRENT_TOOL_PATH, "none")
+        # exit all tools
+        self._settings.set(CURRENT_TOOL_PATH, "none")
 
-            if app_mode == "review":
-                asyncio.ensure_future(self._stage_post_open_teleport_toggle())
+        if app_mode == "review":
+            asyncio.ensure_future(self._stage_post_open_teleport_toggle())
 
-            # toggle RMB viewport context menu based on application mode
-            value = False if app_mode == "review" else True
-            self._settings.set(VIEWPORT_CONTEXT_MENU_PATH, value)
+        # toggle RMB viewport context menu based on application mode
+        value = False if app_mode == "review" else True
+        self._settings.set(VIEWPORT_CONTEXT_MENU_PATH, value)
 
     # teleport is activated after loading a stage and app is in Review mode
     async def _stage_post_open_teleport_toggle(self):

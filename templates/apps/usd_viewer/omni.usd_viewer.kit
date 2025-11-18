@@ -120,24 +120,14 @@ renderer.enabled = "rtx"  # enable rtx renderer
 renderer.multiGpu.enabled = true
 rendergraph.maxFramesInFlight = 2
 rtx-transient.dlssg.enabled=false  # Disable DLSS otherwise it can push the framerate above the locked limit
+telemetry.disableInternalSessionCheck = true
+telemetry.enableAnonymousAppName = true
+telemetry.enableAnonymousData = true
+privacy.externalBuild = true
 
 [settings.exts."omni.appwindow"]
 listenF11 = false
 listenF7 = false
-
-[settings.telemetry]
-# Anonymous Kit application usage telemetry
-enableAnonymousData = true
-enableAnonymousAppName = true
-
-[settings.UJITSO]
-# UJITSO supports loading cached representations of assets.
-# These settings controls what is loaded from cache and where from.
-geometry = true
-
-
-[settings.privacy]
-externalBuild = true
 
 # Tests
 ################################

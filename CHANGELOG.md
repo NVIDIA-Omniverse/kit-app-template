@@ -2,6 +2,19 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [109.0.0] - 2025-11-18
+
+### Added
+- Added new Livestream extensions `omni.kit.livestream.aov` and `omni.services.livestream.webrtc` 
+
+### Changed
+- Updated to `Kit 109.0.0`
+  - [Kit 109.0 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0.html)
+  - [Kit 109.0 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_highlights.html)
+  - `useFabricSceneDelegate = true` removed. Fabric Scene Delegate (FSD) is now enabled by default in Kit 109.0. Applications no longer need to explicitly enable FSD in `.kit` configuration files.
+  - `auto_load_usd` for USD Viewer now supports relative paths
+  - Set custom orientations for `UsdLux 25.05` for Y-up and Z-up stages in USD Explorer template and set `inputs:normalize = true` on that template's distant light.
+
 ## [108.1.0] - 2025-10-06
 
 ### Added
@@ -16,7 +29,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Deprecated
 - Deprecated `omni.kit.ngsearch` extension, no longer available after Kit 108
 
-
 ## [108.0.0] - 2025-08-12
 
 ### Changed
@@ -28,7 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Removed omni.services.transport.server.http.port overrides.  Aligned all template applications to use default ports.
 - Updated repository documentation to reflect changes in streaming changes.
 - Updated crash reporter settings to compress crash reports.
-- Update Windows `omni.kit.window.modifier.titlebar` extension version
+- Update Windows `omni.kit.window.modifier.titlebar` extension version 
 - Update repo tooling to most recent versions
 - Updated application icon images for Composer and Explorer templates
 - Enabled testing for USD Viewer Template messaging extension
@@ -49,7 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [107.2.0] - 2025-05-05
 
-### Added
+### Added 
 - Added tooltip information to the VSCode debug extensions to clarify usage.
 - Added tooling checks for path whitespace and OneDrive paths to improve developer experience.
 

@@ -24,7 +24,6 @@ template_name = "omni.gdn_streaming_configuration"
 fastShutdown = true  # Skip long full shutdown and exit quickly
 name = "{{ application_display_name }} GDN Streaming"  # Skip checking supported platform/config when building
 titleVersion = "1.0.0"  # this is used in our setup file to display some Version to the user in the title bar
-useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 vsync = false  # Vsync disabled by default, can be set to true for L40 or similar
 
 
@@ -73,8 +72,10 @@ width = 1920  # width of main window
 
 
 [settings.app.extensions]
-excluded = [
+
+exclude = [
     "omni.kit.developer.bundle",
+    "omni.kit.widget.cache_indicator",
 ]
 
 

@@ -73,6 +73,7 @@ template_name = "omni.usd_explorer"
 "omni.kit.viewport.scene_camera_model" = {}  # Push camera changes to Viewport ui.scene as fast as possible
 "omni.kit.viewport.window" = {}
 "omni.kit.waypoint.playlist" = {}
+"omni.kit.widget.cache_indicator" = {}
 "omni.kit.widget.filebrowser" = {} # General purpose widgets to browsder and select fles
 "omni.kit.widget.layers" = {}
 "omni.kit.widget.live" = {}  # Includes Cache status display
@@ -110,7 +111,6 @@ template_name = "omni.usd_explorer"
 [settings.app]
 name = "{{ application_display_name }}"
 fastShutdown = true  # Fast shutdown by default
-useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 
 [settings.app.content]
 emptyStageOnStart = true # This will create a stage during the startup process.
@@ -581,9 +581,6 @@ autoLightRig.enabled = true
 [settings.persistent.exts."omni.kit.viewport.window"]
 cameraSpeedMessage.showFlyViewLock = true
 
-[settings.privacy]
-externalBuild = true
-
 [settings.renderer]
 active = "rtx"  # RTX As the default renderer always
 enabled = "rtx"  # only enable rtx renderer by default
@@ -634,10 +631,11 @@ useUniformsReindexing = true
 [settings.structuredLog]
 enable = true
 
-[settings.telemetry]
-# Anonymous Kit application usage telemetry
-enableAnonymousData = true
-enableAnonymousAppName = true
+[settings]
+telemetry.disableInternalSessionCheck = true
+telemetry.enableAnonymousAppName = true
+telemetry.enableAnonymousData = true
+privacy.externalBuild = true
 
 
 [[test]]

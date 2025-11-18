@@ -21,6 +21,13 @@ template_name = "kit_service"
 "{{ setup_extension_name }}" = { order = 10000 }
 
 
+[settings]
+telemetry.disableInternalSessionCheck = true
+telemetry.enableAnonymousAppName = true
+telemetry.enableAnonymousData = true
+privacy.externalBuild = true
+
+
 [settings.app]
 name = "{{ application_display_name }}"
 
@@ -35,8 +42,3 @@ name = "{{ application_display_name }}"
     "${app}/../extscache/"
 ]
 
-
-[settings.telemetry]
-# Anonymous Kit application usage telemetry
-enableAnonymousData = true
-enableAnonymousAppName = true

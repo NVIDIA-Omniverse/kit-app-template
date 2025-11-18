@@ -40,11 +40,14 @@ rtx-transient.dlssg.enabled = true
 rtx-transient.scenedb.forceMaxTLASInstancesLimit = 15000000
 rtx-transient.scenedb.instanceBudget=1000000
 
+
 [settings.app.extensions]
 registryEnabled = true
 supportedTargets.platform = []  # Skip checking supported platform/config when building
-excluded = [
+
+exclude = [
     "omni.kit.developer.bundle",
+    "omni.kit.widget.cache_indicator",
 ]
 
 [settings.app.exts]
@@ -57,9 +60,11 @@ folders.'++' = [  # Search paths for extensions.
 [settings.app.file]
 ignoreUnsavedOnExit = true
 
+
 [settings.exts."omni.kit.window.filepicker"]
 show_only_collections.2 = ""
 show_add_new_connection = false  # Do not allow connections to new servers when running on NVCF.
 
 [settings.exts."omni.kit.window.content_browser"]
 show_only_collections.2 = ""
+

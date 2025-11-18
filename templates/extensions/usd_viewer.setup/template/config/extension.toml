@@ -29,10 +29,6 @@ repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of th
 "{{ extra_extension_name }}" = {}  # Required messaging extension
 
 
-[settings.app]
-useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
-
-
 [settings.exts."{{ extension_name }}"]
 menu_visible = false
 

@@ -20,6 +20,8 @@ import omni.ext
 import omni.usd
 import omni.kit.app
 import omni.kit.livestream.messaging as messaging
+
+from carb.eventdispatcher import get_eventdispatcher
 from omni.kit.viewport.utility import get_active_viewport_camera_string
 
 
@@ -45,6 +47,10 @@ class StageManager:
 
         for o in outgoing:
             messaging.register_event_type_to_send(o)
+            omni.kit.app.register_event_alias(
+                carb.events.type_from_string(o),
+                o,
+            )
 
         # -- register incoming events/messages
         incoming = {
@@ -58,18 +64,36 @@ class StageManager:
             'resetStage': self._on_reset_camera,
         }
 
+        ed = get_eventdispatcher()
         for event_type, handler in incoming.items():
+            omni.kit.app.register_event_alias(
+                carb.events.type_from_string(event_type),
+                event_type,
+            )
             self._subscriptions.append(
-                omni.kit.app.get_app().get_message_bus_event_stream().
-                create_subscription_to_pop_by_type(
-                    carb.events.type_from_string(event_type), handler
+                ed.observe_event(
+                    observer_name=f"StageManager:{event_type}",
+                    event_name=event_type,
+                    on_event=handler,
                 )
             )
 
         # -- subscribe to stage events
+        usd_context = omni.usd.get_context()
         event_stream = omni.usd.get_context().get_stage_event_stream()
         self._subscriptions.append(
-            event_stream.create_subscription_to_pop(self._on_stage_event)
+            ed.observe_event(
+                observer_name="StageManager:StageOpened",
+                event_name=usd_context.stage_event_name(omni.usd.StageEventType.OPENED),
+                on_event=self._on_stage_event_opened,
+            )
+        )
+        self._subscriptions.append(
+            ed.observe_event(
+                observer_name="StageManager:SelectionChanged",
+                event_name=usd_context.stage_event_name(omni.usd.StageEventType.SELECTION_CHANGED),
+                on_event=self._on_stage_event_selection_changed,
+            )
         )
 
     def get_children(self, prim_path, filters=None):
@@ -92,6 +116,8 @@ class StageManager:
         for child in prim.GetChildren():
             # If a child doesn't pass any filter, we skip it.
             if filters is not None:
+                if isinstance(filters, carb.dictionary.Item):
+                    filters = filters.get_dict()
                 if not any(child.IsA(filter_types[filt]) for filt in filters if filt in filter_types):
                     continue
 
@@ -122,22 +148,21 @@ class StageManager:
         Handler for the `getChildrenRequest` event
         Collects a filtered collection of a given primitives children.
         """
-        if event.type == carb.events.type_from_string("getChildrenRequest"):
-            carb.log_info(
-                "Received message to return list of a prim\'s children"
-            )
-            message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
-            event_type = carb.events.type_from_string("getChildrenResponse")
-            children = self.get_children(
-                prim_path=event.payload["prim_path"],
-                filters=event.payload["filters"]
-            )
-            payload = {
-                "prim_path": event.payload["prim_path"],
-                "children": children
-            }
-            message_bus.dispatch(event_type, payload=payload)
-            message_bus.pump()
+
+        carb.log_info(
+            "Received message to return list of a prim\'s children"
+        )
+        children = self.get_children(
+            prim_path=event.payload["prim_path"],
+            filters=event.payload["filters"]
+        )
+        payload = {
+            "prim_path": event.payload["prim_path"],
+            "children": children
+        }
+
+
+        get_eventdispatcher().dispatch_event("getChildrenResponse", payload=payload)
 
     def _on_select_prims(self, event: carb.events.IEvent) -> None:
         """
@@ -145,65 +170,49 @@ class StageManager:
 
         Selects the given primitives.
         """
-        if event.type == carb.events.type_from_string("selectPrimsRequest"):
-            new_selection = []
-            if "paths" in event.payload:
-                new_selection = list(event.payload["paths"])
-                carb.log_info(f"Received message to select '{new_selection}'")
-            # Flagging this as an external event because it
-            # was initiated by the client.
-            self._is_external_update = True
-            sel = omni.usd.get_context().get_selection()
-            sel.clear_selected_prim_paths()
-            sel.set_selected_prim_paths(new_selection, True)
-
-    def _on_stage_event(self, event):
-        """
-        Hanles all stage related events.
-
-        `omni.usd.StageEventType.SELECTION_CHANGED`:
-            Informs the StreamerApp that the selection has changed.
-        `omni.usd.StageEventType.ASSETS_LOADED`:
-            Informs the StreamerApp that a stage has finished loading
-            its assets.
-        `omni.usd.StageEventType.OPENED`:
-            On stage opened, we collect some of the camera properties
-            to allow for them to be reset.
-        """
-        if event.type == int(omni.usd.StageEventType.SELECTION_CHANGED):
-            # If the selection changed came from an external event,
-            # we don't need to let the streaming client know because it
-            # initiated the change and is already aware.
-            if self._is_external_update:
-                self._is_external_update = False
+        new_selection = []
+        if "paths" in event.payload:
+            if isinstance(event.payload["paths"], carb.dictionary.Item):
+                new_selection = list(event.payload["paths"].get_dict())
             else:
-                message_bus = omni.kit.app.get_app()\
-                    .get_message_bus_event_stream()
-                event_type = carb.events.type_from_string(
-                    "stageSelectionChanged"
-                )
-                payload = {"prims": omni.usd.get_context().get_selection().
-                           get_selected_prim_paths()}
-                message_bus.dispatch(event_type, payload=payload)
-                message_bus.pump()
-                carb.log_info(f"Selection changed: Path to USD prims currently selected = {omni.usd.get_context().get_selection().get_selected_prim_paths()}")
+                new_selection = list(event.payload["paths"])
+            carb.log_info(f"Received message to select '{new_selection}'")
+        # Flagging this as an external event because it
+        # was initiated by the client.
+        self._is_external_update = True
+        sel = omni.usd.get_context().get_selection()
+        sel.clear_selected_prim_paths()
+        sel.set_selected_prim_paths(new_selection, True)
 
-        elif event.type == int(omni.usd.StageEventType.OPENED):
-            stage = omni.usd.get_context().get_stage()
-            stage_url = stage.GetRootLayer().identifier if stage else ''
+    def _on_stage_event_opened(self, event):
+        stage = omni.usd.get_context().get_stage()
+        stage_url = stage.GetRootLayer().identifier if stage else ''
 
-            if stage_url:
-                # Set the entire stage to not be pickable.
-                ctx = omni.usd.get_context()
-                ctx.set_pickable("/", False)
-                # Clear before using, so that we're sure the data is only
-                # from the new stage.
-                self._camera_attrs.clear()
-                # Capture the active camera's camera data, used to reset
-                # the scene to a known good state.
-                if (prim := ctx.get_stage().GetPrimAtPath(get_active_viewport_camera_string())):
-                    for attr in prim.GetAttributes():
-                        self._camera_attrs[attr.GetName()] = attr.Get()
+        if stage_url:
+            # Set the entire stage to not be pickable.
+            ctx = omni.usd.get_context()
+            ctx.set_pickable("/", False)
+            # Clear before using, so that we're sure the data is only
+            # from the new stage.
+            self._camera_attrs.clear()
+            # Capture the active camera's camera data, used to reset
+            # the scene to a known good state.
+            if (prim := ctx.get_stage().GetPrimAtPath(get_active_viewport_camera_string())):
+                for attr in prim.GetAttributes():
+                    self._camera_attrs[attr.GetName()] = attr.Get()
+
+    def _on_stage_event_selection_changed(self, event):
+        # If the selection changed came from an external event,
+        # we don't need to let the streaming client know because it
+        # initiated the change and is already aware.
+        if self._is_external_update:
+            self._is_external_update = False
+        else:
+            payload = {"prims": omni.usd.get_context().get_selection().
+                        get_selected_prim_paths()}
+
+            get_eventdispatcher().dispatch_event("stageSelectionChanged", payload=payload)
+            carb.log_info(f"Selection changed: Path to USD prims currently selected = {omni.usd.get_context().get_selection().get_selected_prim_paths()}")
 
     def _on_reset_camera(self, event: carb.events.IEvent):
         """
@@ -212,32 +221,29 @@ class StageManager:
         Resets the camera back to values collected when the stage was opened.
         A success message is sent if all attributes are succesfully reset, and error message is set otherwise.
         """
-        if event.type == carb.events.type_from_string("resetStage"):
-            ctx = omni.usd.get_context()
-            stage = ctx.get_stage()
-            try:
-                # Reset the camera.
-                # The camera lives on the session layer, which has a higher
-                # opinion than the root stage. So we need to explicitly target
-                # the session layer when resetting the camera's attributes.
-                camera_prim = ctx.get_stage().GetPrimAtPath(
-                    get_active_viewport_camera_string()
-                )
-                edit_context = Usd.EditContext(
-                    stage, Usd.EditTarget(stage.GetSessionLayer())
-                )
-                with edit_context:
-                    for name, value in self._camera_attrs.items():
-                        attr = camera_prim.GetAttribute(name)
-                        attr.Set(value)
-            except Exception as e:
-                payload = {"result": "error", "error": str(e)}
-            else:
-                payload = {"result": "success", "error": ""}
-            message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
-            event_type = carb.events.type_from_string("resetStageResponse")
-            message_bus.dispatch(event_type, payload=payload)
-            message_bus.pump()
+        ctx = omni.usd.get_context()
+        stage = ctx.get_stage()
+        try:
+            # Reset the camera.
+            # The camera lives on the session layer, which has a higher
+            # opinion than the root stage. So we need to explicitly target
+            # the session layer when resetting the camera's attributes.
+            camera_prim = ctx.get_stage().GetPrimAtPath(
+                get_active_viewport_camera_string()
+            )
+            edit_context = Usd.EditContext(
+                stage, Usd.EditTarget(stage.GetSessionLayer())
+            )
+            with edit_context:
+                for name, value in self._camera_attrs.items():
+                    attr = camera_prim.GetAttribute(name)
+                    attr.Set(value)
+        except Exception as e:
+            payload = {"result": "error", "error": str(e)}
+        else:
+            payload = {"result": "success", "error": ""}
+
+        get_eventdispatcher().dispatch_event("resetStageResponse", payload=payload)
 
     def _on_make_pickable(self, event: carb.events.IEvent):
         """
@@ -247,25 +253,25 @@ class StageManager:
         Sends 'makePrimsPickableResponse' back to streamer with
         current success status.
         """
-        if event.type == carb.events.type_from_string("makePrimsPickable"):
-            message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
-            event_type = carb.events.type_from_string(
-                "makePrimsPickableResponse"
-            )
-            # Reset the stage to not be pickable.
-            ctx = omni.usd.get_context()
-            ctx.set_pickable("/", False)
-            # Set the provided paths to be pickable.
-            try:
-                paths = event.payload['paths'] or []
-                for path in paths:
-                    ctx.set_pickable(path, True)
-            except Exception as e:
-                payload = {"result": "error", "error": str(e)}
-            else:
-                payload = {"result": "success", "error": ""}
-            message_bus.dispatch(event_type, payload=payload)
-            message_bus.pump()
+        # Reset the stage to not be pickable.
+        ctx = omni.usd.get_context()
+        ctx.set_pickable("/", False)
+        # Set the provided paths to be pickable.
+        try:
+            if "paths" in event.payload:
+                if isinstance(event.payload["paths"], carb.dictionary.Item):
+                    paths = list(event.payload["paths"].get_dict())
+                else:
+                    paths = list(event.payload["paths"])
+
+            for path in paths:
+                ctx.set_pickable(path, True)
+        except Exception as e:
+            payload = {"result": "error", "error": str(e)}
+        else:
+            payload = {"result": "success", "error": ""}
+
+        get_eventdispatcher().dispatch_event("makePrimsPickableResponse", payload=payload)
 
     def on_shutdown(self):
         """This is called every time the extension is deactivated. It is used

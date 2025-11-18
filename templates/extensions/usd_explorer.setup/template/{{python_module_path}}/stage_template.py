@@ -24,6 +24,16 @@ class SunnySkyStage:
         """Unregister the template when the object is deleted."""
         unregister_template("SunnySky")
 
+    def get_usdlux_version(self, prim: Usd.Prim) -> int:
+        attr = prim.GetAttribute("omni:rtx:usdluxVersion")
+        if attr and attr.HasValue():
+            try:
+                v = attr.Get()
+                return int(v) if isinstance(v, (int, float)) else 2411
+            except Exception:
+                pass
+        return 2411
+
     def new_stage(self, _rootname, usd_context_name):
         """Create a new stage with a sunny sky."""
         # Create basic DistantLight
@@ -73,14 +83,24 @@ class SunnySkyStage:
             prim.CreateAttribute(
                 "xformOp:translate", Sdf.ValueTypeNames.Double3, False
             ).Set(Gf.Vec3d(0, 0, 0))
-            if up_axis == "Y":
-                prim.CreateAttribute(
-                    "xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False
-                ).Set(Gf.Vec3d(270, 0, 0))
+            if self.get_usdlux_version(prim) < 2505:
+                if up_axis == "Y":
+                    prim.CreateAttribute(
+                        "xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False
+                    ).Set(Gf.Vec3d(270, 0, 0))
+                else:
+                    prim.CreateAttribute(
+                        "xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False
+                    ).Set(Gf.Vec3d(0, 0, 90))
             else:
-                prim.CreateAttribute(
-                    "xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False
-                ).Set(Gf.Vec3d(0, 0, 90))
+                if up_axis == "Y":
+                    prim.CreateAttribute(
+                        "xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False
+                    ).Set(Gf.Vec3d(0, 270, 0))
+                else:
+                    prim.CreateAttribute(
+                        "xformOp:rotateXYZ", Sdf.ValueTypeNames.Double3, False
+                    ).Set(Gf.Vec3d(90, 0, 0))
             prim.CreateAttribute(
                 "xformOpOrder", Sdf.ValueTypeNames.String, False
             ).Set(["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"])
@@ -105,6 +125,13 @@ class SunnySkyStage:
                 context_name=usd_context_name
             )
             prim = stage.GetPrimAtPath("/Environment/DistantLight")
+            try:
+                if self.get_usdlux_version(prim) >= 2505 and hasattr(UsdLux.Tokens, 'inputsNormalize'):
+                    attr = prim.GetAttribute("inputs:normalize")
+                    if attr and attr.IsValid():
+                        attr.Set(True)
+            except Exception:
+                pass
             prim.CreateAttribute(
                 "xformOp:scale", Sdf.ValueTypeNames.Double3, False
             ).Set(Gf.Vec3d(1, 1, 1))

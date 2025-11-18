@@ -1,0 +1,4 @@
+[kit_base_editor]
+application_name = "bob"
+application_display_name = "Bob's Editor"
+version = "0.0.1"

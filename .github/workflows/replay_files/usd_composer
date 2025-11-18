@@ -1,0 +1,9 @@
+[omni_usd_composer]
+application_name = "john.williams"
+application_display_name = "A New Hope"
+version = "4.0"
+
+[omni_usd_composer.extensions.omni_usd_composer_setup]
+extension_name = "cassian.andor"
+extension_display_name = "A Prequel Is A Setup"
+version = "0.0.0"

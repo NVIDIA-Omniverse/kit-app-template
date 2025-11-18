@@ -107,6 +107,7 @@ template_name = "omni.usd_composer"
 "omni.kit.widget.layers" = {}
 "omni.kit.widget.live" = {}
 "omni.kit.viewport.scene_camera_model" = {}
+"omni.kit.widget.cache_indicator" = {}
 "omni.kit.widget.timeline" = {}
 "omni.kit.widget.versioning" = {}
 "omni.kit.widgets.custom" = {}
@@ -155,7 +156,6 @@ template_name = "omni.usd_composer"
 content.emptyStageOnStart = false
 fastShutdown = true
 name = "{{ application_display_name }}"
-useFabricSceneDelegate = true  # Turn on the Fabric scene delegate by default
 show_developer_preference_section = false
 
 
@@ -342,13 +342,10 @@ communityTabEnabled = true
 crashreporter.compressDumpFiles = true
 foundation.verifyOsVersion.enabled = false
 plugins.'carb.profiler-cpu.plugin'.filePath = "${shared_documents}/create_profile.ct.json.gz"
-privacy.externalBuild = true
 renderer.active = "rtx" # RTX As the default renderer always
 renderer.enabled = "rtx"  # iray, pxr
 structuredLog.enable = true
-
-
-[settings.telemetry]
-# Anonymous Kit application usage telemetry
-enableAnonymousAppName = true
-enableAnonymousData = true
+telemetry.disableInternalSessionCheck = true
+telemetry.enableAnonymousAppName = true
+telemetry.enableAnonymousData = true
+privacy.externalBuild = true

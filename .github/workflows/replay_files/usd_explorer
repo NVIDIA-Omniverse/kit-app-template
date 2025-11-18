@@ -1,0 +1,9 @@
+[omni_usd_explorer]
+application_name = "paiges.dora.the.explorer"
+application_display_name = "I Saw A Live Show Of This Once"
+version = "1.2.3"
+
+[omni_usd_explorer.extensions.omni_usd_explorer_setup]
+extension_name = "im.the.map"
+extension_display_name = "I'm The Map"
+version = "4.5.6"

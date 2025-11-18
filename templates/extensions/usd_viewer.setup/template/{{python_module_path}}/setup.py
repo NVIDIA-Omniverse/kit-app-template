@@ -60,6 +60,13 @@ class SetupExtension(omni.ext.IExt):
         # load provided by setup stage.
         if stage_url:
             stage_url = carb.tokens.get_tokens_interface().resolve(stage_url)
+            try:
+                path = Path(stage_url)
+                if path.exists():
+                    stage_url = str(path.resolve())
+            except (OSError, RuntimeError):
+                # Keep original stage_url - it might be a valid URL or network path
+                pass
             asyncio.ensure_future(self.__open_stage(stage_url))
 
         self._await_layout = asyncio.ensure_future(self._delayed_layout())
@@ -102,8 +109,24 @@ class SetupExtension(omni.ext.IExt):
                 await app.next_update_async()
 
         usd_context = omni.usd.get_context()
-        await usd_context.open_stage_async(
-            url, omni.usd.UsdContextInitialLoadSet.LOAD_ALL)
+
+        count = 0
+        timed_out = False
+        # Wait until we can open the stage
+        while not usd_context.can_open_stage():
+            await omni.kit.app.get_app().next_update_async()
+            count += 1
+            if count > 100:
+                timed_out = True
+                break
+
+        if not timed_out:
+            await usd_context.open_stage_async(
+                url, omni.usd.UsdContextInitialLoadSet.LOAD_ALL)
+        else:
+            carb.log_warn(
+                f"SetupExtension: Timed out waiting to open stage {url}")
+            return
 
         # If this was the first Usd data opened, explicitly restore
         # render-settings now as the renderer may not have been fully

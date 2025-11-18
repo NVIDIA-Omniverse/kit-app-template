@@ -1,0 +1,9 @@
+[basic_python_binding]
+extension_name = "yesss.python"
+extension_display_name = "Expose the Powa To Python"
+version = "1.3.5"
+library_name = "_yesss_python_lib"
+interface_name = "IYesssPythonInterface"
+object_interface_name = "IYesssPythonObjectInterface"
+object_name = "YesssPythonObject"
+extension_namespace = "yesss::python"

@@ -1,0 +1,4 @@
+[basic_python_extension]
+extension_name = "basic.snake.extension"
+extension_display_name = "SNAKES"
+version = "5.5.5"
