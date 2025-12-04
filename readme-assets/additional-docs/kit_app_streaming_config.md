@@ -49,11 +49,11 @@ After you have created and customized your application, build it using the follo
 
 ## Packaging Your Application
 
-- **Omniverse Kit App Streaming** & **Omniverse Cloud**
+- **Omniverse Kit App Streaming** & **Omniverse on NVCF**
   From a **Linux** development environment, run the following command to containerize your application for streaming:
 
   ```bash
-  ./repo.sh package --container --name {container name}
+  ./repo.sh package_container --image-tag [container_image_name:container_image_tag]
   ```
 
   :warning: **Note**

@@ -66,7 +66,7 @@ Ensure your system is set up with the following to work with Omniverse Applicati
 
 - **GPU**: NVIDIA RTX capable GPU (RTX 3070 or Better recommended)
 
-- **Driver**: Minimum and recommended - 537.58. Newer versions may work but are not equally validated.
+- **Driver**: Minimum and recommended - This update requires driver version >=550.54.15 (Linux) or >=551.78 (Windows). Please verify your driver versions before upgrading. Newer versions may work but are not equally validated.
 
 - **Internet Access**: Required for downloading the Omniverse Kit SDK, extensions, and tools.
 

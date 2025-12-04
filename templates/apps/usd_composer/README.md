@@ -219,13 +219,13 @@ Applications packaged using the `package` command can be launched using the `lau
 
 **Requires:** `Docker` and `NVIDIA Container Toolkit`
 
-The packaging tooling provided by the Kit App Template also supports containerization of applications. This is especially useful for deploying headless services and streaming applications in a containerized environment.
+The containerization tool provided by `repo_kit_tools` supports containerization of applications. This is especially useful for deploying headless services and streaming applications in a containerized environment.
 
-To package your application as a container image, use the `--container` flag:
+To package your application as a container image, use:
 
 **Linux:**
 ```bash
-./repo.sh package --container
+./repo.sh package_container
 ```
 
 You will be prompted to select a `.kit` file to serve as the application to launch via the container entrypoint script. This will dictate the behavior of your containerized application.
@@ -234,11 +234,11 @@ For example, if you are containerizing an application for streaming, select the 
 
 > **NOTE:** If creating a container for a NVIDIA Cloud Functions (NVCF) based deployment, select the `{your-app-name}_nvcf.kit` file to ensure the proper settings are used for that platform.
 
-Similar to desktop packaging, the container option allows for specifying a package name using the `--name` flag to name the container image:
+Similar to desktop packaging, the container option allows for specifying `--image-tag` to name the container image:
 
 **Linux:**
 ```bash
-./repo.sh package --container --name [container_image_name]
+./repo.sh package_container --image-tag [container_image_name:container_image_tag]
 ```
 
 #### Launching a Container

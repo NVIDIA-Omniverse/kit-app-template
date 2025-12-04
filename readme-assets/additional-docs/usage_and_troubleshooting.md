@@ -94,7 +94,7 @@ The Omniverse Kit SDK caches data and required dependencies to improve build and
 
 
 #### Space Constraints Due to Docker Artifacts
-When performing extensive local testing of container images created via `repo package --container`, Docker artifacts can accumulate over time, consuming significant disk space.
+When performing extensive local testing of container images created via `repo package_container`, Docker artifacts can accumulate over time, consuming significant disk space.
 
 `docker system df` can be used to determine disk space utilized by Docker objects. To reclaim space, consider the following options:
 

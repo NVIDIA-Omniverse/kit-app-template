@@ -239,19 +239,72 @@ Additional launch options:
     ```powershell
     .\repo.bat package --thin
     ```
+:warning: **Important Note for Packaging:** Because the packaging operation will package everything within the `source/` directory the package version will need to be set independently of a given `kit` file.  **The version is set within the `tools/VERSION.md` file.**
 
-- **`--container`:** Packages the application as a container image (Linux only). When using the `--container` flag, the user will be asked to select a `.kit` file to use within the entry point script for the container.  This can also be specified without user interaction by passing it appropriate `.kit` file name via the `--target-app` flag.
+## Containerization Tool
+
+**Command:** `./repo.sh package_container` or `.\repo.bat package_container`
+
+### Purpose
+The containerization tool provided by `repo_kit_tools` supports containerization of applications. This is especially useful for deploying headless services and streaming applications in a containerized environment.
+
+### Usage
+Always run a build before packaging to ensure the application is up-to-date:
+
+- **`package_container`:** Packages the application as a container image (Linux only). When using the `package_container`, the user will be asked to select a `.kit` file to use within the entry point script for the container.  This can also be specified without user interaction by passing it appropriate `.kit` file name via the `--app ${path_to_kit_file}` flag.
 
     **Linux:**
     ```bash
-    ./repo.sh package --container
+    ./repo.sh package_container
     ```
     **Windows:**
     ```powershell
-    .\repo.bat package --container
+    .\repo.bat package_container
     ```
 
-:warning: **Important Note for Packaging:** Because the packaging operation will package everything within the `source/` directory the package version will need to be set independently of a given `kit` file.  **The version is set within the `tools/VERSION.md` file.**
+Additional command options:
+- **`--app`:** Specify the Kit app to containerize. One of defined in the config.
 
+    **Linux:**
+    ```bash
+    ./repo.sh package_container --app ${path_to_kit_file}
+    ```
+    **Windows:**
+    ```powershell
+    .\repo.bat package_container --app ${path_to_kit_file}
+    ```
+
+    - **`--image-tag`:** Optional image tag override to use for docker image. If includes ':', it will be used as is, e.g.: name:tag.
+
+    **Linux:**
+    ```bash
+    ./repo.sh package_container --image-tag [container_image_name:container_image_tag]
+    ```
+    **Windows:**
+    ```powershell
+    .\repo.bat package_container --image-tag [container_image_name:container_image_tag]
+    ```
+
+- **`-p` or `--from-package`:** Use package from 'kit-app-template/_build/packages/kit-app-template*.${config}.*' instead of a root folder.
+
+    **Linux:**
+    ```bash
+    ./repo.sh package_container -p
+    ```
+    **Windows:**
+    ```powershell
+    .\repo.bat package_container -p
+    ```
+- **`-g` or `--generate`:** Generate default container template files into the destination folder. Passed argument is the destination folder.
+
+    **Linux:**
+    ```bash
+    ./repo.sh package_container -g
+    ```
+    **Windows:**
+    ```powershell
+    .\repo.bat package_container -g
+    ```
+    
 ## Additional Resources
 - [Kit SDK Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)

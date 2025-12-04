@@ -2,6 +2,31 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [109.0.1] - 2025-12-04
+
+### Added
+- Kit added support for ARM64
+
+### Changed
+- Updated to `Kit 109.0.1`
+  - [Kit 109.0.1 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_1.html)
+  - [Kit 109.0.1 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_1_highlights.html)
+- Tooling in tools/repoman was upstreamed to `repo_kit_tools`
+- `repo package_container` replaces `repo package --container`
+- `repo package` is now mapped to the `repo_package_app` tool in `repo_kit_tools`. It still uses the repo_package configuration in our repo.toml.
+- Containerization files in tools/containers have been removed. They are now generated in an automated fashion during containerization by `repo package_container --app ${path_to_kit_file}`. You can generate and not containerize by running `repo package_container --app ${path_to_kit_file} --generate`
+- Default image tag name changed from `kit-app-template:latest` to `appname:latest`. eg: `usd-viewer_nvcf:latest`
+- Container `--name` updated to `--image-tag` supporting both image name and image tag `--image-tag [container_image_name:container_image_tag]`
+- Updated required driver version `>=550.54.15` (Linux) or `>=551.78` (Windows).
+
+### Deprecated
+- tools/containers `entrypoint_memcached.sh.j2` now migrated to generated `entrypoint.sh`
+- tools/containers `kit_args.txt` now migrated to generated `entrypoint.sh`
+- tools/containers `Stream_sdk.txt` now migrated to generated `Dockerfile`
+
+### Known Issue
+- Known issue: Basic C++ w/ Python Binding Extension test fails due to test environment configuration
+
 ## [109.0.0] - 2025-11-18
 
 ### Added

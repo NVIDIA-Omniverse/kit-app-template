@@ -13,6 +13,36 @@ import_configs = [
 # Repository Name
 name = "kit-app-template"
 
+# These are deprecation warnings with the upstreaming of KAT tooling.
+# Remove these warnings in May 2026.
+[[repo.deprecations]]
+tool_name = "repo_package"
+command = "package"
+redirect_tool_name = "repo_kit_package_container"
+arg_name = "--container"
+log_message = "The ./repo${shell_ext} package --container argument has been deprecated. It is replaced by ./repo${shell_ext} package_container."
+
+[[repo.deprecations]]
+tool_name = "repo_package"
+command = "package"
+arg_name = "--target-app"
+arg_redirect_name = "--app"
+
+[[repo.deprecations]]
+tool_name = "repo_package"
+command = "package"
+arg_name = "--name"
+arg_redirect_name = "--image-tag"
+log_message = "The redirected argument --name to --image-tag has new behavior. If a value of image_name:version_string is provided, that will be used to build your container. If no colon is detected, your container's tag will be application_name:the_value_of_this_argument"
+
+[[repo.deprecations]]
+tool_name = "repo_package"
+command = "package"
+arg_name = "-n"
+arg_redirect_name = "--image-tag"
+log_message = "The redirected argument -n to --image-tag has new behavior. If a value of image_name:version_string is provided, that will be used to build your container. If no colon is detected, your container's tag will be application_name:the_value_of_this_argument"
+
+
 [repo_build]
 # These are necessary to avoid a repo_build failure where the source/apps directory
 # is expected to always exist.
@@ -90,6 +120,8 @@ registries = [
     { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
 ]
 
+# Generated kit file with all extensions in the repo
+generated_app_path = "${root}/source/apps/exts.deps.generated.kit"
 
 ########################################################################################################################
 # Packaging
@@ -162,6 +194,44 @@ files_exclude = [
 
 
 ########################################################################################################################
+# Template packages
+########################################################################################################################
+
+# [repo_package.packages.kit_core_templates]
+# root = "templates"
+# archive_name = "kit_core_templates"
+# omniverse_flow_version_scheme=true
+# archive_format = "zip"
+# files = [
+#     ["core_templates.toml"],
+#     ["apps/kit_base_editor/**"],
+#     ["apps/kit_service/**"],
+#     ["apps/streaming_configs/**"],
+#     ["extensions/basic_python/**"],
+#     ["extensions/python_ui/**"],
+#     ["extensions/basic_cpp/**"],
+#     ["extensions/basic_python_binding/**"],
+#     ["extensions/service.setup/**"],
+# ]
+
+# [repo_package.packages.kit_sample_templates]
+# root = "templates"
+# archive_name = "kit_sample_templates"
+# omniverse_flow_version_scheme=true
+# archive_format = "zip"
+# files = [
+#     ["sample_templates.toml"],
+#     ["apps/usd_composer/**"],
+#     ["apps/usd_explorer/**"],
+#     ["apps/usd_viewer/**"],
+#     ["extensions/usd_composer.setup/**"],
+#     ["extensions/usd_explorer.setup/**"],
+#     ["extensions/usd_viewer.setup/**"],
+#     ["extensions/usd_viewer.messaging/**"],
+# ]
+
+
+########################################################################################################################
 # Template tool configuration
 ########################################################################################################################
 [repo_kit_template]
@@ -178,3 +248,26 @@ type_ordering = [
 ]
 
 
+
+########################################################################################################################
+# Application Launching
+########################################################################################################################
+[repo_launch_app]
+enabled = true
+
+
+########################################################################################################################
+# Application Packaging
+########################################################################################################################
+[repo_package_app]
+enabled = true
+
+
+########################################################################################################################
+# Application Containerization
+########################################################################################################################
+[repo_kit_package_container]
+package_cmd = "_package"
+enabled = true
+gui_cli = true
+auto_generate = true
