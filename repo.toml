@@ -26,12 +26,14 @@ log_message = "The ./repo${shell_ext} package --container argument has been depr
 tool_name = "repo_package"
 command = "package"
 arg_name = "--target-app"
+linked_arg = "--container"
 arg_redirect_name = "--app"
 
 [[repo.deprecations]]
 tool_name = "repo_package"
 command = "package"
 arg_name = "--name"
+linked_arg = "--container"
 arg_redirect_name = "--image-tag"
 log_message = "The redirected argument --name to --image-tag has new behavior. If a value of image_name:version_string is provided, that will be used to build your container. If no colon is detected, your container's tag will be application_name:the_value_of_this_argument"
 
@@ -39,6 +41,7 @@ log_message = "The redirected argument --name to --image-tag has new behavior. I
 tool_name = "repo_package"
 command = "package"
 arg_name = "-n"
+linked_arg = "--container"
 arg_redirect_name = "--image-tag"
 log_message = "The redirected argument -n to --image-tag has new behavior. If a value of image_name:version_string is provided, that will be used to build your container. If no colon is detected, your container's tag will be application_name:the_value_of_this_argument"
 
@@ -62,17 +65,32 @@ fetch."token:cache==true".after_pull_commands = []
 [repo_build.build]
 enabled = true
 "platform:windows-x86_64".enabled = false
+# AUTOREMOVE: BEGIN
+# Enable all compilation in CI
+"token:in_ci==true".enabled = true
+# AUTOREMOVE: END
 
 [repo_build.msbuild]
 # If set to true will attempt to link to host's Visual Studio and Windows SDK installations.
 # This is needed if C++ compilation is needed on Windows, and repo_build.build.enabled is set to true.
 link_host_toolchain = false
+# AUTOREMOVE: BEGIN
+# Internally enable host linking in CI
+"token:in_ci==true".link_host_toolchain = true
+# AUTOREMOVE: END
 
 # Filter on Visual Studio version e.g.: Visual Studio 2022. Empty string will match all years and prioritize the newest.
 vs_version = "vs2022"
+# AUTOREMOVE: BEGIN
+"token:in_ci==true".vs_version = "vs2019"
+# AUTOREMOVE: END
 
 # Visual Studio path; This will be used if the user would like to point to a specific VS installation rather than rely on heuristic locating.
 # vs_path = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\"
+# AUTOREMOVE: BEGIN
+# Internal CI Visual Studio path that sometimes works.
+"token:in_ci==true".vs_path = "C:\\vs2019"
+# AUTOREMOVE: END
 
 # Filter specifically to "Enterprise", "Professional", or "Community" editions of Visual Studio
 # vs_edition = "Community"
@@ -112,16 +130,21 @@ publish_pip_cache = false
 [repo_precache_exts]
 # Apps to run and precache
 apps = [
+# AUTOREMOVE: BEGIN
+    "${root}/templates/omni.all.template.extensions.kit",
+# AUTOREMOVE: END
 ]
 
-registries = [
-    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/${kit_version_major}/shared" },
-    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
-    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
-]
+# registries = [
+# PUBLIC REGISTRIES - UNCOMMENT BEFORE STAGING TO GITHUB
+    # { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/${kit_version_major}/shared" },
+    # { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+    # { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
+# ]
 
 # Generated kit file with all extensions in the repo
-generated_app_path = "${root}/source/apps/exts.deps.generated.kit"
+generated_app_path = "${root}/_build/apps/exts.deps.generated.kit"
+
 
 ########################################################################################################################
 # Packaging
@@ -248,6 +271,253 @@ type_ordering = [
 ]
 
 
+# AUTOREMOVE: BEGIN
+#----------------------------------------------------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
+
+# Uncomment to start MRs to prod branch of public-extension-pipeline
+[repo_deploy_exts.pipeline_repo.branch."prod-109"]
+skip_if_build_is_mr = true
+fail_if_exts_are_missing = false
+create_mr = true
+auto_merge_mr = false
+
+
+[repo_deploy_exts.pipeline_repo.branch."integ-109"]
+skip_if_build_is_mr = true
+fail_if_exts_are_missing = false
+create_mr = true
+auto_merge_mr = true
+
+########################################################################################################################
+# Test Runner
+########################################################################################################################
+[repo_test]
+# NOTE: To find more info on repo_test settings look into: '_repo/deps/repo_test/repo_tools.toml'
+default_suite = "alltests"
+
+# When running from package, look for package using that path/pattern:
+# This is a very loose setup expecting a single packaged app archive.
+archive_pattern = "${root}/_build/packages/*.zip"
+
+
+[repo_test.suites."alltests"]
+exclude = [
+    # exclude setup extension, those tests are part of app testing
+    "tests-omni.usd_explorer.setup${shell_ext}",
+]
+
+[repo_test.suites."check_app_version_locks"]
+kind = "pytest"
+
+# Where our tests live
+discover_path = "${root}/tools/ci/tests"
+# Where our source lives
+python_source_path = "tools/ci/*"
+
+log_file = "_build/test/results.xml"
+
+# to prevent pytest capturing stdout add "-s"
+extra_pytest_args = [
+    "-s",
+]
+
+
+########################################################################################################################
+# Extensions publisher
+########################################################################################################################
+
+[repo_publish_exts]
+
+# Publish the fake app for ETM's usage.
+
+# Supported configs and platforms when `-a` cmd is used
+configs = ["release"]  # removed debug
+
+# Extensions to publish, include and exclude among those discovered by kit. Wildcards are supported.
+exts.include = [
+    "omni.etm.list.kit_app_template",
+]
+exts.exclude = []
+
+# verify before publishing
+publish_verification = false
+
+# The default behavior is to publish the file to S3. Use the default behavior to avoid potential issues in the future.
+# If you want to publish the file locally, uncomment the following line and run the CI job locally. Then the file will
+# be saved in the registry instead of S3.
+# use_packman_to_upload_archive = false
+
+# Explicitly set the internal registry.
+# Comment out the old default registry to use the correct default registry from Kit SDK.
+# registries = [
+#     { name = "kit/default", url = "omniverse://kit-extensions.ov.nvidia.com/exts/kit/default" },
+# ]
+
+########################################################################################################################
+# Tool to promote extensions to the public registry pipeline
+########################################################################################################################
+
+[repo_deploy_exts]
+enabled = true
+
+# Generate the public extension registry MR for versions like 1.2.3-rc.1, 1.2.3-prod.1, 1.2.3, but not for 1.2.3-beta.1 etc
+run_if_app_version_regex = "(.*-(rc|prod|stage).*)|((?!.*-).*)"
+
+
+########################################################################################################################
+# Launcher publish and deploy
+########################################################################################################################
+
+# Customized fields of apps are updated in deploy_launcher.py
+[repo_deploy_launcher]
+enabled = true
+git_url = "https://oauth2:${env:GITLAB_AUTH_TOKEN}@gitlab-master.nvidia.com/omniverse/release-pipelines/usd_explorer-release-pipeline.git"
+
+# NOTE: Overriding arrays is not supported. The CI job script will remove directories of the other apps.
+# http://omniverse-docs.s3-website-us-east-1.amazonaws.com/repo_man/1.62.0/docs/configuration.html#command-line-config-overrides
+template_paths = [
+    "${root}/launcher-configs/usd_explorer/launcher-pipeline-template",
+    "${root}/launcher-configs/usd_viewer/launcher-pipeline-template",
+    "${root}/launcher-configs/usd_composer/launcher-pipeline-template",
+]
+
+[repo_deploy_launcher.slack]
+enabled = false  # Explicitly disable it. It doesn't work because the CI env var SLACK_CHANGELOG_PUBLISH_URL is not set.
+                 # If it's needed, use a different way to set it based on apps.
+slack_url = "${env:SLACK_CHANGELOG_PUBLISH_URL}"  #omni-apollo-app / #omni-usd-composer / #omni-runway-release
+write_jira = true
+inline_changelog = false
+
+repo_url = "https://gitlab-master.nvidia.com/omniverse/kit-apps/factory-explorer/"
+
+jira_service_account_name = "${env:JIRA_AUTOMATION_SERVICE_ACCOUNT_NAME}"
+jira_service_account_api_key = "${env:JIRA_AUTOMATION_SERVICE_ACCOUNT_API_KEY}"
+jira_server_url = "https://jirasw.nvidia.com"
+
+
+########################################################################################################################
+# Documentation building
+########################################################################################################################
+
+[repo_docs]
+project = "kit-app-template"
+use_fast_doxygen_conversion = false
+
+sphinx_exclude_patterns = [
+    "templates",
+    "readme-assets",
+    "_repo",
+    "_build",
+    "tools",
+    "source",
+    "tutorial_code",
+    "SECURITY.md",
+    "launcher-configs",
+    "README_internal.md",
+    "CHANGELOG.md",
+    ".gitlab"
+]
+
+sphinx_include_patterns = ["docs"]
+
+[repo_ci]
+
+[repo_ci.jobs."build"]
+script = "${root}/tools/ci/build.py"
+
+[repo_ci.jobs."check_app_version_locks"]
+script = "${root}/tools/ci/check_app_version_locks.py"
+
+[repo_ci.jobs."check_extension_support_levels"]
+script = "${root}/tools/ci/check_extension_support_levels.py"
+
+[repo_ci.jobs."publish_etm_list"]
+script = "${root}/tools/ci/publish_etm_list.py"
+
+[repo_ci.jobs."check_production_registry"]
+script = "${root}/tools/ci/check_production_registry.py"
+
+[repo_ci.jobs."package_nspect_artifact"]
+script = "${root}/tools/ci/package_nspect_artifact.py"
+
+[repo_ci.jobs."container_builder"]
+script = "${root}/tools/ci/container_builder.py"
+
+[repo_ci.jobs."container_publisher"]
+script = "${root}/tools/ci/container_publisher.py"
+
+
+########################################################################################################################
+# Tool to strip down parts of repo and git push to github
+########################################################################################################################
+
+[repo_stage_for_github]
+enabled = true
+
+github_repo_url = "https://github.com/NVIDIA-Omniverse/kit-app-template-staging.git"
+
+exclude = [
+    ".git",
+    ".gitlab-ci.yml",
+    "tools/ci/*",
+    "launcher-configs",
+    "docs",
+    "tools/deps/repo-deps-nv.packman.xml",
+    "index.rst",
+    "tutorial_code",
+    "templates/omni.all.template.extensions.kit",
+    "README_internal.md",
+]
+
+[[repo_stage_for_github.trim]]
+files = [
+    "repo.toml",
+    "templates/apps/kit_base_editor/kit_base_editor.kit",
+    "templates/apps/kit_service/kit_service.kit",
+    "templates/apps/usd_composer/omni.usd_composer.kit",
+    "templates/apps/usd_explorer/omni.usd_explorer.kit",
+    "templates/apps/usd_viewer/omni.usd_viewer.kit",
+    "templates/apps/streaming_configs/default_stream.kit",
+    "templates/apps/streaming_configs/gdn_stream.kit",
+    "templates/apps/streaming_configs/nvcf_stream.kit",
+]
+begin_marker = "# AUTOREMOVE: BEGIN"
+end_marker = "# AUTOREMOVE: END"
+
+[[repo_stage_for_github.trim]]
+# Sanitize the Packman config file.
+files = [
+    "tools/packman/config.packman.xml"
+]
+begin_marker = "<!-- AUTOREMOVE: BEGIN -->"
+end_marker = "<!-- AUTOREMOVE: END -->"
+
+
+#####################
+# Formatter
+#####################
+[repo_format.cpp]
+maintain_legal_blurbs = false
+
+[repo_format.python]
+maintain_legal_blurbs = false
+files.exclude = [
+    "_build/*",
+    "_repo/*",
+    ".git/*",
+    ".eggs/*",
+    ".venv/*",
+    "tools/packman/*",
+    "templates/*",
+    "source/*",
+]
+
+#----------------------------------------------------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
+# AUTOREMOVE: END
 
 ########################################################################################################################
 # Application Launching
