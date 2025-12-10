@@ -117,12 +117,11 @@ publish_pip_cache = false
 apps = [
 ]
 
-# registries = [
-# PUBLIC REGISTRIES - UNCOMMENT BEFORE STAGING TO GITHUB
-    # { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/${kit_version_major}/shared" },
-    # { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
-    # { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
-# ]
+registries = [
+    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/${kit_version_major}/shared" },
+    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
+]
 
 # Generated kit file with all extensions in the repo
 generated_app_path = "${root}/_build/apps/exts.deps.generated.kit"
