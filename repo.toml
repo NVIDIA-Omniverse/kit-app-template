@@ -26,12 +26,14 @@ log_message = "The ./repo${shell_ext} package --container argument has been depr
 tool_name = "repo_package"
 command = "package"
 arg_name = "--target-app"
+linked_arg = "--container"
 arg_redirect_name = "--app"
 
 [[repo.deprecations]]
 tool_name = "repo_package"
 command = "package"
 arg_name = "--name"
+linked_arg = "--container"
 arg_redirect_name = "--image-tag"
 log_message = "The redirected argument --name to --image-tag has new behavior. If a value of image_name:version_string is provided, that will be used to build your container. If no colon is detected, your container's tag will be application_name:the_value_of_this_argument"
 
@@ -39,6 +41,7 @@ log_message = "The redirected argument --name to --image-tag has new behavior. I
 tool_name = "repo_package"
 command = "package"
 arg_name = "-n"
+linked_arg = "--container"
 arg_redirect_name = "--image-tag"
 log_message = "The redirected argument -n to --image-tag has new behavior. If a value of image_name:version_string is provided, that will be used to build your container. If no colon is detected, your container's tag will be application_name:the_value_of_this_argument"
 
@@ -114,14 +117,16 @@ publish_pip_cache = false
 apps = [
 ]
 
-registries = [
-    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/${kit_version_major}/shared" },
-    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
-    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
-]
+# registries = [
+# PUBLIC REGISTRIES - UNCOMMENT BEFORE STAGING TO GITHUB
+    # { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/${kit_version_major}/shared" },
+    # { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+    # { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
+# ]
 
 # Generated kit file with all extensions in the repo
-generated_app_path = "${root}/source/apps/exts.deps.generated.kit"
+generated_app_path = "${root}/_build/apps/exts.deps.generated.kit"
+
 
 ########################################################################################################################
 # Packaging
