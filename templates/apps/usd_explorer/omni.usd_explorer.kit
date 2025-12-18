@@ -106,7 +106,7 @@ template_name = "omni.usd_explorer"
 "{{ setup_extension_name }}" = { order = 10000 }  # This is your application setup Extensions. order = 10000 makes it run last
 
 [dependencies."filter:platform"."windows-x86_64"]
-"omni.kit.window.modifier.titlebar" = {version = "=107.0.1"}  # Use exact version to avoid supported target platform check
+"omni.kit.window.modifier.titlebar" = {version = "=107.0.2"}  # Use exact version to avoid supported target platform check
 
 [settings.app]
 name = "{{ application_display_name }}"
@@ -277,6 +277,9 @@ compressDumpFiles = true
 
 [settings.crashreporter.data]
 experience = "{{ application_display_name }}"
+
+[settings.exts."omni.activity.ui"]
+auto_save_location = ""
 
 [settings.ext."omni.kit.widget.viewport".sceneView.singleCameraModel]
 enabled = true  # Enable single Viewport camera model (setting w/ typo in current Kit)
