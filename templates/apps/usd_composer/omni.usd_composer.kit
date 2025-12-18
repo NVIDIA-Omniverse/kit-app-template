@@ -149,7 +149,7 @@ template_name = "omni.usd_composer"
 
 
 [dependencies."filter:platform"."windows-x86_64"]
-"omni.kit.window.modifier.titlebar" = {version = "=107.0.1"}  # Use exact version to avoid supported target platform check
+"omni.kit.window.modifier.titlebar" = {version = "=107.0.2"}  # Use exact version to avoid supported target platform check
 
 
 [settings.app]
@@ -223,6 +223,7 @@ defaults.fillViewport = true
 experience = "{{ application_display_name }}"
 
 [settings.exts]
+"omni.activity.ui".auto_save_location = ""
 "omni.kit.menu.utils".logDeprecated = false
 "omni.kit.mesh.raycast".bvhBuildOnFirstRequired = true
 "omni.kit.renderer.core".imgui.enableMips = true

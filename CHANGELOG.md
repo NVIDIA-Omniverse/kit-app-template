@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [109.0.2] - 2025-12-18
+
+### Changed
+- Updated to `Kit 109.0.2`
+  - [Kit 109.0.2 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_2.html)
+
 ## [109.0.1] - 2025-12-04
 
 ### Added
@@ -25,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - tools/containers `Stream_sdk.txt` now migrated to generated `Dockerfile`
 
 ### Known Issue
-- Known issue: Basic C++ w/ Python Binding Extension test fails due to test environment configuration
+- Basic C++ w/ Python Binding Extension test fails due to test environment configuration
 
 ## [109.0.0] - 2025-11-18
 
