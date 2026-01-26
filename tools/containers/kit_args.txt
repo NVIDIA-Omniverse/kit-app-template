@@ -1,3 +1,0 @@
-# These arguments are fed into all containerized application executions via repo launch
-"--no-window"
-"--ext-folder /home/ubuntu/.local/share/ov/data/exts/v2"
