@@ -94,6 +94,36 @@ Next, select (using Space) the Template Layer(s) to add. Enter to confirm.
 
 After the operation completes, rebuild (`./repo.sh build` or `.\repo.bat build`) the project to pull in the new extensions.
 
+### What `template new` Modifies
+
+When creating applications, the template tool automatically updates build configuration files:
+
+1. **`premake5.lua`** - Adds `define_app("appname.kit")` so the build system discovers your application
+2. **`repo.toml`** - Adds the app path to `repo_precache_exts.apps` so dependent extensions are pre-cached at build time
+3. **`source/rendered_template_metadata.json`** - Records which templates were rendered (enables `template modify` and `template list`)
+4. **Setup extension** (some templates) - Creates an extension in `source/extensions/` for application-specific initialization
+
+**Extensions** are automatically discovered by the Kit build system based on directory structure, so no build file modifications are needed.
+
+### Creating Applications Without Templates
+
+If you create a `.kit` file manually (without using `repo template new`), you must update the build files yourself:
+
+1. **Add to `premake5.lua`:**
+   ```lua
+   define_app("my_company.my_app.kit")
+   ```
+
+2. **Add to `repo.toml`:**
+   ```toml
+   [repo_precache_exts]
+   apps = ["${root}/source/apps/my_company.my_app.kit"]
+   ```
+
+   If apps already exist, append to the existing list.
+
+> **Note:** Manually created applications won't be tracked in `rendered_template_metadata.json`, so `template modify` cannot add layers to them.
+
 ## Build Tool
 
 **Command:** `./repo.sh build` or `.\repo.bat build`
@@ -172,8 +202,8 @@ You can pass through arguments to your targeted Kit executable by appending `--`
     ```powershell
     .\repo.bat launch -- --clear-cache
     ```
-    
-:warning: **Important Notes When Launching Applications:** 
+
+:warning: **Important Notes When Launching Applications:**
 - **Launching an application with path specific arguments:** When launching application with path specific args (for example `--/app/auto_load_usd` using the USD Viewer Template), the path provided should either be absolute (full path from root) or if the asset is within an extension use a tokenized path (e.g. `./repo.sh launch -- --/app/auto_load_usd='${omni.usd_viewer.samples}/samples_data/stage01.usd'` )
 
 - **Launching directly from an uncompressed package:** The `launch` utility is accessible from the project repository and can be used to launch packages from the project repository.  **However**, if launching an application from within a uncompressed packaged the `launch` utility is not available and any arguments passed should be passed to the `.bat` or `.sh` script directly (e.g. `my.app.kit.sh --/app/auto_load_usd=path/to/asset.usd`).
@@ -248,6 +278,16 @@ Additional launch options:
 ### Purpose
 The containerization tool provided by `repo_kit_tools` supports containerization of applications. This is especially useful for deploying headless services and streaming applications in a containerized environment.
 
+### How It Works
+
+The tool performs these steps:
+1. **Creates a fat package** - Stages all dependencies into a temp directory
+2. **Trims unused extensions** - Removes disabled extensions to minimize image size
+3. **Splits into Docker layers** - Base layer (kit kernel + extscache) and app layer for faster rebuilds
+4. **Builds the container** - Uses a configurable base image (default: `nvcr.io/nvidia/omniverse/ov-base-ubuntu-22`)
+
+The container entrypoint supports runtime configuration via environment variables (`NVDA_KIT_ARGS`, `NVDA_KIT_NUCLEUS`).
+
 ### Usage
 Always run a build before packaging to ensure the application is up-to-date:
 
@@ -305,6 +345,6 @@ Additional command options:
     ```powershell
     .\repo.bat package_container -g
     ```
-    
+
 ## Additional Resources
 - [Kit SDK Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)

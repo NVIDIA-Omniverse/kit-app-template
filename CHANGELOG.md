@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [109.0.3] - 2026-01-26
+- Update to `Kit 109.0.3`
+  - [Kit 109.0.3 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_3.html)
+
 ## [109.0.2] - 2025-12-18
 
 ### Changed
@@ -36,7 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [109.0.0] - 2025-11-18
 
 ### Added
-- Added new Livestream extensions `omni.kit.livestream.aov` and `omni.services.livestream.webrtc` 
+- Added new Livestream extensions `omni.kit.livestream.aov` and `omni.services.livestream.webrtc`
 
 ### Changed
 - Updated to `Kit 109.0.0`
@@ -71,7 +75,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Removed omni.services.transport.server.http.port overrides.  Aligned all template applications to use default ports.
 - Updated repository documentation to reflect changes in streaming changes.
 - Updated crash reporter settings to compress crash reports.
-- Update Windows `omni.kit.window.modifier.titlebar` extension version 
+- Update Windows `omni.kit.window.modifier.titlebar` extension version
 - Update repo tooling to most recent versions
 - Updated application icon images for Composer and Explorer templates
 - Enabled testing for USD Viewer Template messaging extension
@@ -92,7 +96,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [107.2.0] - 2025-05-05
 
-### Added 
+### Added
 - Added tooltip information to the VSCode debug extensions to clarify usage.
 - Added tooling checks for path whitespace and OneDrive paths to improve developer experience.
 
