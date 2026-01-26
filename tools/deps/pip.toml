@@ -12,12 +12,12 @@
 #
 
 # Another sample
-# [[dependency]]
-# python = "../../_build/target-deps/python"
-# packages = [
-#     "toml==0.10.1",
-# ]
-# target = "../../_build/target-deps/pip_prebundle"
+[[dependency]]
+python = "../../_build/target-deps/python"
+packages = [
+    "requests==2.32.5",
+]
+target = "../../_build/target-deps/pip_prebundle"
 # platforms = ["*"]
 # download_only = false
 # append_to_install_folder = true

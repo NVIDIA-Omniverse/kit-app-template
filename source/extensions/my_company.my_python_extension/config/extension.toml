@@ -30,6 +30,8 @@ repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of th
 [[python.module]]  # Main python module this extension provides, it will be publicly available as "import my_company.my_python_extension"
 name = "my_company.my_python_extension"
 
+[[python.module]]
+path = "pip_prebundle"
 
 [documentation]
 pages = [
