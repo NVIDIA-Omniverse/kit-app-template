@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: LicenseRef-NvidiaProprietary
 
+import asyncio
+import uuid
+from typing import Dict, Any, Optional
+
 import carb
 import carb.events
 from carb.eventdispatcher import get_eventdispatcher
@@ -8,14 +12,20 @@ import omni.kit.app
 import omni.kit.livestream.messaging as messaging
 from omni.timeline import get_timeline_interface
 
+from .viewport_capture import ViewportCapture
+from .agent_client import AgentClient, AgentAction, ChatRequest, AgentResponse
+
 
 class CustomMessageManager:
     """Manages custom messages between web client and Kit application"""
 
-    def __init__(self):
+    def __init__(self, agent_backend_url: str = "http://localhost:8000"):
         """Initialize the custom message manager"""
         self._subscriptions = []
         self._timeline = get_timeline_interface()
+        self._viewport_capture = ViewportCapture()
+        self._agent_client = AgentClient(base_url=agent_backend_url)
+        self._pending_requests: Dict[str, Dict[str, Any]] = {}  # Track pending chat requests
         carb.log_info("[CustomMessageManager] Initializing...")
 
         # ===== REGISTER OUTGOING MESSAGES (Kit -> Web Client) =====
@@ -24,6 +34,10 @@ class CustomMessageManager:
             "dataUpdateNotification",   # Notify client of data changes
             "parameterChanged",         # Confirm parameter changes
             "timelineStatusResponse",   # Timeline/simulation status response
+            # Chat-related messages
+            "chatResponse",             # Chat response from agent
+            "chatTyping",               # Typing indicator
+            "chatError",                # Chat error notification
         ]
 
         for message_type in outgoing_messages:
@@ -40,6 +54,9 @@ class CustomMessageManager:
             'getCustomData': self._on_get_custom_data,
             'getTimelineStatus': self._on_get_timeline_status,
             'timelineControl': self._on_timeline_control,
+            # Chat-related handlers
+            'chatMessage': self._on_chat_message,
+            'chatCancel': self._on_chat_cancel,
         }
 
         ed = get_eventdispatcher()
@@ -216,9 +233,279 @@ class CustomMessageManager:
             }
         )
 
+    # ===== CHAT MESSAGE HANDLERS =====
+
+    def _on_chat_message(self, event: carb.events.IEvent):
+        """Handle incoming chat messages from web client"""
+        payload = event.payload
+        message = payload.get('message', '')
+        session_id = payload.get('session_id', str(uuid.uuid4()))
+        request_id = payload.get('request_id', str(uuid.uuid4()))
+        context = payload.get('context', {})
+
+        carb.log_info(f"[CustomMessageManager] Chat message received: {message[:50]}...")
+
+        # Send typing indicator
+        self._send_typing_indicator(session_id, True)
+
+        # Store the pending request
+        self._pending_requests[request_id] = {
+            'message': message,
+            'session_id': session_id,
+            'context': context,
+            'cancelled': False
+        }
+
+        # Process chat asynchronously
+        asyncio.ensure_future(
+            self._process_chat_message(request_id, message, session_id, context)
+        )
+
+    def _on_chat_cancel(self, event: carb.events.IEvent):
+        """Handle chat cancellation requests"""
+        payload = event.payload
+        request_id = payload.get('request_id', '')
+
+        if request_id in self._pending_requests:
+            self._pending_requests[request_id]['cancelled'] = True
+            carb.log_info(f"[CustomMessageManager] Chat request cancelled: {request_id}")
+
+    async def _process_chat_message(
+        self,
+        request_id: str,
+        message: str,
+        session_id: str,
+        context: Dict[str, Any]
+    ):
+        """Process a chat message through the agent backend"""
+        try:
+            # Check if cancelled
+            if self._is_request_cancelled(request_id):
+                return
+
+            # Send initial message to agent
+            chat_request = ChatRequest(
+                message=message,
+                session_id=session_id,
+                context=context
+            )
+
+            response = await self._agent_client.send_chat_message(chat_request)
+
+            # Check if cancelled
+            if self._is_request_cancelled(request_id):
+                return
+
+            # Handle agent actions
+            if response.action == AgentAction.CAPTURE_FRAME:
+                # Agent requested frame capture for visual analysis
+                await self._handle_capture_frame_action(
+                    request_id=request_id,
+                    original_message=message,
+                    session_id=session_id,
+                    action_params=response.action_params or {},
+                    context=context
+                )
+            elif response.action == AgentAction.GET_SCENE_INFO:
+                # Agent requested scene information
+                await self._handle_get_scene_info_action(
+                    request_id=request_id,
+                    original_message=message,
+                    session_id=session_id,
+                    response=response,
+                    context=context
+                )
+            else:
+                # No special action, send response to client
+                self._send_chat_response(
+                    session_id=session_id,
+                    request_id=request_id,
+                    message=response.message,
+                    metadata=response.metadata
+                )
+
+        except Exception as e:
+            carb.log_error(f"[CustomMessageManager] Chat processing error: {e}")
+            self._send_chat_error(session_id, request_id, str(e))
+
+        finally:
+            # Clean up pending request
+            self._pending_requests.pop(request_id, None)
+            self._send_typing_indicator(session_id, False)
+
+    async def _handle_capture_frame_action(
+        self,
+        request_id: str,
+        original_message: str,
+        session_id: str,
+        action_params: Dict[str, Any],
+        context: Dict[str, Any]
+    ):
+        """Handle the capture_frame action from agent"""
+        carb.log_info("[CustomMessageManager] Capturing viewport frame for analysis...")
+
+        # Get capture parameters
+        width = action_params.get('width', 1280)
+        height = action_params.get('height', 720)
+
+        # Capture the viewport
+        frame_data = await self._viewport_capture.capture_frame_async(
+            width=width,
+            height=height
+        )
+
+        if self._is_request_cancelled(request_id):
+            return
+
+        if frame_data is None:
+            self._send_chat_response(
+                session_id=session_id,
+                request_id=request_id,
+                message="I couldn't capture the current view. Please try again.",
+                metadata={"error": "frame_capture_failed"}
+            )
+            return
+
+        # Send frame to vision agent for analysis
+        carb.log_info("[CustomMessageManager] Sending frame to vision agent...")
+
+        analysis_response = await self._agent_client.send_frame_for_analysis(
+            frame_data=frame_data,
+            original_query=original_message,
+            session_id=session_id,
+            context=context
+        )
+
+        if self._is_request_cancelled(request_id):
+            return
+
+        # Send final response to client
+        self._send_chat_response(
+            session_id=session_id,
+            request_id=request_id,
+            message=analysis_response.message,
+            metadata={
+                **(analysis_response.metadata or {}),
+                "frame_analyzed": True
+            }
+        )
+
+    async def _handle_get_scene_info_action(
+        self,
+        request_id: str,
+        original_message: str,
+        session_id: str,
+        response: AgentResponse,
+        context: Dict[str, Any]
+    ):
+        """Handle the get_scene_info action from agent"""
+        # Gather scene information
+        scene_info = self._get_scene_info()
+
+        # Send scene info back to agent for continued processing
+        updated_context = {
+            **context,
+            "scene_info": scene_info
+        }
+
+        chat_request = ChatRequest(
+            message=original_message,
+            session_id=session_id,
+            context=updated_context
+        )
+
+        followup_response = await self._agent_client.send_chat_message(chat_request)
+
+        if self._is_request_cancelled(request_id):
+            return
+
+        self._send_chat_response(
+            session_id=session_id,
+            request_id=request_id,
+            message=followup_response.message,
+            metadata=followup_response.metadata
+        )
+
+    def _get_scene_info(self) -> Dict[str, Any]:
+        """Get current scene information"""
+        try:
+            import omni.usd
+            stage = omni.usd.get_context().get_stage()
+
+            if stage is None:
+                return {"error": "No stage loaded"}
+
+            # Gather basic scene info
+            root_layer = stage.GetRootLayer()
+            prims = list(stage.TraverseAll())
+
+            return {
+                "root_layer": root_layer.identifier if root_layer else None,
+                "prim_count": len(prims),
+                "up_axis": str(stage.GetMetadata("upAxis")),
+                "meters_per_unit": stage.GetMetadata("metersPerUnit"),
+            }
+
+        except Exception as e:
+            carb.log_error(f"[CustomMessageManager] Failed to get scene info: {e}")
+            return {"error": str(e)}
+
+    def _is_request_cancelled(self, request_id: str) -> bool:
+        """Check if a request has been cancelled"""
+        request = self._pending_requests.get(request_id)
+        return request is None or request.get('cancelled', False)
+
+    def _send_typing_indicator(self, session_id: str, is_typing: bool):
+        """Send typing indicator to web client"""
+        get_eventdispatcher().dispatch_event(
+            "chatTyping",
+            payload={
+                'session_id': session_id,
+                'is_typing': is_typing
+            }
+        )
+
+    def _send_chat_response(
+        self,
+        session_id: str,
+        request_id: str,
+        message: str,
+        metadata: Optional[Dict[str, Any]] = None
+    ):
+        """Send chat response to web client"""
+        get_eventdispatcher().dispatch_event(
+            "chatResponse",
+            payload={
+                'session_id': session_id,
+                'request_id': request_id,
+                'message': message,
+                'metadata': metadata or {},
+                'status': 'success'
+            }
+        )
+        carb.log_info(f"[CustomMessageManager] Chat response sent: {message[:50]}...")
+
+    def _send_chat_error(self, session_id: str, request_id: str, error: str):
+        """Send chat error to web client"""
+        get_eventdispatcher().dispatch_event(
+            "chatError",
+            payload={
+                'session_id': session_id,
+                'request_id': request_id,
+                'error': error,
+                'status': 'error'
+            }
+        )
+        carb.log_error(f"[CustomMessageManager] Chat error: {error}")
+
     def on_shutdown(self):
         """Clean up when the manager is shut down"""
         carb.log_info("[CustomMessageManager] Shutting down...")
+
+        # Cancel pending requests
+        for request_id in list(self._pending_requests.keys()):
+            self._pending_requests[request_id]['cancelled'] = True
+        self._pending_requests.clear()
 
         # Clean up subscriptions
         for sub in self._subscriptions:
