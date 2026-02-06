@@ -27,6 +27,8 @@ class AgentResponse:
     requires_followup: bool = False
     session_id: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
+    reasoning: Optional[str] = None  # AI reasoning/thinking process
+    captured_frame: Optional[str] = None  # Base64 encoded frame for UI display
 
 
 @dataclass
@@ -284,7 +286,9 @@ class AgentClient:
             action_params=data.get('action_params'),
             requires_followup=data.get('requires_followup', False),
             session_id=data.get('session_id'),
-            metadata=data.get('metadata')
+            metadata=data.get('metadata'),
+            reasoning=data.get('reasoning'),
+            captured_frame=data.get('captured_frame')
         )
 
     async def health_check(self) -> bool:

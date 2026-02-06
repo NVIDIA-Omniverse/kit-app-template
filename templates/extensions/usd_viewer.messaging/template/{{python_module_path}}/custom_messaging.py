@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: LicenseRef-NvidiaProprietary
 
 import asyncio
+import math
 import uuid
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Tuple
 
 import carb
 import carb.events
@@ -19,6 +20,9 @@ from .agent_client import AgentClient, AgentAction, ChatRequest, AgentResponse
 class CustomMessageManager:
     """Manages custom messages between web client and Kit application"""
 
+    # Camera movement detection threshold (in scene units)
+    CAMERA_MOVEMENT_THRESHOLD = 1.0
+
     def __init__(self, agent_backend_url: str = "http://localhost:8000"):
         """Initialize the custom message manager"""
         self._subscriptions = []
@@ -26,6 +30,10 @@ class CustomMessageManager:
         self._viewport_capture = ViewportCapture()
         self._agent_client = AgentClient(base_url=agent_backend_url)
         self._pending_requests: Dict[str, Dict[str, Any]] = {}  # Track pending chat requests
+
+        # Camera position tracking (per session)
+        self._last_camera_positions: Dict[str, Dict[str, float]] = {}
+
         carb.log_info("[CustomMessageManager] Initializing...")
 
         # ===== REGISTER OUTGOING MESSAGES (Kit -> Web Client) =====
@@ -283,11 +291,35 @@ class CustomMessageManager:
             if self._is_request_cancelled(request_id):
                 return
 
-            # Send initial message to agent
+            # Get current camera position and detect movement
+            current_camera_pos = self._get_camera_position()
+            camera_moved, move_distance = self._detect_camera_movement(
+                session_id, current_camera_pos
+            )
+
+            # Build enriched context with camera information
+            enriched_context = {
+                **context,
+                "camera": {
+                    "position": current_camera_pos,
+                    "has_moved": camera_moved,
+                    "move_distance": move_distance,
+                }
+            }
+
+            # Update stored camera position for next comparison
+            self._update_camera_position(session_id, current_camera_pos)
+
+            carb.log_info(
+                f"[CustomMessageManager] Camera context - "
+                f"position: {current_camera_pos}, moved: {camera_moved}"
+            )
+
+            # Send initial message to agent with enriched context
             chat_request = ChatRequest(
                 message=message,
                 session_id=session_id,
-                context=context
+                context=enriched_context
             )
 
             response = await self._agent_client.send_chat_message(chat_request)
@@ -304,7 +336,7 @@ class CustomMessageManager:
                     original_message=message,
                     session_id=session_id,
                     action_params=response.action_params or {},
-                    context=context
+                    context=enriched_context
                 )
             elif response.action == AgentAction.GET_SCENE_INFO:
                 # Agent requested scene information
@@ -313,7 +345,7 @@ class CustomMessageManager:
                     original_message=message,
                     session_id=session_id,
                     response=response,
-                    context=context
+                    context=enriched_context
                 )
             else:
                 # No special action, send response to client
@@ -379,7 +411,7 @@ class CustomMessageManager:
         if self._is_request_cancelled(request_id):
             return
 
-        # Send final response to client
+        # Send final response to client with captured frame for UI display
         self._send_chat_response(
             session_id=session_id,
             request_id=request_id,
@@ -387,7 +419,9 @@ class CustomMessageManager:
             metadata={
                 **(analysis_response.metadata or {}),
                 "frame_analyzed": True
-            }
+            },
+            reasoning=analysis_response.reasoning,
+            captured_frame=analysis_response.captured_frame or frame_data  # Use response frame or captured frame
         )
 
     async def _handle_get_scene_info_action(
@@ -450,6 +484,65 @@ class CustomMessageManager:
             carb.log_error(f"[CustomMessageManager] Failed to get scene info: {e}")
             return {"error": str(e)}
 
+    # ===== CAMERA TRACKING =====
+
+    def _get_camera_position(self) -> Optional[Dict[str, float]]:
+        """Get current camera position from viewport capture utility."""
+        camera_info = self._viewport_capture.get_camera_info()
+        if camera_info and camera_info.get("valid") and camera_info.get("position"):
+            return camera_info["position"]
+        return None
+
+    def _calculate_camera_distance(
+        self,
+        pos1: Dict[str, float],
+        pos2: Dict[str, float]
+    ) -> float:
+        """Calculate Euclidean distance between two camera positions."""
+        dx = pos1.get("x", 0) - pos2.get("x", 0)
+        dy = pos1.get("y", 0) - pos2.get("y", 0)
+        dz = pos1.get("z", 0) - pos2.get("z", 0)
+        return math.sqrt(dx * dx + dy * dy + dz * dz)
+
+    def _detect_camera_movement(
+        self,
+        session_id: str,
+        current_position: Optional[Dict[str, float]]
+    ) -> Tuple[bool, Optional[float]]:
+        """
+        Detect if camera has moved since last message.
+
+        Returns:
+            Tuple of (has_moved: bool, distance: Optional[float])
+        """
+        if current_position is None:
+            return False, None
+
+        last_position = self._last_camera_positions.get(session_id)
+        if last_position is None:
+            # First message in session, no movement to detect
+            return False, None
+
+        distance = self._calculate_camera_distance(current_position, last_position)
+        has_moved = distance > self.CAMERA_MOVEMENT_THRESHOLD
+
+        if has_moved:
+            carb.log_info(
+                f"[CustomMessageManager] Camera moved {distance:.2f} units "
+                f"(threshold: {self.CAMERA_MOVEMENT_THRESHOLD})"
+            )
+
+        return has_moved, distance
+
+    def _update_camera_position(
+        self,
+        session_id: str,
+        position: Optional[Dict[str, float]]
+    ):
+        """Store the current camera position for a session."""
+        if position:
+            self._last_camera_positions[session_id] = position
+
     def _is_request_cancelled(self, request_id: str) -> bool:
         """Check if a request has been cancelled"""
         request = self._pending_requests.get(request_id)
@@ -470,19 +563,27 @@ class CustomMessageManager:
         session_id: str,
         request_id: str,
         message: str,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
+        reasoning: Optional[str] = None,
+        captured_frame: Optional[str] = None
     ):
         """Send chat response to web client"""
-        get_eventdispatcher().dispatch_event(
-            "chatResponse",
-            payload={
-                'session_id': session_id,
-                'request_id': request_id,
-                'message': message,
-                'metadata': metadata or {},
-                'status': 'success'
-            }
-        )
+        payload = {
+            'session_id': session_id,
+            'request_id': request_id,
+            'message': message,
+            'metadata': metadata or {},
+            'status': 'success'
+        }
+
+        # Add optional fields if present
+        if reasoning:
+            payload['reasoning'] = reasoning
+        if captured_frame:
+            payload['captured_frame'] = captured_frame
+            carb.log_info(f"[CustomMessageManager] Including captured frame ({len(captured_frame)} chars)")
+
+        get_eventdispatcher().dispatch_event("chatResponse", payload=payload)
         carb.log_info(f"[CustomMessageManager] Chat response sent: {message[:50]}...")
 
     def _send_chat_error(self, session_id: str, request_id: str, error: str):
@@ -506,6 +607,9 @@ class CustomMessageManager:
         for request_id in list(self._pending_requests.keys()):
             self._pending_requests[request_id]['cancelled'] = True
         self._pending_requests.clear()
+
+        # Clear camera position tracking
+        self._last_camera_positions.clear()
 
         # Clean up subscriptions
         for sub in self._subscriptions:
