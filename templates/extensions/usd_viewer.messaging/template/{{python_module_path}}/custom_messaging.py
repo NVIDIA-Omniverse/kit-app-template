@@ -411,17 +411,31 @@ class CustomMessageManager:
         if self._is_request_cancelled(request_id):
             return
 
-        # Send final response to client with captured frame for UI display
+        # Check if image_url is available (from LuminiOne cloud upload)
+        # If so, don't send the large base64 captured_frame to reduce payload size
+        response_metadata = analysis_response.metadata or {}
+        image_url = response_metadata.get('image_url')
+
+        # Only include captured_frame if no image_url is available (local setup)
+        # This avoids sending huge base64 payloads when we have a URL
+        frame_to_send = None
+        if not image_url:
+            frame_to_send = analysis_response.captured_frame or frame_data
+            carb.log_info("[CustomMessageManager] No image_url, sending base64 captured_frame")
+        else:
+            carb.log_info(f"[CustomMessageManager] Using image_url instead of base64: {image_url}")
+
+        # Send final response to client
         self._send_chat_response(
             session_id=session_id,
             request_id=request_id,
             message=analysis_response.message,
             metadata={
-                **(analysis_response.metadata or {}),
+                **response_metadata,
                 "frame_analyzed": True
             },
             reasoning=analysis_response.reasoning,
-            captured_frame=analysis_response.captured_frame or frame_data  # Use response frame or captured frame
+            captured_frame=frame_to_send
         )
 
     async def _handle_get_scene_info_action(
@@ -565,7 +579,8 @@ class CustomMessageManager:
         message: str,
         metadata: Optional[Dict[str, Any]] = None,
         reasoning: Optional[str] = None,
-        captured_frame: Optional[str] = None
+        captured_frame: Optional[str] = None,
+        image_url: Optional[str] = None
     ):
         """Send chat response to web client"""
         payload = {
@@ -582,6 +597,13 @@ class CustomMessageManager:
         if captured_frame:
             payload['captured_frame'] = captured_frame
             carb.log_info(f"[CustomMessageManager] Including captured frame ({len(captured_frame)} chars)")
+
+        # Add image_url as top-level field for frontend visualization
+        # Also extract from metadata if not explicitly provided
+        final_image_url = image_url or (metadata.get('image_url') if metadata else None)
+        if final_image_url:
+            payload['image_url'] = final_image_url
+            carb.log_info(f"[CustomMessageManager] Including image URL: {final_image_url}")
 
         get_eventdispatcher().dispatch_event("chatResponse", payload=payload)
         carb.log_info(f"[CustomMessageManager] Chat response sent: {message[:50]}...")

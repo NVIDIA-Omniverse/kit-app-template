@@ -211,6 +211,7 @@ class AgentClient:
                 ) as response:
                     if response.status == 200:
                         data = await response.json()
+                        carb.log_info(f"[AgentClient] Analysis response received: {data}")
                         return self._parse_response(data)
                     else:
                         error_text = await response.text()
