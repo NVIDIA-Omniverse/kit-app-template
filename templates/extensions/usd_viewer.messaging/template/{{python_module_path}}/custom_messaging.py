@@ -15,6 +15,7 @@ from omni.timeline import get_timeline_interface
 
 from .viewport_capture import ViewportCapture
 from .agent_client import AgentClient, AgentAction, ChatRequest, AgentResponse
+from .camera_navigation import get_camera_navigation, CameraNavigation
 
 
 class CustomMessageManager:
@@ -33,6 +34,9 @@ class CustomMessageManager:
 
         # Camera position tracking (per session)
         self._last_camera_positions: Dict[str, Dict[str, float]] = {}
+
+        # Camera navigation for moving to store locations
+        self._camera_navigation: CameraNavigation = get_camera_navigation()
 
         carb.log_info("[CustomMessageManager] Initializing...")
 
@@ -347,6 +351,14 @@ class CustomMessageManager:
                     response=response,
                     context=enriched_context
                 )
+            elif response.action == AgentAction.NAVIGATE_TO:
+                # Agent requested camera navigation to a location
+                await self._handle_navigate_to_action(
+                    request_id=request_id,
+                    session_id=session_id,
+                    response=response,
+                    action_params=response.action_params or {}
+                )
             else:
                 # No special action, send response to client
                 self._send_chat_response(
@@ -497,6 +509,70 @@ class CustomMessageManager:
         except Exception as e:
             carb.log_error(f"[CustomMessageManager] Failed to get scene info: {e}")
             return {"error": str(e)}
+
+    # ===== CAMERA NAVIGATION =====
+
+    async def _handle_navigate_to_action(
+        self,
+        request_id: str,
+        session_id: str,
+        response: AgentResponse,
+        action_params: Dict[str, Any]
+    ):
+        """Handle the navigate_to action from agent - move camera to a location"""
+        destination = action_params.get('destination', '')
+        speed = action_params.get('speed', 1.0)
+        instant = action_params.get('instant', False)
+
+        carb.log_info(f"[CustomMessageManager] Navigate to: {destination} (speed={speed}, instant={instant})")
+
+        if not destination:
+            self._send_chat_response(
+                session_id=session_id,
+                request_id=request_id,
+                message=response.message or "I need a destination to navigate to.",
+                metadata={"error": "no_destination"}
+            )
+            return
+
+        # Send the agent's message first (e.g., "Taking you to the Pringles section...")
+        if response.message:
+            self._send_chat_response(
+                session_id=session_id,
+                request_id=request_id,
+                message=response.message,
+                metadata={
+                    **(response.metadata or {}),
+                    "navigating_to": destination,
+                    "navigation_started": True
+                }
+            )
+
+        # Perform the navigation
+        success = await self._camera_navigation.navigate_to(
+            destination=destination,
+            speed=speed,
+            instant=instant
+        )
+
+        if success:
+            carb.log_info(f"[CustomMessageManager] Navigation complete: {destination}")
+            # Optionally send arrival notification
+            # self._send_navigation_arrived(session_id, destination)
+        else:
+            carb.log_warn(f"[CustomMessageManager] Navigation failed: {destination}")
+            # Send error message if navigation failed
+            available = list(self._camera_navigation.get_positions().keys())
+            self._send_chat_response(
+                session_id=session_id,
+                request_id=request_id,
+                message=f"Sorry, I couldn't navigate to '{destination}'. Available locations: {', '.join(available[:10])}",
+                metadata={"error": "navigation_failed", "destination": destination}
+            )
+
+    def get_available_locations(self) -> Dict[str, Dict[str, Any]]:
+        """Get all available navigation locations"""
+        return self._camera_navigation.get_positions()
 
     # ===== CAMERA TRACKING =====
 

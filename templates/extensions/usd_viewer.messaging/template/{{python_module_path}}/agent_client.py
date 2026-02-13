@@ -16,6 +16,7 @@ class AgentAction(Enum):
     CAPTURE_FRAME = "capture_frame"
     GET_SCENE_INFO = "get_scene_info"
     HIGHLIGHT_OBJECT = "highlight_object"
+    NAVIGATE_TO = "navigate_to"  # Navigate camera to a location
 
 
 @dataclass
