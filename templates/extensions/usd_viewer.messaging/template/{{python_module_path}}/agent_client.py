@@ -17,6 +17,8 @@ class AgentAction(Enum):
     GET_SCENE_INFO = "get_scene_info"
     HIGHLIGHT_OBJECT = "highlight_object"
     NAVIGATE_TO = "navigate_to"  # Navigate camera to a location
+    FORECAST_DEMAND = "forecast_demand"  # Demand forecast action
+    SEARCH_EC = "search_ec"  # E-commerce search action
 
 
 @dataclass

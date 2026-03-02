@@ -359,6 +359,34 @@ class CustomMessageManager:
                     response=response,
                     action_params=response.action_params or {}
                 )
+            elif response.action == AgentAction.FORECAST_DEMAND:
+                # Demand forecast action - send status and response
+                self._send_typing_indicator(
+                    session_id=session_id,
+                    is_typing=False,
+                    agent_type='demand_forecast',
+                    agent_name='Demand Forecast Agent'
+                )
+                self._send_chat_response(
+                    session_id=session_id,
+                    request_id=request_id,
+                    message=response.message,
+                    metadata=response.metadata
+                )
+            elif response.action == AgentAction.SEARCH_EC:
+                # E-commerce search action - send status and response
+                self._send_typing_indicator(
+                    session_id=session_id,
+                    is_typing=False,
+                    agent_type='ec_search',
+                    agent_name='E-Commerce Search Agent'
+                )
+                self._send_chat_response(
+                    session_id=session_id,
+                    request_id=request_id,
+                    message=response.message,
+                    metadata=response.metadata
+                )
             else:
                 # No special action, send response to client
                 self._send_chat_response(
@@ -638,15 +666,26 @@ class CustomMessageManager:
         request = self._pending_requests.get(request_id)
         return request is None or request.get('cancelled', False)
 
-    def _send_typing_indicator(self, session_id: str, is_typing: bool):
-        """Send typing indicator to web client"""
-        get_eventdispatcher().dispatch_event(
-            "chatTyping",
-            payload={
-                'session_id': session_id,
-                'is_typing': is_typing
-            }
-        )
+    def _send_typing_indicator(
+        self,
+        session_id: str,
+        is_typing: bool,
+        agent_type: Optional[str] = None,
+        agent_name: Optional[str] = None
+    ):
+        """Send typing indicator with optional agent status to web client"""
+        payload = {
+            'session_id': session_id,
+            'is_typing': is_typing
+        }
+
+        # Add agent status information if provided
+        if agent_type:
+            payload['agent_type'] = agent_type
+        if agent_name:
+            payload['agent_name'] = agent_name
+
+        get_eventdispatcher().dispatch_event("chatTyping", payload=payload)
 
     def _send_chat_response(
         self,
