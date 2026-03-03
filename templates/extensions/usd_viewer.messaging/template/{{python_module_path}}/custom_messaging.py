@@ -419,6 +419,7 @@ class CustomMessageManager:
         # Get capture parameters
         width = action_params.get('width', 1280)
         height = action_params.get('height', 720)
+        followup_intent = action_params.get('followup_intent')  # e.g., 'demand_forecast', 'ec_search'
 
         # Capture the viewport
         frame_data = await self._viewport_capture.capture_frame_async(
@@ -438,7 +439,35 @@ class CustomMessageManager:
             )
             return
 
-        # Send frame to vision agent for analysis
+        # If there's a followup_intent (demand_forecast, ec_search), send back to /api/chat
+        # with the frame data so it can be processed by the proper handler
+        if followup_intent:
+            carb.log_info(f"[CustomMessageManager] Followup intent: {followup_intent}, sending to /api/chat with frame...")
+
+            # Send back to chat endpoint with frame data
+            chat_request = ChatRequest(
+                message=original_message,
+                session_id=session_id,
+                frame_data=frame_data,
+                context=context
+            )
+
+            response = await self._agent_client.send_chat_message(chat_request)
+
+            if self._is_request_cancelled(request_id):
+                return
+
+            # Send the response
+            self._send_chat_response(
+                session_id=session_id,
+                request_id=request_id,
+                message=response.message,
+                metadata=response.metadata,
+                reasoning=response.reasoning
+            )
+            return
+
+        # Standard flow: Send frame to vision agent for analysis
         carb.log_info("[CustomMessageManager] Sending frame to vision agent...")
 
         analysis_response = await self._agent_client.send_frame_for_analysis(
