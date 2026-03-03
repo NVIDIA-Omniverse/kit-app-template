@@ -6,7 +6,7 @@
     <package name="repo_build" version="1.17.1"/>
   </dependency>
   <dependency name="repo_kit_tools" linkPath="../../_repo/deps/repo_kit_tools">
-    <package name="repo_kit_tools" version="1.16.0"/>
+    <package name="repo_kit_tools" version="1.17.1"/>
   </dependency>
   <dependency name="repo_test" linkPath="../../_repo/deps/repo_test">
     <package name="repo_test" version="2.42.1" />
