@@ -2,6 +2,9 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [109.0.3] - 2026-03-03
+- Update `repo_kit_tools` to `1.17.1` to enable [Kit Artifacts Collection](https://docs.omniverse.nvidia.com/omniverse-dgxc/latest/observability/logs/kit-latest/artifacts-collection.html)
+
 ## [109.0.3] - 2026-01-26
 - Update to `Kit 109.0.3`
   - [Kit 109.0.3 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_3.html)
