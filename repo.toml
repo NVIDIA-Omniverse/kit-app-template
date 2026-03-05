@@ -201,38 +201,40 @@ files_exclude = [
 # Template packages
 ########################################################################################################################
 
-# [repo_package.packages.kit_core_templates]
-# root = "templates"
-# archive_name = "kit_core_templates"
-# omniverse_flow_version_scheme=true
-# archive_format = "zip"
-# files = [
-#     ["core_templates.toml"],
-#     ["apps/kit_base_editor/**"],
-#     ["apps/kit_service/**"],
-#     ["apps/streaming_configs/**"],
-#     ["extensions/basic_python/**"],
-#     ["extensions/python_ui/**"],
-#     ["extensions/basic_cpp/**"],
-#     ["extensions/basic_python_binding/**"],
-#     ["extensions/service.setup/**"],
-# ]
+[repo_package.packages.kit_core_templates]
+root = "templates"
+archive_name = "kit_core_templates"
+omniverse_flow_version_scheme=true
+platform_independent = true
+archive_format = "zip"
+files = [
+    ["core_templates.toml"],
+    ["apps/kit_base_editor/**"],
+    ["apps/kit_service/**"],
+    ["apps/streaming_configs/**"],
+    ["extensions/basic_python/**"],
+    ["extensions/python_ui/**"],
+    ["extensions/basic_cpp/**"],
+    ["extensions/basic_python_binding/**"],
+    ["extensions/service.setup/**"],
+]
 
-# [repo_package.packages.kit_sample_templates]
-# root = "templates"
-# archive_name = "kit_sample_templates"
-# omniverse_flow_version_scheme=true
-# archive_format = "zip"
-# files = [
-#     ["sample_templates.toml"],
-#     ["apps/usd_composer/**"],
-#     ["apps/usd_explorer/**"],
-#     ["apps/usd_viewer/**"],
-#     ["extensions/usd_composer.setup/**"],
-#     ["extensions/usd_explorer.setup/**"],
-#     ["extensions/usd_viewer.setup/**"],
-#     ["extensions/usd_viewer.messaging/**"],
-# ]
+[repo_package.packages.kit_sample_templates]
+root = "templates"
+archive_name = "kit_sample_templates"
+omniverse_flow_version_scheme=true
+platform_independent = true
+archive_format = "zip"
+files = [
+    ["sample_templates.toml"],
+    ["apps/usd_composer/**"],
+    ["apps/usd_explorer/**"],
+    ["apps/usd_viewer/**"],
+    ["extensions/usd_composer.setup/**"],
+    ["extensions/usd_explorer.setup/**"],
+    ["extensions/usd_viewer.setup/**"],
+    ["extensions/usd_viewer.messaging/**"],
+]
 
 
 ########################################################################################################################

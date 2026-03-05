@@ -1,0 +1,94 @@
+# -- USD Application Sample templates --
+[templates."omni_usd_composer"]
+class = "ApplicationTemplate"
+name = "USD Composer"
+url = "."
+subpath = "apps/usd_composer/omni.usd_composer.kit"
+variables.application_name = "my_company.my_usd_composer"
+variables.application_display_name = "My USD Composer"
+variables.version = "0.1.0"
+
+[[templates."omni_usd_composer".extensions]]
+template = "omni_usd_composer_setup"
+
+[[templates."omni_usd_composer".applications]]
+link_all = true
+
+
+[templates."omni_usd_explorer"]
+class = "ApplicationTemplate"
+name = "USD Explorer"
+url = "."
+subpath = "apps/usd_explorer/omni.usd_explorer.kit"
+variables.application_name = "my_company.my_usd_explorer"
+variables.application_display_name = "My USD Explorer"
+variables.version = "0.1.0"
+
+[[templates."omni_usd_explorer".extensions]]
+template = "omni_usd_explorer_setup"
+
+[[templates."omni_usd_explorer".applications]]
+link_all = true
+
+
+[templates."omni_usd_viewer"]
+class = "ApplicationTemplate"
+name = "USD Viewer"
+url = "."
+subpath = "apps/usd_viewer/omni.usd_viewer.kit"
+variables.application_name = "my_company.my_usd_viewer"
+variables.application_display_name = "My USD Viewer"
+variables.version = "0.1.0"
+
+[[templates."omni_usd_viewer".extensions]]
+template = "omni_usd_viewer_messaging"
+
+[[templates."omni_usd_viewer".extensions]]
+template = "omni_usd_viewer_setup"
+
+[[templates."omni_usd_viewer".applications]]
+link_all = true
+
+
+[templates."omni_usd_composer_setup"]
+class = "SetupExtensionTemplate"
+name = "Omni USD Composer Setup"
+url = "."
+subpath = "extensions/usd_composer.setup/template"
+type = "setup"
+variables.extension_name = "my_company.my_usd_composer_setup_extension"
+variables.extension_display_name = "My USD Composer Setup Extension"
+variables.version = "0.1.0"
+
+
+[templates."omni_usd_explorer_setup"]
+class = "SetupExtensionTemplate"
+name = "Omni USD Explorer Setup"
+url = "."
+subpath = "extensions/usd_explorer.setup/template"
+type = "setup"
+variables.extension_name = "my_company.my_usd_explorer_setup_extension"
+variables.extension_display_name = "My USD Explorer Setup Extension"
+variables.version = "0.1.0"
+
+
+[templates."omni_usd_viewer_setup"]
+class = "SetupExtensionTemplate"
+name = "Omni USD Viewer Setup"
+url = "."
+subpath = "extensions/usd_viewer.setup/template"
+type = "setup"
+variables.extension_name = "my_company.my_usd_viewer_setup_extension"
+variables.extension_display_name = "My USD Viewer Setup Extension"
+variables.version = "0.1.0"
+
+
+[templates."omni_usd_viewer_messaging"]
+class = "SetupExtensionTemplate"
+name = "Omni USD Viewer Messaging"
+url = "."
+subpath = "extensions/usd_viewer.messaging/template"
+type = "extra"
+variables.extension_name = "my_company.my_usd_viewer_messaging_extension"
+variables.extension_display_name = "My USD Viewer Messaging Extension"
+variables.version = "0.1.0"

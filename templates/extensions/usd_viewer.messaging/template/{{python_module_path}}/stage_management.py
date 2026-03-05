@@ -80,11 +80,10 @@ class StageManager:
 
         # -- subscribe to stage events
         usd_context = omni.usd.get_context()
-        event_stream = omni.usd.get_context().get_stage_event_stream()
         self._subscriptions.append(
             ed.observe_event(
                 observer_name="StageManager:StageOpened",
-                event_name=usd_context.stage_event_name(omni.usd.StageEventType.OPENED),
+                event_name=usd_context.stage_event_name(omni.usd.StageEventType.ASSETS_LOADED),
                 on_event=self._on_stage_event_opened,
             )
         )
@@ -189,14 +188,12 @@ class StageManager:
         stage_url = stage.GetRootLayer().identifier if stage else ''
 
         if stage_url:
-            # Set the entire stage to not be pickable.
-            ctx = omni.usd.get_context()
-            ctx.set_pickable("/", False)
             # Clear before using, so that we're sure the data is only
             # from the new stage.
             self._camera_attrs.clear()
             # Capture the active camera's camera data, used to reset
             # the scene to a known good state.
+            ctx = omni.usd.get_context()
             if (prim := ctx.get_stage().GetPrimAtPath(get_active_viewport_camera_string())):
                 for attr in prim.GetAttributes():
                     self._camera_attrs[attr.GetName()] = attr.Get()
@@ -249,14 +246,12 @@ class StageManager:
         """
         Handler for `makePrimsPickable` event.
 
-        Enables viewport selection for the provided primitives.
+        Adds the provided primitives to the set of selectable objects in the viewport.
         Sends 'makePrimsPickableResponse' back to streamer with
         current success status.
         """
-        # Reset the stage to not be pickable.
+        # Add the provided paths to the set of pickable prims.
         ctx = omni.usd.get_context()
-        ctx.set_pickable("/", False)
-        # Set the provided paths to be pickable.
         try:
             if "paths" in event.payload:
                 if isinstance(event.payload["paths"], carb.dictionary.Item):
