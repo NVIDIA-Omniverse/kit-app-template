@@ -15,7 +15,6 @@ import carb.settings
 import omni.kit.app
 import omni.kit.commands
 import omni.kit.menu.utils
-import omni.renderer_capture
 from omni.kit.menu.utils import MenuLayout
 
 SETTINGS_APPLICATION_MODE_PATH = "/app/application_mode"

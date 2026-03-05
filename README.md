@@ -260,7 +260,7 @@ The Omniverse Platform supports streaming Kit-based applications directly to a w
 ### Deploying to NVIDIA DGX Cloud (DGXC)
 
 > ⚠️ **Planning to deploy on DGX Cloud?**
-> Applications deployed on NVIDIA DGX Cloud via NVCF need NVCF-compatible streaming configuration. The **NVCF Streaming** layer provides this out of the box, or you can create your own custom layer. Add layers during `template new` or later with `repo template modify`. Standard streaming configurations are not DGXC-compatible.
+> Applications deployed on NVIDIA DGX Cloud via NVCF need NVCF-compatible streaming configuration. The **NVCF Streaming** layer provides this out of the box, or you can create your own custom layer. Add layers during `template new` or later with `./repo.sh template modify` (Linux) or `.\repo.bat template modify` (Windows). Standard streaming configurations are not DGXC-compatible.
 
 See the [DGXC Deployment Guide](readme-assets/additional-docs/dgxc_nvcf_deployment.md) for configuration details and the [public DGXC documentation](https://docs.omniverse.nvidia.com/omniverse-dgxc/latest/) for deployment steps.
 
