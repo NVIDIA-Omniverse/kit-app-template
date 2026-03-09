@@ -16,6 +16,7 @@ from omni.timeline import get_timeline_interface
 from .viewport_capture import ViewportCapture
 from .agent_client import AgentClient, AgentAction, ChatRequest, AgentResponse
 from .camera_navigation import get_camera_navigation, CameraNavigation
+from .usd_spawner import UsdSpawner
 
 
 class CustomMessageManager:
@@ -30,6 +31,7 @@ class CustomMessageManager:
         self._timeline = get_timeline_interface()
         self._viewport_capture = ViewportCapture()
         self._agent_client = AgentClient(base_url=agent_backend_url)
+        self._usd_spawner = UsdSpawner()
         self._pending_requests: Dict[str, Dict[str, Any]] = {}  # Track pending chat requests
 
         # Camera position tracking (per session)
@@ -386,6 +388,21 @@ class CustomMessageManager:
                     request_id=request_id,
                     message=response.message,
                     metadata=response.metadata
+                )
+            elif response.action == AgentAction.SPAWN_USD:
+                # Agent wants to spawn a USD asset — tell the browser to enter
+                # spawn-mode so the user can click a location in the viewport.
+                params = response.action_params or {}
+                self._send_chat_response(
+                    session_id=session_id,
+                    request_id=request_id,
+                    message=response.message,
+                    metadata={
+                        **(response.metadata or {}),
+                        "action":     "spawn_mode",
+                        "usd_path":   params.get("usd_path", ""),
+                        "asset_name": params.get("asset_name", "Asset"),
+                    }
                 )
             else:
                 # No special action, send response to client
@@ -776,6 +793,11 @@ class CustomMessageManager:
 
         # Clear camera position tracking
         self._last_camera_positions.clear()
+
+        # Shut down USD spawner
+        if self._usd_spawner:
+            self._usd_spawner.on_shutdown()
+            self._usd_spawner = None
 
         # Clean up subscriptions
         for sub in self._subscriptions:

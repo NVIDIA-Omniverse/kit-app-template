@@ -1,0 +1,9 @@
+{
+  "_comment": "Edit this file to configure paths for your environment. Do not rename keys.",
+
+  "usd_base": "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/usd",
+
+  "inventory_file": "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/asset_list_shop_already.json",
+
+  "stage_prims_file": "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/stage_prims.json"
+}

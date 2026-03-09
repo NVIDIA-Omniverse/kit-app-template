@@ -19,6 +19,7 @@ class AgentAction(Enum):
     NAVIGATE_TO = "navigate_to"  # Navigate camera to a location
     FORECAST_DEMAND = "forecast_demand"  # Demand forecast action
     SEARCH_EC = "search_ec"  # E-commerce search action
+    SPAWN_USD = "spawn_usd"  # Spawn a USD asset at a user-clicked location
 
 
 @dataclass
