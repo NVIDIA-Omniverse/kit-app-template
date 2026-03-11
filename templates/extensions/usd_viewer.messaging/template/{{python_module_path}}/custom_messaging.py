@@ -52,6 +52,9 @@ class CustomMessageManager:
             "chatResponse",             # Chat response from agent
             "chatTyping",               # Typing indicator
             "chatError",                # Chat error notification
+            # Planogram
+            "planogramCaptureResponse",  # Small thumbnail after frame capture
+            "planogramAnalysisResult",   # Structured row analysis from backend
         ]
 
         for message_type in outgoing_messages:
@@ -71,6 +74,9 @@ class CustomMessageManager:
             # Chat-related handlers
             'chatMessage': self._on_chat_message,
             'chatCancel': self._on_chat_cancel,
+            # Planogram
+            'planogramCaptureRequest': self._on_planogram_capture_request,
+            'planogramAnalyzeRequest': self._on_planogram_analyze_request,
         }
 
         ed = get_eventdispatcher()
@@ -781,6 +787,127 @@ class CustomMessageManager:
             }
         )
         carb.log_error(f"[CustomMessageManager] Chat error: {error}")
+
+    # ===== PLANOGRAM CAPTURE =====
+    # The full viewport frame is too large (~1-4 MB) for the WebRTC data channel
+    # (~64 KB limit).  Strategy:
+    #   1. planogramCaptureRequest  → Kit captures, stores full JPEG in memory,
+    #                                 sends a small thumbnail (~15 KB) to browser.
+    #   2. planogramAnalyzeRequest  → Kit sends stored full JPEG to backend,
+    #                                 returns structured result to browser.
+    # The large image never travels over WebRTC.
+
+    def _on_planogram_capture_request(self, event: carb.events.IEvent):
+        """Handle planogramCaptureRequest — capture and store frame, send thumbnail."""
+        carb.log_info("[CustomMessageManager] planogramCaptureRequest received")
+        asyncio.ensure_future(self._capture_and_send_planogram_frame())
+
+    def _on_planogram_analyze_request(self, event: carb.events.IEvent):
+        """Handle planogramAnalyzeRequest — POST stored frame to backend, return result."""
+        payload = event.payload
+        carb.log_info(f"[CustomMessageManager] planogramAnalyzeRequest: {payload}")
+        asyncio.ensure_future(self._run_planogram_analysis(payload))
+
+    async def _capture_and_send_planogram_frame(self):
+        """Capture viewport, compress to JPEG, store full-res, send small thumbnail."""
+        try:
+            frame_b64 = await self._viewport_capture.capture_frame_async()
+            if frame_b64 is None:
+                get_eventdispatcher().dispatch_event(
+                    "planogramCaptureResponse",
+                    payload={"success": False, "error": "Frame capture failed"},
+                )
+                carb.log_warn("[CustomMessageManager] Planogram capture returned no data")
+                return
+
+            thumbnail_b64, vision_b64 = self._compress_planogram_frame(frame_b64)
+            self._planogram_frame: Optional[str] = vision_b64
+
+            carb.log_info(
+                f"[CustomMessageManager] Planogram captured — "
+                f"vision={len(vision_b64)//1024} KB, thumb={len(thumbnail_b64)//1024} KB"
+            )
+
+            get_eventdispatcher().dispatch_event(
+                "planogramCaptureResponse",
+                payload={"success": True, "thumbnail": thumbnail_b64},
+            )
+        except Exception as exc:
+            carb.log_error(f"[CustomMessageManager] Planogram capture error: {exc}")
+            get_eventdispatcher().dispatch_event(
+                "planogramCaptureResponse",
+                payload={"success": False, "error": str(exc)},
+            )
+
+    async def _run_planogram_analysis(self, payload: dict):
+        """POST stored full-res frame to backend and dispatch result to browser."""
+        vision_b64 = getattr(self, '_planogram_frame', None)
+        if not vision_b64:
+            get_eventdispatcher().dispatch_event(
+                "planogramAnalysisResult",
+                payload={"success": False, "error": "No captured frame — capture first"},
+            )
+            return
+
+        model     = payload.get("model", "qwen")
+        num_rows  = int(payload.get("num_rows", 4))
+        shelf_id  = payload.get("shelf_id", "Shelf_1")
+        backend   = self._agent_client._base_url
+        url       = f"{backend}/api/planogram/analyze"
+        body      = {"frame_data": vision_b64, "model": model, "num_rows": num_rows, "shelf_id": shelf_id}
+
+        carb.log_info(f"[CustomMessageManager] Posting planogram to {url} model={model} rows={num_rows}")
+
+        try:
+            import json as _json
+            import urllib.request as _urllib
+            data = _json.dumps(body).encode("utf-8")
+            req  = _urllib.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
+            loop = asyncio.get_event_loop()
+            resp_data = await loop.run_in_executor(
+                None,
+                lambda: _json.loads(_urllib.urlopen(req, timeout=300).read().decode("utf-8"))
+            )
+            carb.log_info(f"[CustomMessageManager] Planogram result: {str(resp_data)[:200]}")
+            get_eventdispatcher().dispatch_event(
+                "planogramAnalysisResult",
+                payload={"success": True, **resp_data},
+            )
+        except Exception as exc:
+            carb.log_error(f"[CustomMessageManager] Planogram analysis error: {exc}")
+            get_eventdispatcher().dispatch_event(
+                "planogramAnalysisResult",
+                payload={"success": False, "error": str(exc)},
+            )
+
+    @staticmethod
+    def _compress_planogram_frame(frame_b64: str):
+        """
+        Return (thumbnail_b64, vision_b64).
+        thumbnail  ~15 KB (400 px wide, q65) — safe for WebRTC data channel
+        vision     full-res q90 JPEG         — sent server-side only
+        """
+        import base64 as _b64
+        import io as _io
+        try:
+            from PIL import Image as _Image
+            raw = _b64.b64decode(frame_b64)
+            img = _Image.open(_io.BytesIO(raw)).convert("RGB")
+
+            vis_buf = _io.BytesIO()
+            img.save(vis_buf, format="JPEG", quality=90)
+            vision_b64 = _b64.b64encode(vis_buf.getvalue()).decode("utf-8")
+
+            ratio = 400 / img.width if img.width > 400 else 1.0
+            thumb = img.resize((int(img.width * ratio), int(img.height * ratio)), _Image.LANCZOS)
+            th_buf = _io.BytesIO()
+            thumb.save(th_buf, format="JPEG", quality=65)
+            thumbnail_b64 = _b64.b64encode(th_buf.getvalue()).decode("utf-8")
+
+            return thumbnail_b64, vision_b64
+        except Exception as exc:
+            carb.log_warn(f"[CustomMessageManager] Frame compression failed ({exc}), using raw")
+            return frame_b64, frame_b64
 
     def on_shutdown(self):
         """Clean up when the manager is shut down"""
