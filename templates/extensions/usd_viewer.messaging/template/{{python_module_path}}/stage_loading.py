@@ -235,8 +235,9 @@ class LoadingManager:
         If streaming manager is not busy and the stage is loaded from storage,
         notify the client.
         """
-        # Only evaluate for stage loaded from storage.
+        # Only send a success notification for stages loaded from storage.
         if not self._persisted_stage:
+            self._reset_state()
             return
 
         if self._is_evaluating_loading_status:
@@ -284,7 +285,6 @@ class LoadingManager:
         if not self._persisted_stage:
             return
 
-        carb.log_info('Storing message about loading activity.')
         # Send activity message
         carb.log_info('Sending message to client about loading activity.')
         get_eventdispatcher().dispatch_event("updateProgressActivity", payload=dict(event.payload))

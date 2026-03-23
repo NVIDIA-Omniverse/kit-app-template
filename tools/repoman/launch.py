@@ -184,7 +184,8 @@ def get_image_template_mapping(discovered_images: List[dict]) -> Dict[str, str]:
         container_info = json.loads(output[0])[0]
 
         # Grab the kit_app_template label definining what application is inside.
-        container_template = container_info.get("Config").get("Labels").get("kit_app_template")
+        container_template = (container_info.get("Config") or {}).get("Labels") or {}
+        container_template = container_template.get("kit_app_template")
         available_images[container.get("ID")] = {
             "container_name": container.get("Repository"),
             "container_tag": container.get("Tag"),
@@ -330,6 +331,9 @@ def select_container(images: dict) -> dict:
             "Select with arrow keys which containerized App you would like to launch:", image_names
         )
 
+    if selected_image_name not in transformed_images:
+        _quiet_error(f"Invalid selection: '{selected_image_name}'. Please select a valid container image.")
+
     return transformed_images[selected_image_name]
 
 
@@ -415,7 +419,7 @@ def launch_kit(
     # It should be the `_build/${host_platform}/${config}/` folder which contains entrypoint scripts
     # for the included kit apps.
     # It should contain an apps folder that contains various target kit apps.
-    if app_name == None:
+    if app_name is None:
         # Select the kit App from the apps sub-dir.
         app_name = select_kit(target_directory / "apps", config)
 
@@ -445,11 +449,11 @@ def launch_kit(
 
 def expand_package(package_path: str) -> Path:
     archive_path = Path(package_path)
-    archive_timestamp = str(archive_path.stat().st_mtime)
     if not archive_path.is_file():
         raise Exception(
             f"Target archive {archive_path} is not a file. You can use `{PACKAGE_ARG}` to expand and launch an already packaged Kit application."
         )
+    archive_timestamp = str(archive_path.stat().st_mtime)
 
     archive_name = archive_path.name
     destination = KIT_PACKAGE_DIR / archive_name

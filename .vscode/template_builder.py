@@ -56,7 +56,7 @@ def create_and_build_templates(
     print("\n----------------------------------------------------------------------------------------")
     print("*** Building all applications and extensions...")
     print("----------------------------------------------------------------------------------------\n")
-    subprocess.run([f"{repo_path}", "build"], check=False)
+    subprocess.run([f"{repo_path}", "build"], check=True)
 
 
 def is_valid_kat_repo(arg_parser: argparse.ArgumentParser, arg: Path) -> bool:
@@ -87,7 +87,6 @@ if __name__ == "__main__":
         default=Path.cwd(),
         help="An absolute path to your locally cloned Kit-App-Template repository.",
         dest="source_dir",
-        nargs=1
     )
 
     args = parser.parse_args()

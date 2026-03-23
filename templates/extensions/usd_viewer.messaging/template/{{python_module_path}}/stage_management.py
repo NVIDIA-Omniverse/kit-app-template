@@ -216,7 +216,7 @@ class StageManager:
         Handler for `resetStage` event.
 
         Resets the camera back to values collected when the stage was opened.
-        A success message is sent if all attributes are succesfully reset, and error message is set otherwise.
+        A success message is sent if all attributes are successfully reset, and error message is set otherwise.
         """
         ctx = omni.usd.get_context()
         stage = ctx.get_stage()
@@ -253,6 +253,7 @@ class StageManager:
         # Add the provided paths to the set of pickable prims.
         ctx = omni.usd.get_context()
         try:
+            paths = []
             if "paths" in event.payload:
                 if isinstance(event.payload["paths"], carb.dictionary.Item):
                     paths = list(event.payload["paths"].get_dict())
