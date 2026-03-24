@@ -42,7 +42,7 @@ Answer `yes` to enable streaming for your application. You can then pick from th
   [ ] [omni_gdn_streaming]: GDN Streaming
 ```
 
-- **Omniverse Kit App Streaming (Default):** Ideal for self-managed streaming deployments or local streaming during development. Uses [`omni.kit.livestream.webrtc`](https://docs.omniverse.nvidia.com/kit/docs/omni.kit.livestream.app/latest/Overview.html) for WebRTC-based streaming. Choose this for local testing, Kubernetes deployments, or custom infrastructure.
+- **Omniverse Kit App Streaming (Default):** Ideal for self-managed streaming deployments or local streaming during development. Uses [`omni.kit.livestream.webrtc`](https://docs.omniverse.nvidia.com/kit/docs/omni.kit.livestream.webrtc/latest/Overview.html) for WebRTC-based streaming. Choose this for local testing, Kubernetes deployments, or custom infrastructure.
 
 - **NVCF Streaming:** Required for applications deployed on NVIDIA DGX Cloud via NVIDIA Cloud Functions. Adds [`omni.services.livestream.session`](https://docs.omniverse.nvidia.com/kit/docs/omni.services.livestream.session/latest/Overview.html) which implements NVCF-specific health endpoints and session management. See the [DGXC Deployment Guide](dgxc_nvcf_deployment.md) for configuration details.
 

@@ -1,0 +1,101 @@
+# -- Core Application templates --
+[templates."kit_base_editor"]
+class = "ApplicationTemplate"
+name = "Kit Base Editor"
+url = "."
+subpath = "apps/kit_base_editor/kit_base_editor.kit"
+variables.application_name = "my_company.my_editor"
+variables.application_display_name = "My Editor"
+variables.version = "0.1.0"
+
+[[templates."kit_base_editor".applications]]
+link_all = true
+
+
+[templates."kit_service"]
+class = "ApplicationTemplate"
+name = "Kit Service"
+url = "."
+subpath = "apps/kit_service/kit_service.kit"
+variables.application_name = "my_company.my_service"
+variables.application_display_name = "My Service"
+variables.version = "0.1.0"
+
+[[templates."kit_service".extensions]]
+template = "kit_service_setup"
+
+
+# -- Application Layer templates --
+[templates."omni_default_streaming"]
+class = "ApplicationLayerTemplate"
+name = "Omniverse Kit App Streaming (Default)"
+url = "."
+subpath = "apps/streaming_configs/default_stream.kit"
+type = "streaming"
+variables.version = "0.1.0"
+
+
+[templates."nvcf_streaming"]
+class = "ApplicationLayerTemplate"
+name = "NVCF Streaming"
+url = "."
+subpath = "apps/streaming_configs/nvcf_stream.kit"
+type = "nvcf"
+variables.version = "0.1.0"
+
+[templates."omni_gdn_streaming"]
+class = "ApplicationLayerTemplate"
+name = "GDN Streaming"
+url = "."
+subpath = "apps/streaming_configs/gdn_stream.kit"
+type = "gdn_streaming"
+variables.version = "0.1.0"
+
+
+# -- Extension templates --
+[templates."basic_python_extension"]
+class = "ExtensionTemplate"
+name = "Basic Python Extension"
+url = "."
+subpath = "extensions/basic_python/template"
+variables.extension_name = "my_company.my_python_extension"
+variables.extension_display_name = "My Python Extension"
+variables.version = "0.1.0"
+
+[templates."basic_python_ui_extension"]
+class = "ExtensionTemplate"
+name = "Python UI Extension"
+url = "."
+subpath = "extensions/python_ui/template"
+variables.extension_name = "my_company.my_python_ui_extension"
+variables.extension_display_name = "My Python UI Extension"
+variables.version = "0.1.0"
+
+[templates."basic_cpp_extension"]
+class = "ExtensionTemplate"
+name = "Basic C++ Extension"
+url = "."
+subpath = "extensions/basic_cpp/template"
+variables.extension_name = "my_company.my_cpp_extension"
+variables.extension_display_name = "My C++ Extension"
+variables.version = "0.1.0"
+
+[templates."basic_python_binding"]
+class = "BindingExtensionTemplate"
+name = "Basic C++ w/ Python Binding Extension"
+url = "."
+subpath = "extensions/basic_python_binding/template"
+variables.extension_name = "my_company.my_python_binding"
+variables.extension_display_name = "My Pybind11 Extension"
+variables.version = "0.1.0"
+
+
+[templates."kit_service_setup"]
+class = "SetupExtensionTemplate"
+name = "Service Setup"
+url = "."
+subpath = "extensions/service.setup/template"
+type = "setup"
+variables.extension_name = "my_company.my_service_setup_extension"
+variables.extension_display_name = "My Service Setup Extension"
+variables.version = "0.1.0"

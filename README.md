@@ -4,6 +4,13 @@
   <img src="readme-assets/kit_app_template_banner.png" width=100% />
 </p>
 
+## :memo: Feature Branch Information
+**This repository is based on a Feature Branch of the Omniverse Kit SDK.** Feature Branches are regularly updated and best suited for testing and prototyping.
+For stable, production-oriented development, please use the [Production Branch of the Kit SDK on NVIDIA GPU Cloud (NGC)](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/omniverse/collections/omniverse_enterprise_25h1).
+
+[Omniverse Release Information](https://docs.omniverse.nvidia.com/dev-overview/latest/omniverse-releases.html#)
+
+
 ## Overview
 
 Welcome to `kit-app-template`, a toolkit designed for developers interested in GPU-accelerated application development within the NVIDIA Omniverse ecosystem. This repository offers streamlined tools and templates to simplify creating high-performance, OpenUSD-based desktop or cloud streaming applications using the Omniverse Kit SDK.
@@ -253,7 +260,7 @@ The Omniverse Platform supports streaming Kit-based applications directly to a w
 ### Deploying to NVIDIA DGX Cloud (DGXC)
 
 > ⚠️ **Planning to deploy on DGX Cloud?**
-> Applications deployed on NVIDIA DGX Cloud via NVCF need NVCF-compatible streaming configuration. The **NVCF Streaming** layer provides this out of the box, or you can create your own custom layer. Add layers during `template new` or later with `repo template modify`. Standard streaming configurations are not DGXC-compatible.
+> Applications deployed on NVIDIA DGX Cloud via NVCF need NVCF-compatible streaming configuration. The **NVCF Streaming** layer provides this out of the box, or you can create your own custom layer. Add layers during `template new` or later with `./repo.sh template modify` (Linux) or `.\repo.bat template modify` (Windows). Standard streaming configurations are not DGXC-compatible.
 
 See the [DGXC Deployment Guide](readme-assets/additional-docs/dgxc_nvcf_deployment.md) for configuration details and the [public DGXC documentation](https://docs.omniverse.nvidia.com/omniverse-dgxc/latest/) for deployment steps.
 
