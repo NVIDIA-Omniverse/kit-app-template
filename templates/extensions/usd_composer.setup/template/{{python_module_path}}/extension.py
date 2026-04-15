@@ -21,10 +21,8 @@ from pathlib import Path
 import carb
 import omni.ext
 import omni.kit.app
-import omni.kit.commands
 import omni.kit.menu.utils
 import omni.kit.stage_templates as stage_templates
-import omni.kit.ui
 import omni.kit.window.property as property_window_ext
 import omni.ui as ui
 import omni.usd
@@ -254,7 +252,7 @@ class CreateSetupExtension(omni.ext.IExt):
         for _ in range(5):
             await omni.kit.app.get_app().next_update_async()
 
-        if omni.usd.get_context().can_open_stage():
+        if omni.usd.get_context().can_open_stage() and not omni.usd.get_context().get_stage_url():
             stage_templates.new_stage(template=None)
 
     def _launch_app(self, app_id, console=True, custom_args=None):

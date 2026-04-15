@@ -277,3 +277,4 @@ package_cmd = "_package"
 enabled = true
 gui_cli = true
 auto_generate = true
+precache_extensions = true

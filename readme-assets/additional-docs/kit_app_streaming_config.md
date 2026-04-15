@@ -39,14 +39,11 @@ Answer `yes` to enable streaming for your application. You can then pick from th
 ? Browse layers with arrow keys ↑↓: [SPACE to toggle selection, ENTER to confirm selection(s)]
 ❯ [ ] [omni_default_streaming]: Omniverse Kit App Streaming (Default)
   [ ] [nvcf_streaming]: NVCF Streaming
-  [ ] [omni_gdn_streaming]: GDN Streaming
 ```
 
 - **Omniverse Kit App Streaming (Default):** Ideal for self-managed streaming deployments or local streaming during development. Uses [`omni.kit.livestream.webrtc`](https://docs.omniverse.nvidia.com/kit/docs/omni.kit.livestream.webrtc/latest/Overview.html) for WebRTC-based streaming. Choose this for local testing, Kubernetes deployments, or custom infrastructure.
 
 - **NVCF Streaming:** Required for applications deployed on NVIDIA DGX Cloud via NVIDIA Cloud Functions. Adds [`omni.services.livestream.session`](https://docs.omniverse.nvidia.com/kit/docs/omni.services.livestream.session/latest/Overview.html) which implements NVCF-specific health endpoints and session management. See the [DGXC Deployment Guide](dgxc_nvcf_deployment.md) for configuration details.
-
-- **GDN Streaming:** Streams applications through NVIDIA Graphics Delivery Network; especially useful for configurator workflows. Refer to the [End-to-End Configurator Example Guide](https://docs.omniverse.nvidia.com/auto-config/latest/overview.html) for deployment instructions.
 
 
 After creating your application, you'll find two `.kit` files in the `/source/apps/` directory:
@@ -81,8 +78,7 @@ After you have created and customized your application, build it using the follo
 
 ## Packaging Your Application
 
-- **Omniverse Kit App Streaming** & **Omniverse on NVCF**
-  From a **Linux** development environment, run the following command to containerize your application for streaming:
+From a **Linux** development environment, run the following command to containerize your application for streaming:
 
   ```bash
   ./repo.sh package_container --image-tag [container_image_name:container_image_tag]
@@ -90,9 +86,6 @@ After you have created and customized your application, build it using the follo
 
   :warning: **Note**
   When prompted to select a `.kit` file, choose the `{app_name}_{streaming_config}.kit` file.
-
-- **GDN Streaming**
-  Refer to the [End-to-End Configurator Example Guide](https://docs.omniverse.nvidia.com/auto-config/latest/overview.html) for instructions on packaging and deploying to NVIDIA GDN.
 
 ## Testing Locally
 

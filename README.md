@@ -253,8 +253,6 @@ The Omniverse Platform supports streaming Kit-based applications directly to a w
 ### NVIDIA-Managed
 - **NVIDIA Cloud Functions (NVCF):** Offloads hardware, streaming, and network complexities for secure, large scale deployments.
 
-- **Graphics Delivery Network (GDN):** Streams high-fidelity 3D content worldwide with just a shared URL.
-
 [Configuring and packaging streaming-ready Kit applications](readme-assets/additional-docs/kit_app_streaming_config.md)
 
 ### Deploying to NVIDIA DGX Cloud (DGXC)

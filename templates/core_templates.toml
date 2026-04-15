@@ -43,14 +43,6 @@ subpath = "apps/streaming_configs/nvcf_stream.kit"
 type = "nvcf"
 variables.version = "0.1.0"
 
-[templates."omni_gdn_streaming"]
-class = "ApplicationLayerTemplate"
-name = "GDN Streaming"
-url = "."
-subpath = "apps/streaming_configs/gdn_stream.kit"
-type = "gdn_streaming"
-variables.version = "0.1.0"
-
 
 # -- Extension templates --
 [templates."basic_python_extension"]

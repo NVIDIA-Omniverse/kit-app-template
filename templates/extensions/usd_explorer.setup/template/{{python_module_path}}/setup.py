@@ -18,12 +18,10 @@ from contextlib import suppress
 from pathlib import Path
 from typing import cast, Optional
 
-import omni.client
 import omni.ext
 import omni.kit.menu.utils
 import omni.kit.app
 import omni.kit.context_menu
-import omni.kit.ui
 import omni.usd
 
 from omni.kit.quicklayout import QuickLayout
@@ -36,7 +34,6 @@ from omni.kit.viewport.utility import get_active_viewport, get_active_viewport_w
 import carb
 import carb.settings
 import carb.dictionary
-import carb.events
 import carb.tokens
 import carb.input
 from carb.eventdispatcher import get_eventdispatcher
@@ -162,8 +159,11 @@ class SetupExtension(omni.ext.IExt):
         self.default_layout_path = str(
             Path(self._layouts_path) / "default.json"
         )
+
+        # OMPE-74087: moved to ${data} as DGXC has read-only directories
+        token = carb.tokens.get_tokens_interface()
         self.layout_user_path = str(
-            Path(self._layouts_path) / "layout_user.json"
+            Path(token.resolve("${data}")) / "layout_user.json"
         )
 
         # remove the user defined layout so that we always load the default
