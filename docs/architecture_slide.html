@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omniverse Retail Shop - System Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            padding: 40px;
+        }
+        .slide {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            page-break-after: always;
+        }
+        .slide-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #1a1a1a;
+            text-align: center;
+            border-bottom: 3px solid #4285f4;
+            padding-bottom: 15px;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #5f6368;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: #ffffff;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid;
+        }
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .print-btn:hover {
+            background: #3367d6;
+        }
+        @media print {
+            .print-btn { display: none; }
+            .slide { box-shadow: none; margin: 0; }
+            body { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">Export / Print</button>
+
+    <!-- SLIDE 1: Main Architecture -->
+    <div class="slide">
+        <h1 class="slide-title">Omniverse Retail Shop - System Architecture</h1>
+        <p class="subtitle">AI-Powered Digital Twin Platform with Multi-Model Inference</p>
+
+        <div class="mermaid">
+flowchart LR
+    subgraph USER[" "]
+        BROWSER["<b>Web Browser</b>"]
+    end
+
+    subgraph HOST["<b>HOST MACHINE</b>"]
+        UI["<b>Web UI</b><br/>React/Next.js"]
+        BACKEND["<b>Agent Backend</b><br/>FastAPI + LangGraph"]
+        subgraph AGENTS["AI Agents"]
+            IC["Intent<br/>Classifier"]
+            VA["Vision<br/>Agent"]
+            DFA["Demand<br/>Forecast"]
+            ECA["E-Commerce<br/>Search"]
+        end
+    end
+
+    subgraph L40S["<b>L40s GPU</b>"]
+        KIT["<b>Omniverse Kit</b><br/>USD Viewer"]
+        MSG["Custom Messaging<br/>Viewport Capture"]
+        STREAM["Kit Livestream"]
+    end
+
+    subgraph DYNAMO["<b>DYNAMO - H100</b>"]
+        NEM["<b>Nemotron 30B</b><br/>LLM + RAG<br/>Store Knowledge"]
+        VLM["<b>Qwen3 VL</b><br/>Fast Visual Tasks<br/>Product Recognition"]
+    end
+
+    subgraph GX10["<b>GX10 - NVIDIA SPARK</b>"]
+        COS["<b>Cosmos Reason 2</b><br/>Spatial Reasoning<br/>Shelf Analysis"]
+        GLM["<b>GLM 4.7 Flash</b><br/>Extended Thinking"]
+    end
+
+    subgraph CLOUD["<b>LUMINIONE CLOUD</b>"]
+        GEMINI["<b>Gemini</b><br/>LLM + RAG<br/>Vision (Fast)"]
+    end
+
+    BROWSER <--> UI
+    UI <--> STREAM
+    STREAM <--> KIT
+    KIT <--> MSG
+    MSG <--> BACKEND
+
+    BACKEND --> IC
+    IC --> NEM
+    IC --> VA
+    IC --> DFA
+    IC --> ECA
+
+    VA --> VLM
+    VA --> COS
+    DFA --> NEM
+    ECA --> NEM
+    BACKEND --> GLM
+    BACKEND -.-> GEMINI
+
+    style USER fill:#ffffff,stroke:#dadce0,stroke-width:0px
+    style HOST fill:#e8f0fe,stroke:#4285f4,stroke-width:2px
+    style L40S fill:#fce8e6,stroke:#ea4335,stroke-width:2px
+    style DYNAMO fill:#e6f4ea,stroke:#34a853,stroke-width:2px
+    style GX10 fill:#fef7e0,stroke:#fbbc04,stroke-width:2px
+    style CLOUD fill:#f3e8fd,stroke:#9334e6,stroke-width:2px
+    style AGENTS fill:#ffffff,stroke:#dadce0,stroke-width:1px
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background:#e8f0fe;border-color:#4285f4;"></div>
+                <span>Host Machine</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#fce8e6;border-color:#ea4335;"></div>
+                <span>L40s GPU (Rendering)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#e6f4ea;border-color:#34a853;"></div>
+                <span>H100 Dynamo (LLM + VLM)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#fef7e0;border-color:#fbbc04;"></div>
+                <span>GX10 Spark (Spatial + Reasoning)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#f3e8fd;border-color:#9334e6;"></div>
+                <span>LuminiOne Cloud (Proprietary)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: Data Flow -->
+    <div class="slide">
+        <h1 class="slide-title">AI Agent Pipeline - Data Flow</h1>
+        <p class="subtitle">Intent-Based Routing with Multi-Model Orchestration</p>
+
+        <div class="mermaid">
+flowchart LR
+    subgraph INPUT["<b>INPUT</b>"]
+        Q["User Query"]
+        V["Viewport Frame"]
+    end
+
+    subgraph PROCESS["<b>PROCESSING</b>"]
+        INTENT["<b>Intent Classification</b><br/>(Nemotron 30B)"]
+        subgraph ROUTE["Intent Routing"]
+            R1["Product Recognition<br/>(What is this?)"]
+            R2["Spatial Reasoning<br/>(Row 3? Navigate?)"]
+            R3["Demand Forecast<br/>(Stock prediction)"]
+            R4["E-Commerce Search<br/>(Buy online)"]
+            R5["General Q&A"]
+        end
+    end
+
+    subgraph MODELS["<b>AI MODELS</b>"]
+        subgraph H100["H100 Dynamo"]
+            M1["<b>Nemotron 30B</b><br/>LLM + RAG"]
+            M4["<b>Qwen3 VL</b><br/>Fast Vision"]
+        end
+        subgraph SPARK["GX10 Spark"]
+            M2["<b>Cosmos R2</b><br/>Spatial Reasoning"]
+            M3["<b>GLM 4.7 Flash</b><br/>Deep Thinking"]
+        end
+    end
+
+    subgraph OUTPUT["<b>OUTPUT</b>"]
+        RESP["Chat Response"]
+        ACT["Action"]
+    end
+
+    Q --> INTENT
+    V --> INTENT
+    INTENT --> M1
+    INTENT --> ROUTE
+
+    R1 --> M4
+    R2 --> M2
+    R3 --> M1
+    R4 --> M1
+    R5 --> M1
+
+    M4 --> M1
+    M2 --> M1
+    M1 --> RESP
+    M3 --> RESP
+    R2 --> ACT
+
+    style INPUT fill:#e8f0fe,stroke:#4285f4,stroke-width:2px
+    style PROCESS fill:#fff8e1,stroke:#f9ab00,stroke-width:2px
+    style MODELS fill:#e6f4ea,stroke:#34a853,stroke-width:2px
+    style OUTPUT fill:#fce8e6,stroke:#ea4335,stroke-width:2px
+    style H100 fill:#c8e6c9,stroke:#2e7d32,stroke-width:1px
+    style SPARK fill:#ffe0b2,stroke:#ef6c00,stroke-width:1px
+    style ROUTE fill:#ffffff,stroke:#dadce0
+        </div>
+    </div>
+
+    <!-- SLIDE 3: Infrastructure -->
+    <div class="slide">
+        <h1 class="slide-title">Infrastructure Topology</h1>
+        <p class="subtitle">Distributed GPU Computing Architecture</p>
+
+        <div class="mermaid">
+flowchart TB
+    subgraph NETWORK["<b>NETWORK INFRASTRUCTURE</b>"]
+        subgraph HOST_ZONE["Host Zone"]
+            HOST_M["<b>Host Machine</b><br/>─────────────<br/>Web UI (React/Next.js)<br/>Agent Backend (FastAPI)<br/>─────────────<br/>Agents: Intent, Vision,<br/>Demand, E-Commerce"]
+        end
+
+        subgraph GPU_ZONE["GPU Rendering Zone"]
+            L40S_S["<b>L40s Server</b><br/>─────────────<br/>NVIDIA Omniverse Kit<br/>USD Viewer Extension<br/>RTX Real-time Rendering<br/>Kit Livestream"]
+        end
+
+        subgraph AI_ZONE["AI Inference Zone"]
+            DYNAMO_H["<b>Dynamo (H100)</b><br/>─────────────<br/>Nemotron 30B (LLM+RAG)<br/>Qwen3 VL (Fast Vision)"]
+
+            GX10_S["<b>GX10 (NVIDIA Spark)</b><br/>─────────────<br/>Cosmos Reason 2 (Spatial)<br/>─────────────<br/>GLM 4.7 Flash Flash (Thinking)"]
+        end
+
+        subgraph CLOUD_ZONE["Cloud (Optional)"]
+            LUMI["<b>LuminiOne</b><br/>─────────────<br/>Gemini (LLM+RAG)<br/>Vision (Fast Tasks)"]
+        end
+    end
+
+    HOST_M <-->|"HTTP"| L40S_S
+    HOST_M <-->|"HTTP/REST"| DYNAMO_H
+    HOST_M <-->|"HTTP/REST"| GX10_S
+    HOST_M -.->|"HTTPS"| LUMI
+    L40S_S <-->|"Pixel Stream"| HOST_M
+
+    style HOST_ZONE fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style GPU_ZONE fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style AI_ZONE fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style CLOUD_ZONE fill:#f3e8fd,stroke:#9334e6,stroke-width:2px
+    style NETWORK fill:#ffffff,stroke:#dadce0,stroke-width:1px
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#4285f4',
+                primaryTextColor: '#1a1a1a',
+                primaryBorderColor: '#dadce0',
+                lineColor: '#5f6368',
+                secondaryColor: '#f8f9fa',
+                tertiaryColor: '#ffffff',
+                background: '#ffffff',
+                mainBkg: '#ffffff',
+                nodeBorder: '#dadce0',
+                clusterBkg: '#f8f9fa',
+                clusterBorder: '#dadce0',
+                titleColor: '#1a1a1a',
+                edgeLabelBackground: '#ffffff',
+                fontFamily: 'Segoe UI, -apple-system, sans-serif'
+            },
+            flowchart: {
+                curve: 'basis',
+                padding: 20
+            }
+        });
+    </script>
+</body>
+</html>

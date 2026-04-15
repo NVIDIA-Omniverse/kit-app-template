@@ -31,6 +31,13 @@ window.width = 1920
 rtx.post.aa.op = 3
 rtx.verifyDriverVersion.enabled = false
 
+# Fix NVST_R_ERROR_UDP_RTP_SOURCE_OPEN_FAILED_NO_PORTS_AVAILABLE
+# Omniverse Hub (spawned by Kit's hub-client) binds UDP 47998 by default.
+# NVST SDK's default streamPort is also 47998 — move it out of Hub's range.
+[settings.exts."omni.kit.livestream.app".primaryStream]
+streamPort = 62000   # UDP port for RTP media (default 47998 conflicts with Omniverse Hub)
+signalPort = 49100   # TCP signaling port (keep at default)
+
 [settings.app.extensions]
 registryEnabled = true
 supportedTargets.platform = []  # Skip checking supported platform/config when building
