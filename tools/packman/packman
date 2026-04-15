@@ -27,7 +27,7 @@ else
 	PM_CURL_SILENT="-s -S"
 	PM_WGET_QUIET="--quiet"
 fi
-export PM_PACKMAN_VERSION=7.34
+export PM_PACKMAN_VERSION=8.2.1
 
 
 cleanup() {
@@ -82,7 +82,7 @@ main() {
     # Ensure the packages root path exists:
     if [ ! -d "$PM_PACKAGES_ROOT" ]; then
         echo "Creating packman packages cache at $PM_PACKAGES_ROOT"
-        mkdir -p -m a+rwx "$PM_PACKAGES_ROOT" || return 1
+        mkdir -p "$PM_PACKAGES_ROOT" || return 1
     fi
 
     execute_with_retry()
@@ -142,14 +142,18 @@ main() {
     {
         PLATFORM=`uname`
         PROCESSOR=`uname -m`
-        PYTHON_VERSION=3.10.19-nv2
+        PYTHON_VERSION=3.12.13-nv1
+        PYTHON_EXE=python
 
         if [ $PLATFORM == 'Darwin' ]; then
-            PYTHON_PACKAGE=3.10.5-1-macos-x86_64
+            PYTHON_PACKAGE=3.12.13-macos-aarch64
         elif [ $PLATFORM == 'Linux' ] && [ $PROCESSOR == 'x86_64' ]; then
-            PYTHON_PACKAGE=$PYTHON_VERSION-linux-x86_64
+            PYTHON_PACKAGE=$PYTHON_VERSION-manylinux_2_35-x86_64
         elif [ $PLATFORM == 'Linux' ] && [ $PROCESSOR == 'aarch64' ]; then
-            PYTHON_PACKAGE=$PYTHON_VERSION-linux-aarch64
+            PYTHON_PACKAGE=$PYTHON_VERSION-manylinux_2_35-aarch64
+        elif [[ $PLATFORM =~ ^MINGW.* ]] && [ $PROCESSOR == 'x86_64' ]; then
+            PYTHON_PACKAGE=$PYTHON_VERSION-windows-x86_64
+            PYTHON_EXE=python.exe
         else
             echo "Operating system not supported"
             return 1
@@ -160,7 +164,7 @@ main() {
             mkdir -p "$PYTHON_INSTALL_FOLDER" || return 1
         fi
 
-        export PM_PYTHON="$PYTHON_INSTALL_FOLDER/python"
+        export PM_PYTHON="$PYTHON_INSTALL_FOLDER/$PYTHON_EXE"
 
         if [ ! -f "$PM_PYTHON" ]; then
             PYTHON_PACKAGE_TMP=$(generate_temp_file_name)

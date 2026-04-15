@@ -11,7 +11,6 @@
 from functools import partial
 from typing import Any, Dict, List, Tuple, Union
 
-import carb.dictionary
 import carb.settings
 import omni.ui as ui
 

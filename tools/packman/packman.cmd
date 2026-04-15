@@ -36,11 +36,11 @@ goto :eof
 
 :: Subroutines below
 :PYTHON_ENV_ERROR
-@echo User environment variable PM_PYTHON is not set! Please configure machine for packman or call configure.bat.
+@echo User environment variable PM_PYTHON is not set! Please configure machine for packman or call configure.ps1.
 exit /b 1
 
 :MODULE_ENV_ERROR
-@echo User environment variable PM_MODULE is not set! Please configure machine for packman or call configure.bat.
+@echo User environment variable PM_MODULE is not set! Please configure machine for packman or call configure.ps1.
 exit /b 1
 
 :VAR_ERROR
@@ -75,15 +75,22 @@ if %errorlevel% equ 0 (
 :: trim leading space (this is safe even when PM_OLD_CODE_PAGE has not been set)
 set PM_OLD_CODE_PAGE=%PM_OLD_CODE_PAGE:~1%
 if "%PM_OLD_CODE_PAGE%" equ "65001" (
-	chcp 437 > nul
-	set PM_RESTORE_CODE_PAGE=1
+	chcp 437 > nul 2>&1 && set PM_RESTORE_CODE_PAGE=1
 )
-call "%~dp0\bootstrap\configure.bat"
+set "PM_CONFIG_OUTPUT=%TEMP%\packman-configure-%RANDOM%%RANDOM%.tmp"
+powershell -ExecutionPolicy ByPass -NoLogo -NoProfile -File "%~dp0\bootstrap\configure.ps1" > "%PM_CONFIG_OUTPUT%"
 set PM_CONFIG_ERRORLEVEL=%errorlevel%
+if %PM_CONFIG_ERRORLEVEL% equ 0 (
+	for /f "usebackq delims=" %%A in ("%PM_CONFIG_OUTPUT%") do set "%%A"
+)
+if exist "%PM_CONFIG_OUTPUT%" (
+	del /F "%PM_CONFIG_OUTPUT%" > nul
+)
 if defined PM_RESTORE_CODE_PAGE (
 	:: Restore code page
 	chcp %PM_OLD_CODE_PAGE% > nul
 )
 set PM_OLD_CODE_PAGE=
+set PM_CONFIG_OUTPUT=
 set PM_RESTORE_CODE_PAGE=
 exit /b %PM_CONFIG_ERRORLEVEL%

@@ -13,10 +13,6 @@ from pxr import UsdGeom, Usd
 import carb
 import carb.dictionary
 import carb.events
-import carb.settings
-import carb.tokens
-import omni.client.utils
-import omni.ext
 import omni.usd
 import omni.kit.app
 import omni.kit.livestream.messaging as messaging
