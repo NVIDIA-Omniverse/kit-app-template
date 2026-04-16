@@ -68,9 +68,8 @@ class CameraNavigation:
                 self._rebuild_positions()
                 return False
         else:
-            carb.log_warn(
-                f"[CameraNavigation] No preset file for store '{key}' "
-                f"(expected: {preset_file}) — starting with empty built-ins"
+            carb.log_info(
+                f"[CameraNavigation] No preset file for store '{key}' — starting with empty built-ins"
             )
 
         self._active_store = key

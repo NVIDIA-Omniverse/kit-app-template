@@ -926,10 +926,24 @@ class CustomMessageManager:
     # ===== CAMERA NAV POSITION REGISTRY =====
 
     def _dispatch_nav_positions(self, extra: dict = None) -> None:
-        """Send full positions list (with is_custom metadata) to the web client."""
+        """Send positions list to the web client, chunked to stay under WebRTC 65535-byte limit."""
         positions = self._camera_navigation.get_all_positions_with_metadata()
-        payload = {"positions": positions, **(extra or {})}
-        get_eventdispatcher().dispatch_event("navPositionsResponse", payload=payload)
+        keys = list(positions.keys())
+        CHUNK_SIZE = 10
+        total_chunks = max(1, (len(keys) + CHUNK_SIZE - 1) // CHUNK_SIZE)
+
+        for i in range(0, len(keys), CHUNK_SIZE):
+            chunk_keys = keys[i:i + CHUNK_SIZE]
+            chunk = {k: positions[k] for k in chunk_keys}
+            chunk_index = i // CHUNK_SIZE
+            payload = {
+                "positions": chunk,
+                "chunk": chunk_index,
+                "total_chunks": total_chunks,
+                "is_last_chunk": chunk_index == total_chunks - 1,
+                **(extra or {} if chunk_index == total_chunks - 1 else {}),
+            }
+            get_eventdispatcher().dispatch_event("navPositionsResponse", payload=payload)
 
     def _on_get_nav_positions(self, event: carb.events.IEvent) -> None:
         carb.log_info("[CustomMessageManager] getNavPositions received")
