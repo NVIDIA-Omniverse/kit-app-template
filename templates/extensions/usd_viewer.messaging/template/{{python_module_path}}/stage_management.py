@@ -128,16 +128,25 @@ class StageManager:
             )
             message_bus = omni.kit.app.get_app().get_message_bus_event_stream()
             event_type = carb.events.type_from_string("getChildrenResponse")
+            prim_path = event.payload["prim_path"]
             children = self.get_children(
-                prim_path=event.payload["prim_path"],
+                prim_path=prim_path,
                 filters=event.payload["filters"]
             )
-            payload = {
-                "prim_path": event.payload["prim_path"],
-                "children": children
-            }
-            message_bus.dispatch(event_type, payload=payload)
-            message_bus.pump()
+            CHUNK_SIZE = 20
+            total_chunks = max(1, (len(children) + CHUNK_SIZE - 1) // CHUNK_SIZE)
+            for i in range(0, max(len(children), 1), CHUNK_SIZE):
+                chunk = children[i:i + CHUNK_SIZE]
+                chunk_index = i // CHUNK_SIZE
+                payload = {
+                    "prim_path": prim_path,
+                    "children": chunk,
+                    "chunk": chunk_index,
+                    "total_chunks": total_chunks,
+                    "is_last_chunk": chunk_index == total_chunks - 1,
+                }
+                message_bus.dispatch(event_type, payload=payload)
+                message_bus.pump()
 
     def _on_select_prims(self, event: carb.events.IEvent) -> None:
         """
