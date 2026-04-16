@@ -457,6 +457,9 @@ class CustomMessageManager:
         width = action_params.get('width', 1280)
         height = action_params.get('height', 720)
         followup_intent = action_params.get('followup_intent')  # e.g., 'demand_forecast', 'ec_search'
+        # Use the intent-classifier's resolved_query (self-contained rewrite) so the
+        # vision agent receives a fully contextualised question.
+        resolved_query = action_params.get('resolved_query', original_message)
 
         # Capture the viewport
         frame_data = await self._viewport_capture.capture_frame_async(
@@ -481,9 +484,9 @@ class CustomMessageManager:
         if followup_intent:
             carb.log_info(f"[CustomMessageManager] Followup intent: {followup_intent}, sending to /api/chat with frame...")
 
-            # Send back to chat endpoint with frame data
+            # Send back to chat endpoint with frame data (use resolved_query)
             chat_request = ChatRequest(
-                message=original_message,
+                message=resolved_query,
                 session_id=session_id,
                 frame_data=frame_data,
                 context=context
@@ -509,7 +512,7 @@ class CustomMessageManager:
 
         analysis_response = await self._agent_client.send_frame_for_analysis(
             frame_data=frame_data,
-            original_query=original_message,
+            original_query=resolved_query,
             session_id=session_id,
             context=context
         )
