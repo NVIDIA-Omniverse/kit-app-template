@@ -55,6 +55,9 @@ class CustomMessageManager:
             # Planogram
             "planogramCaptureResponse",  # Small thumbnail after frame capture
             "planogramAnalysisResult",   # Structured row analysis from backend
+            # Camera nav position registry
+            "navPositionsResponse",      # Full positions list (after any CRUD operation)
+            "cameraPositionResponse",    # Current camera position query result
         ]
 
         for message_type in outgoing_messages:
@@ -77,6 +80,17 @@ class CustomMessageManager:
             # Planogram
             'planogramCaptureRequest': self._on_planogram_capture_request,
             'planogramAnalyzeRequest': self._on_planogram_analyze_request,
+            # Camera nav position registry
+            'getNavPositions':     self._on_get_nav_positions,
+            'registerNavPosition': self._on_register_nav_position,
+            'deleteNavPosition':   self._on_delete_nav_position,
+            'clearNavPositions':   self._on_clear_nav_positions,
+            'getCameraPosition':   self._on_get_camera_position,
+            'navigateTo':          self._on_navigate_to_direct,
+            # Per-store built-in preset management
+            'setActiveStore':      self._on_set_active_store,
+            'promoteNavPosition':  self._on_promote_nav_position,
+            'saveAllAsBuiltin':    self._on_save_all_as_builtin,
         }
 
         ed = get_eventdispatcher()
@@ -908,6 +922,273 @@ class CustomMessageManager:
         except Exception as exc:
             carb.log_warn(f"[CustomMessageManager] Frame compression failed ({exc}), using raw")
             return frame_b64, frame_b64
+
+    # ===== CAMERA NAV POSITION REGISTRY =====
+
+    def _dispatch_nav_positions(self, extra: dict = None) -> None:
+        """Send full positions list (with is_custom metadata) to the web client."""
+        positions = self._camera_navigation.get_all_positions_with_metadata()
+        payload = {"positions": positions, **(extra or {})}
+        get_eventdispatcher().dispatch_event("navPositionsResponse", payload=payload)
+
+    def _on_get_nav_positions(self, event: carb.events.IEvent) -> None:
+        carb.log_info("[CustomMessageManager] getNavPositions received")
+        self._dispatch_nav_positions()
+
+    def _on_register_nav_position(self, event: carb.events.IEvent) -> None:
+        payload = event.payload
+        name = payload.get("name", "").strip()
+        location = tuple(payload.get("location", [0.0, 0.0, 0.0]))
+        rotation = tuple(payload.get("rotation", [0.0, 0.0, 0.0]))
+        description = payload.get("description", name)
+
+        if not name:
+            carb.log_warn("[CustomMessageManager] registerNavPosition: empty name ignored")
+            return
+
+        success = self._camera_navigation.save_position(name, location, rotation, description)
+        carb.log_info(f"[CustomMessageManager] registerNavPosition '{name}' → saved={success}")
+
+        # Sync to agent backend so chat can navigate to this position by name
+        key = name.lower().strip().replace(" ", "_")
+        asyncio.ensure_future(self._sync_nav_position_to_backend(
+            key, list(location), list(rotation), description
+        ))
+
+        self._dispatch_nav_positions({"saved": success, "name": name})
+
+    def _on_delete_nav_position(self, event: carb.events.IEvent) -> None:
+        name = event.payload.get("name", "")
+        success = self._camera_navigation.delete_position(name)
+        carb.log_info(f"[CustomMessageManager] deleteNavPosition '{name}' → success={success}")
+
+        asyncio.ensure_future(self._delete_nav_position_from_backend(name.lower()))
+
+        self._dispatch_nav_positions({"deleted": success, "name": name})
+
+    def _on_clear_nav_positions(self, event: carb.events.IEvent) -> None:
+        success = self._camera_navigation.clear_custom_positions()
+        carb.log_info(f"[CustomMessageManager] clearNavPositions → success={success}")
+
+        asyncio.ensure_future(self._clear_nav_positions_from_backend())
+
+        self._dispatch_nav_positions({"cleared": success})
+
+    # ── Backend sync helpers ──────────────────────────────────────────────────
+
+    async def _sync_nav_position_to_backend(
+        self, name: str, location: list, rotation: list, description: str
+    ) -> None:
+        """POST a registered nav position to the agent backend."""
+        import json as _json
+        import urllib.request as _urllib
+        url = f"{self._agent_client._base_url}/api/nav-positions"
+        body = _json.dumps({
+            "name": name, "description": description,
+            "location": location, "rotation": rotation,
+        }).encode("utf-8")
+        try:
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(
+                None,
+                lambda: _urllib.urlopen(
+                    _urllib.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST"),
+                    timeout=5
+                )
+            )
+            carb.log_info(f"[CustomMessageManager] Synced nav position '{name}' to backend")
+        except Exception as e:
+            carb.log_warn(f"[CustomMessageManager] Could not sync nav position to backend: {e}")
+
+    async def _delete_nav_position_from_backend(self, name: str) -> None:
+        """DELETE a nav position from the agent backend."""
+        import urllib.request as _urllib
+        url = f"{self._agent_client._base_url}/api/nav-positions/{name}"
+        try:
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(
+                None,
+                lambda: _urllib.urlopen(
+                    _urllib.Request(url, method="DELETE"),
+                    timeout=5
+                )
+            )
+            carb.log_info(f"[CustomMessageManager] Deleted nav position '{name}' from backend")
+        except Exception as e:
+            carb.log_warn(f"[CustomMessageManager] Could not delete nav position from backend: {e}")
+
+    async def _clear_nav_positions_from_backend(self) -> None:
+        """DELETE all custom nav positions from the agent backend."""
+        import urllib.request as _urllib
+        url = f"{self._agent_client._base_url}/api/nav-positions"
+        try:
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(
+                None,
+                lambda: _urllib.urlopen(
+                    _urllib.Request(url, method="DELETE"),
+                    timeout=5
+                )
+            )
+            carb.log_info("[CustomMessageManager] Cleared all nav positions from backend")
+        except Exception as e:
+            carb.log_warn(f"[CustomMessageManager] Could not clear nav positions from backend: {e}")
+
+    def _on_get_camera_position(self, event: carb.events.IEvent) -> None:
+        try:
+            pos = self._read_camera_position_robust()
+            carb.log_info(f"[CustomMessageManager] getCameraPosition → {pos}")
+            if pos:
+                get_eventdispatcher().dispatch_event(
+                    "cameraPositionResponse",
+                    payload={
+                        "success": True,
+                        "location": pos["location"],
+                        "rotation": pos["rotation"],
+                    }
+                )
+            else:
+                get_eventdispatcher().dispatch_event(
+                    "cameraPositionResponse",
+                    payload={"success": False, "error": "Camera position unavailable"}
+                )
+        except Exception as exc:
+            carb.log_error(f"[CustomMessageManager] getCameraPosition error: {exc}")
+            get_eventdispatcher().dispatch_event(
+                "cameraPositionResponse",
+                payload={"success": False, "error": str(exc)}
+            )
+
+    def _read_camera_position_robust(self):
+        """
+        Read camera position + rotation via world-transform matrix decomposition.
+        Always decomposes the world matrix for rotation — never reads raw op values,
+        which can be stale or zero-initialized if ops were just created.
+        Returns dict with 'location' (list[float,3]) and 'rotation' (list[float,3]).
+        """
+        import math
+        try:
+            import omni.usd
+            from pxr import UsdGeom
+
+            stage = omni.usd.get_context().get_stage()
+            if not stage:
+                carb.log_warn("[CustomMessageManager] No stage for camera position")
+                return None
+
+            # Prefer the active viewport camera path so we read what the user sees
+            camera_prim = None
+            try:
+                from omni.kit.viewport.utility import get_active_viewport_camera_path
+                cam_path = get_active_viewport_camera_path()
+                if cam_path:
+                    camera_prim = stage.GetPrimAtPath(cam_path)
+                    carb.log_info(f"[CustomMessageManager] Using viewport camera: {cam_path}")
+            except Exception as e:
+                carb.log_warn(f"[CustomMessageManager] Could not get viewport camera path: {e}")
+
+            # Fall back to the configured camera path
+            if not camera_prim or not camera_prim.IsValid():
+                fallback = self._camera_navigation._camera_path
+                camera_prim = stage.GetPrimAtPath(fallback)
+                carb.log_info(f"[CustomMessageManager] Using configured camera: {fallback}")
+
+            if not camera_prim or not camera_prim.IsValid():
+                carb.log_warn("[CustomMessageManager] No valid camera prim found")
+                return None
+
+            xformable = UsdGeom.Xformable(camera_prim)
+
+            # Always use world transform — it reflects the true camera state regardless
+            # of whether ops are translate/rotate or a combined matrix op.
+            world_xform = xformable.ComputeLocalToWorldTransform(0)
+            t = world_xform.ExtractTranslation()
+            location = [float(t[0]), float(t[1]), float(t[2])]
+
+            # Decompose rotation matrix → Euler XYZ degrees
+            m = world_xform.ExtractRotationMatrix()
+            # USD uses row-vector convention: M = Rx * Ry * Rz
+            # sy = |cos(ry)| comes from the first row of M
+            sy = math.sqrt(m[0][0] ** 2 + m[0][1] ** 2)
+            if sy > 1e-6:
+                rx = math.degrees(math.atan2(m[1][2], m[2][2]))
+                ry = math.degrees(math.atan2(-m[0][2], sy))
+                rz = math.degrees(math.atan2(m[0][1], m[0][0]))
+            else:
+                rx = math.degrees(math.atan2(-m[2][1], m[1][1]))
+                ry = math.degrees(math.atan2(-m[0][2], sy))
+                rz = 0.0
+            rotation = [rx, ry, rz]
+
+            carb.log_info(
+                f"[CustomMessageManager] Camera: "
+                f"t=({location[0]:.1f},{location[1]:.1f},{location[2]:.1f}) "
+                f"r=({rotation[0]:.2f},{rotation[1]:.2f},{rotation[2]:.2f})"
+            )
+            return {"location": location, "rotation": rotation}
+
+        except Exception as e:
+            import traceback
+            carb.log_error(f"[CustomMessageManager] _read_camera_position_robust failed: {e}")
+            carb.log_error(traceback.format_exc())
+            return None
+
+    def _on_navigate_to_direct(self, event: carb.events.IEvent) -> None:
+        """Direct navigation from the UI panel (bypasses the chat agent)."""
+        destination = event.payload.get("destination", "")
+        instant = event.payload.get("instant", False)
+        speed = float(event.payload.get("speed", 1.0))
+        carb.log_info(f"[CustomMessageManager] navigateTo '{destination}' instant={instant}")
+        asyncio.ensure_future(self._do_navigate_direct(destination, instant, speed))
+
+    async def _do_navigate_direct(self, destination: str, instant: bool, speed: float) -> None:
+        success = await self._camera_navigation.navigate_to(
+            destination=destination, instant=instant, speed=speed
+        )
+        if not success:
+            carb.log_warn(f"[CustomMessageManager] Direct navigation failed: '{destination}'")
+
+    # ── Per-store built-in preset handlers ──────────────────────────────────
+
+    def _on_set_active_store(self, event: carb.events.IEvent) -> None:
+        """
+        Handle setActiveStore message from the web client.
+        Payload: { store_key: "pipc" | "711" | ... }
+        Loads the store's built-in positions from store_presets/<key>.json.
+        """
+        store_key = event.payload.get("store_key", "").strip()
+        if not store_key:
+            carb.log_warn("[CustomMessageManager] setActiveStore: empty store_key ignored")
+            return
+        carb.log_info(f"[CustomMessageManager] setActiveStore '{store_key}'")
+        self._camera_navigation.set_active_store(store_key)
+        self._dispatch_nav_positions({"store_key": store_key})
+
+    def _on_promote_nav_position(self, event: carb.events.IEvent) -> None:
+        """
+        Handle promoteNavPosition message — promote a single custom position to built-in
+        for the currently active store.
+        Payload: { name: "entrance" }
+        """
+        name = event.payload.get("name", "").strip()
+        if not name:
+            carb.log_warn("[CustomMessageManager] promoteNavPosition: empty name ignored")
+            return
+        carb.log_info(f"[CustomMessageManager] promoteNavPosition '{name}'")
+        success = self._camera_navigation.promote_to_builtin(name)
+        self._dispatch_nav_positions({"promoted": success, "name": name})
+
+    def _on_save_all_as_builtin(self, event: carb.events.IEvent) -> None:
+        """
+        Handle saveAllAsBuiltin message — promote ALL current custom positions to
+        built-in for the currently active store.
+        Payload: {} (no parameters needed)
+        """
+        carb.log_info("[CustomMessageManager] saveAllAsBuiltin")
+        success = self._camera_navigation.save_all_custom_as_builtin()
+        self._dispatch_nav_positions({"all_saved_as_builtin": success})
+
+    # ===== END CAMERA NAV POSITION REGISTRY =====
 
     def on_shutdown(self):
         """Clean up when the manager is shut down"""

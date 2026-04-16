@@ -2,90 +2,18 @@
 # SPDX-License-Identifier: LicenseRef-NvidiaProprietary
 
 import asyncio
+import json
 import math
+import os
 from typing import Dict, Any, Optional, Tuple, Callable
 
 import carb
 
+# JSON file to persist user-registered camera positions (sibling of this .py file)
+NAV_PRESETS_FILE = os.path.join(os.path.dirname(__file__), "nav_presets.json")
 
-# Store location presets - can be loaded from config or scene
-STORE_POSITIONS = {
-    "pringles": {
-        "location": (202.81, 153.37, -57.66),
-        "rotation": (-2.75, 0.71, 0.03),
-        "description": "Pringles snack shelf"
-    },
-    "cheetos": {
-        "location": (180.60, 140.30, -62.09),
-        "rotation": (-21.39, -2.35, -0.86),
-        "description": "Cheetos snack area"
-    },
-    "coffee_station": {
-        "location": (-108.34, 270.27, -812.71),
-        "rotation": (1.96, 2.77, -0.09),
-        "description": "Coffee station"
-    },
-    "ufc_refresh_coconut_water": {
-        "location": (-151.78, 262.27, -647.68),
-        "rotation": (0.35, 91.57, 12.58),
-        "description": "UFC Refresh coconut water"
-    },
-    "coconut_water": {
-        "location": (-151.78, 262.27, -647.68),
-        "rotation": (0.35, 91.57, 12.58),
-        "description": "Coconut water section"
-    },
-    "atm_machine": {
-        "location": (298.48, 271.14, 380.75),
-        "rotation": (0.04, -90.23, -8.74),
-        "description": "ATM machine"
-    },
-    "atm": {
-        "location": (298.48, 271.14, 380.75),
-        "rotation": (0.04, -90.23, -8.74),
-        "description": "ATM machine"
-    },
-    "ibon_machine": {
-        "location": (357.39, 270.87, 28.77),
-        "rotation": (0.05, -90.52, -5.34),
-        "description": "iBon machine"
-    },
-    "ibon": {
-        "location": (357.39, 270.87, 28.77),
-        "rotation": (0.05, -90.52, -5.34),
-        "description": "iBon machine"
-    },
-    "cashier": {
-        "location": (328.39, 268.79, -492.29),
-        "rotation": (0.43, -84.74, 4.67),
-        "description": "Cashier counter"
-    },
-    "checkout": {
-        "location": (328.39, 268.79, -492.29),
-        "rotation": (0.43, -84.74, 4.67),
-        "description": "Checkout counter"
-    },
-    "olive_oil": {
-        "location": (-119.81, 148.37, -450.42),
-        "rotation": (-0.04, 89.20, 2.48),
-        "description": "Olive oil section"
-    },
-    "snacks": {
-        "location": (202.81, 153.37, -57.66),
-        "rotation": (-2.75, 0.71, 0.03),
-        "description": "Snacks section"
-    },
-    "beverages": {
-        "location": (-151.78, 262.27, -647.68),
-        "rotation": (0.35, 91.57, 12.58),
-        "description": "Beverages section"
-    },
-    "drinks": {
-        "location": (-151.78, 262.27, -647.68),
-        "rotation": (0.35, 91.57, 12.58),
-        "description": "Drinks section"
-    },
-}
+# Directory that holds one JSON file per store key (e.g. pipc.json, 711.json)
+STORE_PRESETS_DIR = os.path.join(os.path.dirname(__file__), "store_presets")
 
 
 class CameraNavigation:
@@ -94,11 +22,199 @@ class CameraNavigation:
     def __init__(self, camera_path: str = "/World/Camera"):
         self._camera_path = camera_path
         self._animation_running = False
-        self._positions = STORE_POSITIONS.copy()
         self._on_arrival_callback: Optional[Callable[[str], None]] = None
+
+        # Built-in positions loaded from the active store's JSON preset file
+        self._builtin_positions: Dict[str, Dict[str, Any]] = {}
+        # User-registered (custom) positions — persisted to nav_presets.json
+        self._custom_positions: Dict[str, Dict[str, Any]] = {}
+        # Active store key (e.g. "pipc", "711") — set via set_active_store()
+        self._active_store: Optional[str] = None
+
+        # Merged view used for navigation
+        self._positions: Dict[str, Dict[str, Any]] = {}
+
+        # Load custom positions from disk and merge
+        self._load_custom_positions()
+        self._rebuild_positions()
 
         carb.log_info(f"[CameraNavigation] Initialized with camera: {camera_path}")
         carb.log_info(f"[CameraNavigation] Available locations: {list(self._positions.keys())}")
+
+    # ===== STORE PRESET MANAGEMENT =====
+
+    def set_active_store(self, store_key: str) -> bool:
+        """
+        Load built-in positions for the given store key from store_presets/<key>.json.
+        Resets builtin positions; custom positions are preserved.
+        Returns True if the preset file was found and loaded.
+        """
+        key = store_key.lower().strip()
+        preset_file = os.path.join(STORE_PRESETS_DIR, f"{key}.json")
+
+        self._builtin_positions = {}
+        if os.path.exists(preset_file):
+            try:
+                with open(preset_file, "r") as f:
+                    data = json.load(f)
+                self._builtin_positions = {k.lower(): v for k, v in data.items()}
+                carb.log_info(
+                    f"[CameraNavigation] Loaded {len(self._builtin_positions)} "
+                    f"built-in positions for store '{key}'"
+                )
+            except Exception as e:
+                carb.log_error(f"[CameraNavigation] Failed to load preset for '{key}': {e}")
+                self._active_store = key
+                self._rebuild_positions()
+                return False
+        else:
+            carb.log_warn(
+                f"[CameraNavigation] No preset file for store '{key}' "
+                f"(expected: {preset_file}) — starting with empty built-ins"
+            )
+
+        self._active_store = key
+        self._rebuild_positions()
+        carb.log_info(f"[CameraNavigation] Active store set to '{key}'. "
+                      f"Total positions: {len(self._positions)}")
+        return True
+
+    def promote_to_builtin(self, name: str) -> bool:
+        """
+        Promote a single custom position to the built-in preset for the active store.
+        Removes it from custom positions so it appears only in Built-in Locations.
+        Saves both the store preset and custom positions file to disk.
+        """
+        key = name.lower().strip().replace(" ", "_")
+        if key not in self._custom_positions:
+            carb.log_warn(f"[CameraNavigation] Cannot promote unknown custom position: '{key}'")
+            return False
+        if not self._active_store:
+            carb.log_warn("[CameraNavigation] No active store — cannot promote to built-in")
+            return False
+        self._builtin_positions[key] = self._custom_positions.pop(key)
+        self._rebuild_positions()
+        saved = self._save_store_presets() and self._save_custom_to_disk()
+        carb.log_info(f"[CameraNavigation] Promoted '{key}' to built-in for store '{self._active_store}'")
+        return saved
+
+    def save_all_custom_as_builtin(self) -> bool:
+        """
+        Promote ALL current custom positions to the built-in preset for the active store.
+        Removes them from custom positions so they appear only in Built-in Locations.
+        Saves both the store preset and custom positions file to disk.
+        """
+        if not self._active_store:
+            carb.log_warn("[CameraNavigation] No active store — cannot promote to built-in")
+            return False
+        count = len(self._custom_positions)
+        self._builtin_positions.update(self._custom_positions)
+        self._custom_positions.clear()
+        self._rebuild_positions()
+        saved = self._save_store_presets() and self._save_custom_to_disk()
+        carb.log_info(
+            f"[CameraNavigation] Saved {count} custom positions "
+            f"as built-ins for store '{self._active_store}'"
+        )
+        return saved
+
+    def _save_store_presets(self) -> bool:
+        """Persist the current built-in positions to store_presets/<active_store>.json."""
+        if not self._active_store:
+            carb.log_warn("[CameraNavigation] _save_store_presets: no active store")
+            return False
+        os.makedirs(STORE_PRESETS_DIR, exist_ok=True)
+        preset_file = os.path.join(STORE_PRESETS_DIR, f"{self._active_store}.json")
+        try:
+            with open(preset_file, "w") as f:
+                json.dump(self._builtin_positions, f, indent=2)
+            carb.log_info(
+                f"[CameraNavigation] Saved {len(self._builtin_positions)} built-ins "
+                f"for store '{self._active_store}' → {preset_file}"
+            )
+            return True
+        except Exception as e:
+            carb.log_error(f"[CameraNavigation] Failed to save store presets: {e}")
+            return False
+
+    def _rebuild_positions(self) -> None:
+        """Merge builtin + custom into _positions (custom wins on conflict)."""
+        self._positions = {**self._builtin_positions, **self._custom_positions}
+
+    # ===== JSON PERSISTENCE (custom positions) =====
+
+    def _load_custom_positions(self) -> None:
+        """Load user-registered positions from nav_presets.json."""
+        if not os.path.exists(NAV_PRESETS_FILE):
+            return
+        try:
+            with open(NAV_PRESETS_FILE, "r") as f:
+                data: Dict[str, Any] = json.load(f)
+            for name, pos_data in data.items():
+                key = name.lower()
+                self._custom_positions[key] = pos_data
+            carb.log_info(f"[CameraNavigation] Loaded {len(data)} custom positions from disk")
+        except Exception as e:
+            carb.log_error(f"[CameraNavigation] Failed to load nav_presets.json: {e}")
+
+    def _save_custom_to_disk(self) -> bool:
+        """Persist _custom_positions to nav_presets.json."""
+        try:
+            with open(NAV_PRESETS_FILE, "w") as f:
+                json.dump(self._custom_positions, f, indent=2)
+            return True
+        except Exception as e:
+            carb.log_error(f"[CameraNavigation] Failed to write nav_presets.json: {e}")
+            return False
+
+    def save_position(
+        self,
+        name: str,
+        location: Tuple[float, float, float],
+        rotation: Tuple[float, float, float],
+        description: str = ""
+    ) -> bool:
+        """Register a new custom camera position and persist it to disk."""
+        key = name.lower().strip().replace(" ", "_")
+        pos_data = {
+            "location": list(location),
+            "rotation": list(rotation),
+            "description": description or name,
+        }
+        self._custom_positions[key] = pos_data
+        self._rebuild_positions()
+        saved = self._save_custom_to_disk()
+        carb.log_info(f"[CameraNavigation] Registered position '{key}': {pos_data}")
+        return saved
+
+    def delete_position(self, name: str) -> bool:
+        """Remove a user-registered position and update the JSON file."""
+        key = name.lower()
+        if key not in self._custom_positions:
+            carb.log_warn(f"[CameraNavigation] Cannot delete built-in or unknown position: {key}")
+            return False
+        del self._custom_positions[key]
+        self._rebuild_positions()
+        return self._save_custom_to_disk()
+
+    def clear_custom_positions(self) -> bool:
+        """Remove all user-registered positions, restore only built-ins."""
+        self._custom_positions.clear()
+        self._rebuild_positions()
+        return self._save_custom_to_disk()
+
+    def get_all_positions_with_metadata(self) -> Dict[str, Dict[str, Any]]:
+        """Return all positions annotated with is_custom and is_builtin flags."""
+        result: Dict[str, Dict[str, Any]] = {}
+        for key, data in self._positions.items():
+            result[key] = {
+                **data,
+                "is_custom": key in self._custom_positions,
+                "is_builtin": key in self._builtin_positions,
+            }
+        return result
+
+    # ===== END JSON PERSISTENCE =====
 
     def set_on_arrival_callback(self, callback: Callable[[str], None]):
         """Set callback to be called when camera arrives at destination"""
@@ -106,7 +222,7 @@ class CameraNavigation:
 
     def add_position(self, name: str, location: Tuple[float, float, float],
                      rotation: Tuple[float, float, float], description: str = ""):
-        """Add a new position to the navigation system"""
+        """Add a new position to the navigation system (in-memory only)."""
         self._positions[name.lower()] = {
             "location": location,
             "rotation": rotation,
@@ -117,6 +233,10 @@ class CameraNavigation:
     def get_positions(self) -> Dict[str, Dict[str, Any]]:
         """Get all available positions"""
         return self._positions.copy()
+
+    def get_active_store(self) -> Optional[str]:
+        """Return the currently active store key, or None if not set."""
+        return self._active_store
 
     def find_position(self, name: str) -> Optional[str]:
         """Find a position by name (fuzzy matching)"""
@@ -141,17 +261,43 @@ class CameraNavigation:
         return None
 
     def _get_camera_and_ops(self):
-        """Get camera prim and transform operations"""
+        """
+        Get camera prim and transform operations.
+        Prefers the active viewport camera over the configured path.
+        Ensures the camera has clean xformOp:translate + xformOp:rotateXYZ ops.
+        If the camera uses a matrix op (xformOp:transform), or any required op is
+        missing, the entire xform stack is rebuilt from the current world transform
+        to avoid double-transform compounding and zero-rotation seeding bugs.
+        """
         try:
+            import math
             import omni.usd
-            from pxr import UsdGeom
+            from pxr import UsdGeom, Gf
 
             stage = omni.usd.get_context().get_stage()
             if not stage:
                 carb.log_error("[CameraNavigation] No stage available")
                 return None, None, None
 
-            camera = stage.GetPrimAtPath(self._camera_path)
+            # Prefer the camera the viewport is actually showing
+            camera = None
+            try:
+                from omni.kit.viewport.utility import get_active_viewport_camera_path
+                active_path = get_active_viewport_camera_path()
+                if active_path:
+                    candidate = stage.GetPrimAtPath(active_path)
+                    if candidate and candidate.IsValid():
+                        camera = candidate
+                        carb.log_info(f"[CameraNavigation] Using active viewport camera: {active_path}")
+            except Exception as e:
+                carb.log_warn(f"[CameraNavigation] Could not get viewport camera path: {e}")
+
+            # Fall back to the configured path
+            if not camera or not camera.IsValid():
+                camera = stage.GetPrimAtPath(self._camera_path)
+                if camera and camera.IsValid():
+                    carb.log_info(f"[CameraNavigation] Using configured camera: {self._camera_path}")
+
             if not camera or not camera.IsValid():
                 carb.log_error(f"[CameraNavigation] Camera not found at {self._camera_path}")
                 return None, None, None
@@ -160,6 +306,7 @@ class CameraNavigation:
 
             translate_op = None
             rotate_op = None
+            has_matrix_op = False
 
             for op in xformable.GetOrderedXformOps():
                 op_name = op.GetOpName()
@@ -167,6 +314,49 @@ class CameraNavigation:
                     translate_op = op
                 elif "rotate" in op_name.lower():
                     rotate_op = op
+                elif "transform" in op_name.lower():
+                    has_matrix_op = True
+
+            # If the camera uses a matrix op OR either required op is missing,
+            # rebuild the xform stack from the current world transform so that:
+            #   1. No double-transform (matrix op + translate/rotate compounding)
+            #   2. rotateXYZ is seeded with the actual camera rotation, not zeros
+            if has_matrix_op or translate_op is None or rotate_op is None:
+                carb.log_info("[CameraNavigation] Rebuilding xform ops from world transform")
+
+                # Capture world transform BEFORE clearing any ops
+                world_xform = xformable.ComputeLocalToWorldTransform(0)
+                t = world_xform.ExtractTranslation()
+
+                # Decompose rotation matrix → Euler XYZ degrees
+                m = world_xform.ExtractRotationMatrix()
+                # USD uses row-vector convention: M = Rx * Ry * Rz
+                # so sy = |cos(ry)| from the first row
+                sy = math.sqrt(m[0][0] ** 2 + m[0][1] ** 2)
+                if sy > 1e-6:
+                    rx = math.degrees(math.atan2(m[1][2], m[2][2]))
+                    ry = math.degrees(math.atan2(-m[0][2], sy))
+                    rz = math.degrees(math.atan2(m[0][1], m[0][0]))
+                else:
+                    rx = math.degrees(math.atan2(-m[2][1], m[1][1]))
+                    ry = math.degrees(math.atan2(-m[0][2], sy))
+                    rz = 0.0
+
+                # Wipe all existing ops to prevent compounding
+                xformable.SetXformOpOrder([])
+
+                # Re-add clean translate + rotateXYZ seeded with actual world values
+                translate_op = xformable.AddTranslateOp()
+                translate_op.Set(Gf.Vec3d(t[0], t[1], t[2]))
+
+                rotate_op = xformable.AddRotateXYZOp()
+                rotate_op.Set(Gf.Vec3f(rx, ry, rz))
+
+                carb.log_info(
+                    f"[CameraNavigation] Rebuilt ops: "
+                    f"t=({t[0]:.1f},{t[1]:.1f},{t[2]:.1f}) "
+                    f"r=({rx:.2f},{ry:.2f},{rz:.2f})"
+                )
 
             return xformable, translate_op, rotate_op
 
