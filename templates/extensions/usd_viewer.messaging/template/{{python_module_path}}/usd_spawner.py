@@ -203,6 +203,37 @@ def _save_rotation_corrections(corrections: dict) -> None:
         carb.log_warn(f"[UsdSpawner] Could not save rotation_corrections.json: {exc}")
 
 
+# ---------------------------------------------------------------------------
+# Persistent scale corrections (saved/loaded from JSON)
+# ---------------------------------------------------------------------------
+# Format: { "prim_name": { "scale_x": 1.0, "scale_y": 1.0, "scale_z": 1.0 } }
+# When a key exists here it is applied as a scale op on the outer Xform.
+_SCALE_CORRECTIONS_PATH = os.path.join(os.path.dirname(__file__), "scale_corrections.json")
+
+
+def _load_scale_corrections() -> dict:
+    """Load saved scale corrections from JSON, return empty dict on failure."""
+    try:
+        if os.path.exists(_SCALE_CORRECTIONS_PATH):
+            with open(_SCALE_CORRECTIONS_PATH, "r") as f:
+                data = json.load(f)
+            carb.log_info(f"[UsdSpawner] Loaded scale_corrections.json ({len(data)} entries)")
+            return data
+    except Exception as exc:
+        carb.log_warn(f"[UsdSpawner] Could not load scale_corrections.json: {exc}")
+    return {}
+
+
+def _save_scale_corrections(corrections: dict) -> None:
+    """Persist scale corrections dict to JSON file."""
+    try:
+        with open(_SCALE_CORRECTIONS_PATH, "w") as f:
+            json.dump(corrections, f, indent=2)
+        carb.log_info(f"[UsdSpawner] Saved scale_corrections.json ({len(corrections)} entries)")
+    except Exception as exc:
+        carb.log_warn(f"[UsdSpawner] Could not save scale_corrections.json: {exc}")
+
+
 # Reverse map: USD filename stem → asset key.
 # e.g. "NittoTea_Royal_Milktea" → "nittotea_milktea"
 # Used to scan stage for prims matching a given asset key.
@@ -226,6 +257,8 @@ class UsdSpawner:
         # Persistent per-asset Euler rotation corrections (loaded from JSON).
         # Keys override ASSET_SPAWN_ROTATION_CORRECTION for those assets.
         self._rotation_corrections: dict = _load_rotation_corrections()
+        # Persistent per-asset scale corrections (loaded from JSON).
+        self._scale_corrections: dict = _load_scale_corrections()
 
         # Register outgoing events
         for evt in ("spawnUsdResponse", "deleteUsdResponse", "replaceUsdResponse", "replaceAllUsdResponse"):
@@ -296,6 +329,19 @@ class UsdSpawner:
                 observer_name="UsdSpawner:adjustAssetRotation",
                 event_name="adjustAssetRotation",
                 on_event=self._on_adjust_asset_rotation,
+            )
+        )
+
+        # Subscribe to adjust-asset-scale request (browser scale panel)
+        omni.kit.app.register_event_alias(
+            carb.events.type_from_string("adjustAssetScale"),
+            "adjustAssetScale",
+        )
+        self._subscriptions.append(
+            get_eventdispatcher().observe_event(
+                observer_name="UsdSpawner:adjustAssetScale",
+                event_name="adjustAssetScale",
+                on_event=self._on_adjust_asset_scale,
             )
         )
 
@@ -478,14 +524,49 @@ class UsdSpawner:
     # Internal helpers
     # ------------------------------------------------------------------
 
+    def _detect_up_axis(self) -> str:
+        """Return 'Y' or 'Z' from stage upAxis metadata (defaults to 'Y')."""
+        try:
+            stage = omni.usd.get_context().get_stage()
+            if stage:
+                up = stage.GetMetadata("upAxis")
+                if up:
+                    return str(up).upper()
+        except Exception:
+            pass
+        return "Y"
+
+    def _get_floor_level(self, up_axis: str) -> float:
+        """Return the floor coordinate along the up axis."""
+        config_key = "floor_z" if up_axis == "Z" else "floor_y"
+        if config_key in _cfg:
+            return float(_cfg[config_key])
+        try:
+            stage = omni.usd.get_context().get_stage()
+            if stage:
+                floor_prim = stage.GetPrimAtPath("/World/Floor")
+                if floor_prim:
+                    ops = UsdGeom.Xformable(floor_prim).GetOrderedXformOps()
+                    translate_op = next(
+                        (op for op in ops if op.GetOpType() == UsdGeom.XformOp.TypeTranslate),
+                        None,
+                    )
+                    if translate_op:
+                        val = translate_op.Get()
+                        return float(val[2]) if up_axis == "Z" else float(val[1])
+        except Exception:
+            pass
+        return 0.0
+
     def _compute_world_position(
         self, screen_x: float, screen_y: float
     ) -> "Gf.Vec3d | None":
         """
-        Convert normalised screen coords → world-space position on Y=0 plane.
+        Convert normalised screen coords → world-space position on the floor plane.
 
         screen_x, screen_y ∈ [0, 1], (0,0) = top-left corner of the viewport.
-        Returns None when computation is not possible (no stage/camera).
+        Detects stage up-axis (Y-up or Z-up) and intersects the camera ray with
+        the correct horizontal plane.  Returns None when computation fails.
         """
         try:
             from omni.kit.viewport.utility import get_active_viewport
@@ -496,37 +577,45 @@ class UsdSpawner:
                 return None
 
             stage = omni.usd.get_context().get_stage()
-            camera_path = viewport.camera_path
-            camera_prim = stage.GetPrimAtPath(camera_path)
+            camera_prim = stage.GetPrimAtPath(viewport.camera_path)
             if not camera_prim:
-                carb.log_error(f"[UsdSpawner] Camera prim not found: {camera_path}")
+                carb.log_error(f"[UsdSpawner] Camera prim not found: {viewport.camera_path}")
                 return None
 
-            # Build a Gf.Camera from the USD prim and get its frustum
-            usd_camera = UsdGeom.Camera(camera_prim)
-            gf_camera = usd_camera.GetCamera(Usd.TimeCode.Default())
-            frustum = gf_camera.frustum
+            frustum   = UsdGeom.Camera(camera_prim).GetCamera(Usd.TimeCode.Default()).frustum
+            ndc_x     = 2.0 * screen_x - 1.0
+            ndc_y     = 1.0 - 2.0 * screen_y
+            ray       = frustum.ComputePickRay(Gf.Vec2d(ndc_x, ndc_y))
+            origin    = ray.startPoint
+            direction = ray.direction
 
-            # Screen [0,1] → NDC [-1,1].  Y is flipped: screen top = NDC +1.
-            ndc_x = 2.0 * screen_x - 1.0
-            ndc_y = 1.0 - 2.0 * screen_y
+            up_axis     = self._detect_up_axis()
+            floor_level = self._get_floor_level(up_axis)
 
-            ray = frustum.ComputePickRay(Gf.Vec2d(ndc_x, ndc_y))
-            origin: Gf.Vec3d = ray.startPoint
-            direction: Gf.Vec3d = ray.direction
-
-            # Intersect ray with Y=0 ground plane:  origin.y + t * dir.y = 0
-            if abs(direction[1]) < 1e-6:
-                # Ray nearly parallel to ground — project 15 units forward
-                carb.log_warn("[UsdSpawner] Ray parallel to ground, using fallback distance")
-                t = 15.0
-            else:
-                t = -origin[1] / direction[1]
+            if up_axis == "Z":
+                # Intersect with horizontal Z = floor_level plane
+                if abs(direction[2]) < 1e-6:
+                    carb.log_warn("[UsdSpawner] Ray parallel to Z-floor, using fallback distance")
+                    t = 1500.0
+                    hit = origin + t * direction
+                    return Gf.Vec3d(hit[0], hit[1], floor_level)
+                t = (floor_level - origin[2]) / direction[2]
                 if t < 0:
-                    t = abs(t)  # camera below ground or looking away
-
-            hit = origin + t * direction
-            return Gf.Vec3d(hit[0], 0.0, hit[2])  # snap Y to ground
+                    t = abs(t)
+                hit = origin + t * direction
+                return Gf.Vec3d(hit[0], hit[1], floor_level)
+            else:
+                # Y-up: intersect with horizontal Y = floor_level plane
+                if abs(direction[1]) < 1e-6:
+                    carb.log_warn("[UsdSpawner] Ray parallel to Y-floor, using fallback distance")
+                    t = 1500.0
+                    hit = origin + t * direction
+                    return Gf.Vec3d(hit[0], floor_level, hit[2])
+                t = (floor_level - origin[1]) / direction[1]
+                if t < 0:
+                    t = abs(t)
+                hit = origin + t * direction
+                return Gf.Vec3d(hit[0], floor_level, hit[2])
 
         except Exception as exc:
             carb.log_error(f"[UsdSpawner] Ray computation error: {exc}")
@@ -646,6 +735,24 @@ class UsdSpawner:
             except Exception as rot_err:
                 carb.log_warn(f"[UsdSpawner] Spawn: could not apply rotation: {rot_err}")
 
+        # Apply saved scale correction on the outer Xform (scale is innermost, applied first).
+        # Multiplies with the /Ref child's 100x unit-conversion scale.
+        if prim_name in self._scale_corrections:
+            sc = self._scale_corrections[prim_name]
+            sx = float(sc.get("scale_x", 1.0))
+            sy = float(sc.get("scale_y", 1.0))
+            sz = float(sc.get("scale_z", 1.0))
+            if sx != 1.0 or sy != 1.0 or sz != 1.0:
+                try:
+                    scale_op = xform.AddScaleOp(UsdGeom.XformOp.PrecisionFloat)
+                    scale_op.Set(Gf.Vec3f(sx, sy, sz))
+                    carb.log_warn(
+                        f"[UsdSpawner] Spawn: applied scale correction"
+                        f" ({sx},{sy},{sz}) for '{prim_name}'"
+                    )
+                except Exception as sc_err:
+                    carb.log_warn(f"[UsdSpawner] Spawn: could not apply scale: {sc_err}")
+
         # Child prim holds the reference; its internal xformOps are unaffected.
         # Scale by 100 to convert from meters (USDZ, metersPerUnit=1.0) to
         # centimeters (store stage, metersPerUnit=0.01).  Remove this if your
@@ -655,11 +762,14 @@ class UsdSpawner:
         ref_xform.AddScaleOp().Set(Gf.Vec3f(100.0, 100.0, 100.0))
         ref_xform.GetPrim().GetReferences().AddReference(usd_path)
 
-        # Y-snap: adjust the outer Xform so the new asset's bottom sits at the
-        # correct shelf/floor height.
+        # Floor-snap: raise prim so its bounding box bottom touches the floor plane.
+        # Works for both Y-up (up_idx=1) and Z-up (up_idx=2) stages.
         #
-        #   snap_y_to is set  → replace mode: snap bottom to original item's bottom Y
-        #   snap_y_to is None → fresh spawn:  snap bottom to Y=0 only if below ground
+        #   snap_y_to is set  → replace mode: snap bottom to original item's bottom level
+        #   snap_y_to is None → fresh spawn:  snap bottom to floor only if below ground
+        up_axis     = self._detect_up_axis()
+        floor_level = self._get_floor_level(up_axis)
+        up_idx      = 2 if up_axis == "Z" else 1
         try:
             bbox_cache = UsdGeom.BBoxCache(
                 Usd.TimeCode.Default(),
@@ -669,42 +779,40 @@ class UsdSpawner:
             bbox = bbox_cache.ComputeWorldBound(xform.GetPrim())
             rng  = bbox.GetRange()
             if not rng.IsEmpty():
-                y_min = rng.GetMin()[1]
+                v_min = rng.GetMin()[up_idx]
                 if snap_y_to is not None:
-                    # Always align: shift translate so bbox bottom lands on snap_y_to
-                    cur_translate_y = translate_op.Get(Usd.TimeCode.Default())[1]
-                    snapped_y = cur_translate_y + (snap_y_to - y_min)
-                    translate_op.Set(Gf.Vec3d(position[0], snapped_y, position[2]))
+                    cur = list(translate_op.Get(Usd.TimeCode.Default()))
+                    old_v = cur[up_idx]
+                    cur[up_idx] += snap_y_to - v_min
+                    translate_op.Set(Gf.Vec3d(*cur))
                     carb.log_warn(
-                        f"[UsdSpawner] Shelf-snap: new_bbox_y_min={y_min:.2f}  "
-                        f"snap_y_to={snap_y_to:.2f}  cur_translate_y={cur_translate_y:.2f}  "
-                        f"→ snapped_y={snapped_y:.2f}"
+                        f"[UsdSpawner] Shelf-snap (axis={up_idx}): bbox_min={v_min:.2f}  "
+                        f"snap_to={snap_y_to:.2f}  translate {old_v:.2f} → {cur[up_idx]:.2f}"
                     )
                 elif has_rotation_correction:
-                    # Rotation correction was applied: the item's geometric center may
-                    # have drifted from the translate position (pivot ≠ exact center).
-                    # Snap so bbox center aligns with the requested position Y.
-                    y_max = rng.GetMax()[1]
-                    bbox_center_y = (y_min + y_max) / 2
-                    center_drift = bbox_center_y - position[1]
-                    if abs(center_drift) > 0.5:   # only correct if drift > 5 mm
-                        cur_translate_y = translate_op.Get(Usd.TimeCode.Default())[1]
-                        snapped_y = cur_translate_y - center_drift
-                        translate_op.Set(Gf.Vec3d(position[0], snapped_y, position[2]))
+                    v_max    = rng.GetMax()[up_idx]
+                    center_v = (v_min + v_max) / 2
+                    drift    = center_v - position[up_idx]
+                    if abs(drift) > 0.5:
+                        cur = list(translate_op.Get(Usd.TimeCode.Default()))
+                        old_v = cur[up_idx]
+                        cur[up_idx] -= drift
+                        translate_op.Set(Gf.Vec3d(*cur))
                         carb.log_warn(
-                            f"[UsdSpawner] Center-snap: bbox_center={bbox_center_y:.2f}  "
-                            f"target_y={position[1]:.2f}  drift={center_drift:.2f}  "
-                            f"→ translate_y {cur_translate_y:.2f} → {snapped_y:.2f}"
+                            f"[UsdSpawner] Center-snap (axis={up_idx}): center={center_v:.2f}  "
+                            f"drift={drift:.2f}  translate {old_v:.2f} → {cur[up_idx]:.2f}"
                         )
-                elif y_min < -0.5:
-                    # Fresh spawn only: lift to floor (Y=0) if item is below ground
-                    snapped_y = position[1] - y_min
-                    translate_op.Set(Gf.Vec3d(position[0], snapped_y, position[2]))
+                elif v_min < floor_level - 0.5:
+                    cur = list(translate_op.Get(Usd.TimeCode.Default()))
+                    old_v = cur[up_idx]
+                    cur[up_idx] += floor_level - v_min
+                    translate_op.Set(Gf.Vec3d(*cur))
                     carb.log_warn(
-                        f"[UsdSpawner] Floor-snap: y_min={y_min:.1f} → Y adjusted to {snapped_y:.1f}"
+                        f"[UsdSpawner] Floor-snap (axis={up_idx}): v_min={v_min:.1f}  "
+                        f"floor={floor_level:.1f}  translate {old_v:.2f} → {cur[up_idx]:.2f}"
                     )
         except Exception as snap_err:
-            carb.log_warn(f"[UsdSpawner] Y-snap failed (asset may be partially underground): {snap_err}")
+            carb.log_warn(f"[UsdSpawner] Floor-snap failed (asset may be partially underground): {snap_err}")
 
         # Apply per-asset translation offset (saved via browser rotation panel).
         if prim_name in self._rotation_corrections:
@@ -1455,6 +1563,74 @@ class UsdSpawner:
         carb.log_warn(
             f"[UsdSpawner] adjustAssetRotation done — {updated} prim(s) updated"
         )
+
+    # ------------------------------------------------------------------
+
+    def _on_adjust_asset_scale(self, event) -> None:
+        """
+        Browser Scale Adjustment Panel → adjustAssetScale event.
+
+        Finds all /World/* prims whose name starts with prim_name and sets
+        their xformOp:scale to (scale_x, scale_y, scale_z).  Values are
+        persisted to scale_corrections.json so future spawns apply them too.
+        """
+        payload   = event.payload
+        prim_name = str(payload.get("prim_name", ""))
+        scale_x   = float(payload.get("scale_x", 1.0))
+        scale_y   = float(payload.get("scale_y", 1.0))
+        scale_z   = float(payload.get("scale_z", 1.0))
+
+        carb.log_warn(
+            f"[UsdSpawner] adjustAssetScale  prim_name={prim_name}"
+            f"  scale=({scale_x},{scale_y},{scale_z})"
+        )
+
+        if not prim_name:
+            carb.log_warn("[UsdSpawner] adjustAssetScale: missing prim_name")
+            return
+
+        # Persist so future spawns of this asset use the correction.
+        self._scale_corrections[prim_name] = {
+            "scale_x": scale_x,
+            "scale_y": scale_y,
+            "scale_z": scale_z,
+        }
+        _save_scale_corrections(self._scale_corrections)
+
+        stage = omni.usd.get_context().get_stage()
+        if not stage:
+            carb.log_warn("[UsdSpawner] adjustAssetScale: no stage")
+            return
+        world = stage.GetPrimAtPath("/World")
+        if not world:
+            carb.log_warn("[UsdSpawner] adjustAssetScale: /World not found")
+            return
+
+        new_scale = Gf.Vec3f(scale_x, scale_y, scale_z)
+        updated = 0
+
+        for prim in world.GetAllChildren():
+            if not prim.GetName().startswith(prim_name):
+                continue
+            xform = UsdGeom.Xform(prim)
+            ops = xform.GetOrderedXformOps()
+
+            scale_op = next(
+                (op for op in ops if op.GetOpType() == UsdGeom.XformOp.TypeScale), None,
+            )
+            if scale_op is not None:
+                scale_op.Set(new_scale)
+            else:
+                scale_op = xform.AddScaleOp(UsdGeom.XformOp.PrecisionFloat)
+                scale_op.Set(new_scale)
+
+            carb.log_warn(
+                f"[UsdSpawner] adjustAssetScale  updated {prim.GetPath()}"
+                f"  scale={new_scale}"
+            )
+            updated += 1
+
+        carb.log_warn(f"[UsdSpawner] adjustAssetScale done — {updated} prim(s) updated")
 
     # ------------------------------------------------------------------
 
