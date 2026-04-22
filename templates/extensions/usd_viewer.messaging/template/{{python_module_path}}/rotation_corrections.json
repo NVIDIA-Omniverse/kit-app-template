@@ -1,0 +1,34 @@
+{
+  "cheetos_cheddar_jalapeno": {
+    "euler_x": 87.0,
+    "euler_y": 0.0,
+    "euler_z": 0.0,
+    "offset_x": 0.0,
+    "offset_y": 0.0,
+    "offset_z": 10.0
+  },
+  "cheetos_puffs": {
+    "euler_x": 89.0,
+    "euler_y": 0.0,
+    "euler_z": 0.0,
+    "offset_x": 0.0,
+    "offset_y": 0.0,
+    "offset_z": 12.0
+  },
+  "lipton_milktea": {
+    "euler_x": 0.0,
+    "euler_y": 90.0,
+    "euler_z": -90.0,
+    "offset_x": 0.0,
+    "offset_y": 0.0,
+    "offset_z": 4.0
+  },
+  "cheetos_flaming_hot": {
+    "euler_x": 90.0,
+    "euler_y": 0.0,
+    "euler_z": 0.0,
+    "offset_x": 0.0,
+    "offset_y": 0.0,
+    "offset_z": 11.0
+  }
+}

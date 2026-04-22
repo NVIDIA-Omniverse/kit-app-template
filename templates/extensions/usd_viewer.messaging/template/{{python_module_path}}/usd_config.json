@@ -3,7 +3,7 @@
 
   "usd_base": "/home/aicenter/adrian/local-omniverse/omniverse-vs-agent-backend/assets/usd",
 
-  "inventory_file": "/home/aicenter/adrian/local-omniverse/omniverse-vs-agent-backend/assets/asset_list_shop_already.json",
-
-  "stage_prims_file": "/home/aicenter/adrian/local-omniverse/omniverse-vs-agent-backend/assets/stage_prims.json"
+  "inventory_file":   "/home/aicenter/adrian/local-omniverse/omniverse-vs-agent-backend/assets/asset_list_shop_already.json",
+  "stage_prims_file": "/home/aicenter/adrian/local-omniverse/omniverse-vs-agent-backend/assets/stage_prims.json",
+  "shelf_rows_file":  "/home/aicenter/adrian/local-omniverse/omniverse-vs-agent-backend/assets/shelf_rows.json"
 }
