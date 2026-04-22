@@ -43,81 +43,100 @@ except Exception as _cfg_err:
     _carb_early.log_warn(f"[UsdSpawner] Could not load usd_config.json: {_cfg_err} — using built-in defaults")
     _cfg = {}
 
-_USD_BASE        = _cfg.get("usd_base",        "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/usd")
-_INVENTORY_FILE  = _cfg.get("inventory_file",  "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/asset_list_shop_already.json")
+_USD_BASE         = _cfg.get("usd_base",         "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/usd")
+_USD_ASSETS       = _cfg.get("usd_assets",       "/workspace/shashika-ws/github-ws/usd-ws/USD-Assets")
+_INVENTORY_FILE   = _cfg.get("inventory_file",   "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/asset_list_shop_already.json")
 _STAGE_PRIMS_FILE = _cfg.get("stage_prims_file", "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/stage_prims.json")
+_SHELF_ROWS_FILE  = _cfg.get("shelf_rows_file",  "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/shelf_rows.json")
 
-ASSET_LIBRARY: dict[str, str] = {k: f"{_USD_BASE}/{f}" for k, f in [
-    # Tea & Milk Tea
-    ("lipton_milktea",           "Lipton_Milktea.usdz"),
-    ("lipton_iced_tea",          "Lipton_Fruit_Iced_Tea.usdz"),
-    ("nittotea_milktea",         "NittoTea_Royal_Milktea.usdz"),
-    ("freshdel_strawberry_tea",  "FreshDelight_Strawberry_MilkTea.usdz"),
-    ("freshdel_coco_tea",        "FreshDelight_Coco_MilkTea.usdz"),
-    ("dezheng_oolong_tea",       "De_Zheng_Roasted_Oolong_Milk_Tea.usdz"),
-    ("afternoon_cream_milktea",  "AfternoonTeaTime_Heavy_Cream_Milktea.usdz"),
-    ("afternoon_jasmine_tea",    "AfternoonTeaTime_Heavy_Cream_Jasmine_Milktea.usdz"),
-    ("real_leaf_green_tea",      "Real_Leaf_Green_Tea_Gyokuro.usdz"),
-    ("real_leaf_green_tea_pet",  "Real_Leaf_Green_Tea_Gyokuro_PET580.usdz"),
-    ("chai_li_won_green_tea",    "Chai_Li_Won_Taiwanese_Green_Tea_PET975.usdz"),
-    ("maixiang_black_tea",       "MaiXiang_Black_Tea_TP375.usdz"),
-    ("yuancui_black_tea",        "yuancui_black_tea.usdz"),
-    ("jasmine_guava_green_tea",  "JasmineTeaGarden_Guava_Lemon_Greentea.usdz"),
-    ("jasmine_apple_black_tea",  "JasmineTeaGarden_Apple_Black_tea.usdz"),
-    ("honey_apple_orange_tea",   "Honey_Apple_Orange_GreyTea.usdz"),
-    ("green_drink",              "green_drink.usdz"),
-    # Soy Milk & Oat
-    ("uni_soymilk",              "Uni_Sunshine_SoyMilk.usdz"),
-    ("uni_brownrice_milk",       "Uni_Sunshine_BrownRiceMilk.usdz"),
-    ("kuangchuan_black_soymilk", "KuangChuan_Sugarfree_BlackSoyMilk.usdz"),
-    ("kuangchuan_soymilk",       "KuangChuan_Milk_SoyMilk.usdz"),
-    ("fuhang_soymilk",           "FuHang_SoyMilk_Unsweetened.usdz"),
-    ("kuangchuan_soymilk_357",   "Kuang_Chuan_Unsweetened_SoyMilk_357ml.usdz"),
-    ("quaker_soymilk_oat",       "Quaker_SoyMilkOatdrink.usdz"),
-    ("agv_milk_oat",             "A_G_V_MilkOatdrink.usdz"),
-    ("agv_honey_oat",            "A_G_V_HoneyOatdrink.usdz"),
-    ("agv_milk_peanut",          "AGV_Milk_Peanut_Can340.usdz"),
-    ("g_nut_milk",               "g_nut_milk.usdz"),
-    # Juice & Yogurt
-    ("jinjin_asparagus_juice",   "JinJin_Asparagus_Juice.usdz"),
-    ("guava_mixed_juice",        "Fresh_Picked_Orchard_Guava_Mixed_Juice.usdz"),
-    ("pomi_fruit_veg_juice",     "Pomi_Oneday_Fruit_Vegetable_Juice.usdz"),
-    ("ab_strawberry_yogurt",     "ab_strawberry_yogurt.usdz"),
-    # Sports & Water
-    ("pocari_sweat",             "A_Pocari_Sweat_PET580.usdz"),
-    ("supersup_sports_drink",    "A_SuperSup_Sports_Drink_PET590.usdz"),
-    ("heysong_fin_drink",        "A_HeySong_FIN_Supply_Drink_PET580.usdz"),
-    ("staycool_charcoal_water",  "StayCool_Alkaline_Bamboo_Charcoal_Water_PET700.usdz"),
-    ("uni_h2o_water",            "UNI_H2O_Pure_Water_PET600.usdz"),
-    ("ufc_coconut_water",        "UFC_Refresh_CoconutWater.usdz"),
-    # Snacks
-    ("pringles_cheese",          "Pringles_Cheese_Flavor_Potato_Chips.usdz"),
-    ("pringles_bbq",             "Pringles_Charcoal_BBQ_Flavor_Large.usdz"),
-    ("pringles_pizza",           "Pringles_Pizza_Flavor_Large.usdz"),
-    ("pringles_lobster",         "Pringles_Spicy_Stir-Fried_Garlic_Lobster_Flavor_Potato_Chips.usdz"),
-    ("cheetos_double_cheese",    "Cheetos_Double_Cheese_Flavor_Corn_Stick.usdz"),
-    ("guai_guai_coconut",        "Guai_Guai_Coconut_Flavor_Large.usdz"),
-    # Noodles
-    ("uni_minced_meat_noodle",   "Uni_Noodles_Minced_Meat_Flavor_Bowl.usdz"),
-    ("uni_braised_beef_noodle",  "Uni_Noodles_Green_Onion_Braised_Beef_Flavor_Bowl.usdz"),
-    ("manhan_beef_noodles",      "A_ManHan_Green_Onion_Braised_Beef_Noodles.usdz"),
-    ("grab_beef_veg_noodle",     "Grab_Cup_Noodles_Beef_and_Vegetable_Flavor.usdz"),
-    ("grab_pork_spinach_noodle", "Grab_Cup_Noodles_Minced_Pork_and_Spinach_Flavor.usdz"),
-    ("ramen_do_miso",            "Ramen_Do_Japanese_Miso_Flavor.usdz"),
-    ("ramen_do_tonkatsu",        "Ramen_Do_Japanese_Tonkatsu_Flavor.usdz"),
-    ("ahq_red_pepper_noodle",    "A_Ah_Q_Cup_Noodles_Red_Pepper_Beef_Flavor.usdz"),
-    ("ahq_seafood_noodle",       "Ah_Q_Cup_Noodles_Fresh_Seafood_Flavor.usdz"),
-    ("double_bang_satay_noodle", "Double_Bang_Satay_Hotpot_Soup_Noodles.usdz"),
-    ("weili_soybean_noodle",     "A_Wei_Li_Fried_Soybean_Paste_Noodles_Bowl.usdz"),
-    ("yidu_beef_noodle",         "Yidu_Zan_Aged_Jar_Beef_Noodles.usdz"),
-    # Food
-    ("royal_deli_braised_egg",   "Royal_Deli_Shian_Farm_Fragrant_Braised_Egg_White_Diced.usdz"),
-    ("taiwanese_braised_veg",    "Taiwanese_Braised_Dish_Seasonal_Vegetables.usdz"),
-    ("manhan_garlic_sausages",   "ManHan_Mini_Sausages_Garlic_Flavor.usdz"),
-    # Props
-    ("recycle_bin",              "recycle-bin.usdz"),
-    ("shelf",                    "shelf.usdz"),
-]}
+ASSET_LIBRARY: dict[str, str] = {
+    **{k: f"{_USD_BASE}/{f}" for k, f in [
+        # Tea & Milk Tea
+        ("lipton_milktea",           "Lipton_Milktea.usdz"),
+        ("lipton_iced_tea",          "Lipton_Fruit_Iced_Tea.usdz"),
+        ("nittotea_milktea",         "NittoTea_Royal_Milktea.usdz"),
+        ("freshdel_strawberry_tea",  "FreshDelight_Strawberry_MilkTea.usdz"),
+        ("freshdel_coco_tea",        "FreshDelight_Coco_MilkTea.usdz"),
+        ("dezheng_oolong_tea",       "De_Zheng_Roasted_Oolong_Milk_Tea.usdz"),
+        ("afternoon_cream_milktea",  "AfternoonTeaTime_Heavy_Cream_Milktea.usdz"),
+        ("afternoon_jasmine_tea",    "AfternoonTeaTime_Heavy_Cream_Jasmine_Milktea.usdz"),
+        ("real_leaf_green_tea",      "Real_Leaf_Green_Tea_Gyokuro.usdz"),
+        ("real_leaf_green_tea_pet",  "Real_Leaf_Green_Tea_Gyokuro_PET580.usdz"),
+        ("chai_li_won_green_tea",    "Chai_Li_Won_Taiwanese_Green_Tea_PET975.usdz"),
+        ("maixiang_black_tea",       "MaiXiang_Black_Tea_TP375.usdz"),
+        ("yuancui_black_tea",        "yuancui_black_tea.usdz"),
+        ("jasmine_guava_green_tea",  "JasmineTeaGarden_Guava_Lemon_Greentea.usdz"),
+        ("jasmine_apple_black_tea",  "JasmineTeaGarden_Apple_Black_tea.usdz"),
+        ("honey_apple_orange_tea",   "Honey_Apple_Orange_GreyTea.usdz"),
+        ("green_drink",              "green_drink.usdz"),
+        # Soy Milk & Oat
+        ("uni_soymilk",              "Uni_Sunshine_SoyMilk.usdz"),
+        ("uni_brownrice_milk",       "Uni_Sunshine_BrownRiceMilk.usdz"),
+        ("kuangchuan_black_soymilk", "KuangChuan_Sugarfree_BlackSoyMilk.usdz"),
+        ("kuangchuan_soymilk",       "KuangChuan_Milk_SoyMilk.usdz"),
+        ("fuhang_soymilk",           "FuHang_SoyMilk_Unsweetened.usdz"),
+        ("kuangchuan_soymilk_357",   "Kuang_Chuan_Unsweetened_SoyMilk_357ml.usdz"),
+        ("quaker_soymilk_oat",       "Quaker_SoyMilkOatdrink.usdz"),
+        ("agv_milk_oat",             "A_G_V_MilkOatdrink.usdz"),
+        ("agv_honey_oat",            "A_G_V_HoneyOatdrink.usdz"),
+        ("agv_milk_peanut",          "AGV_Milk_Peanut_Can340.usdz"),
+        ("g_nut_milk",               "g_nut_milk.usdz"),
+        # Juice & Yogurt
+        ("jinjin_asparagus_juice",   "JinJin_Asparagus_Juice.usdz"),
+        ("guava_mixed_juice",        "Fresh_Picked_Orchard_Guava_Mixed_Juice.usdz"),
+        ("pomi_fruit_veg_juice",     "Pomi_Oneday_Fruit_Vegetable_Juice.usdz"),
+        ("ab_strawberry_yogurt",     "ab_strawberry_yogurt.usdz"),
+        # Sports & Water
+        ("pocari_sweat",             "A_Pocari_Sweat_PET580.usdz"),
+        ("supersup_sports_drink",    "A_SuperSup_Sports_Drink_PET590.usdz"),
+        ("heysong_fin_drink",        "A_HeySong_FIN_Supply_Drink_PET580.usdz"),
+        ("staycool_charcoal_water",  "StayCool_Alkaline_Bamboo_Charcoal_Water_PET700.usdz"),
+        ("uni_h2o_water",            "UNI_H2O_Pure_Water_PET600.usdz"),
+        ("ufc_coconut_water",        "UFC_Refresh_CoconutWater.usdz"),
+        # Snacks (primary)
+        ("pringles_cheese",          "Pringles_Cheese_Flavor_Potato_Chips.usdz"),
+        ("pringles_bbq",             "Pringles_Charcoal_BBQ_Flavor_Large.usdz"),
+        ("pringles_pizza",           "Pringles_Pizza_Flavor_Large.usdz"),
+        ("pringles_lobster",         "Pringles_Spicy_Stir-Fried_Garlic_Lobster_Flavor_Potato_Chips.usdz"),
+        ("cheetos_double_cheese",    "Cheetos_Double_Cheese_Flavor_Corn_Stick.usdz"),
+        ("guai_guai_coconut",        "Guai_Guai_Coconut_Flavor_Large.usdz"),
+        # Noodles
+        ("uni_minced_meat_noodle",   "Uni_Noodles_Minced_Meat_Flavor_Bowl.usdz"),
+        ("uni_braised_beef_noodle",  "Uni_Noodles_Green_Onion_Braised_Beef_Flavor_Bowl.usdz"),
+        ("manhan_beef_noodles",      "A_ManHan_Green_Onion_Braised_Beef_Noodles.usdz"),
+        ("grab_beef_veg_noodle",     "Grab_Cup_Noodles_Beef_and_Vegetable_Flavor.usdz"),
+        ("grab_pork_spinach_noodle", "Grab_Cup_Noodles_Minced_Pork_and_Spinach_Flavor.usdz"),
+        ("ramen_do_miso",            "Ramen_Do_Japanese_Miso_Flavor.usdz"),
+        ("ramen_do_tonkatsu",        "Ramen_Do_Japanese_Tonkatsu_Flavor.usdz"),
+        ("ahq_red_pepper_noodle",    "A_Ah_Q_Cup_Noodles_Red_Pepper_Beef_Flavor.usdz"),
+        ("ahq_seafood_noodle",       "Ah_Q_Cup_Noodles_Fresh_Seafood_Flavor.usdz"),
+        ("double_bang_satay_noodle", "Double_Bang_Satay_Hotpot_Soup_Noodles.usdz"),
+        ("weili_soybean_noodle",     "A_Wei_Li_Fried_Soybean_Paste_Noodles_Bowl.usdz"),
+        ("yidu_beef_noodle",         "Yidu_Zan_Aged_Jar_Beef_Noodles.usdz"),
+        # Food
+        ("royal_deli_braised_egg",   "Royal_Deli_Shian_Farm_Fragrant_Braised_Egg_White_Diced.usdz"),
+        ("taiwanese_braised_veg",    "Taiwanese_Braised_Dish_Seasonal_Vegetables.usdz"),
+        ("manhan_garlic_sausages",   "ManHan_Mini_Sausages_Garlic_Flavor.usdz"),
+        # Props (primary)
+        ("recycle_bin",              "recycle-bin.usdz"),
+        ("shelf",                    "shelf.usdz"),
+    ]},
+    **{k: f"{_USD_ASSETS}/{f}" for k, f in [
+        # Snacks (USD-Assets)
+        ("lays_bags",                "Lays_Bags.usdz"),
+        ("doritos_blue_cool_ranch",  "Doritos_blue_cool_ranch.usdz"),
+        ("doritos_nacho",            "Doritos_Nacho.usdz"),
+        ("doritos_bags",             "Doritos_bags.usdz"),
+        ("doritos_bbq",              "Doritos_bbq.usdz"),
+        ("red_doritos",              "Red_doritos.usdz"),
+        ("cheetos_flaming_hot",      "Cheetos_Flaming_Hot.usdz"),
+        ("cheetos_puffs",            "Cheetos_Puffs.usdz"),
+        ("cheetos_cheddar_jalapeno", "Cheetos_Cheddar_Jalapeno.usdz"),
+        # Props (USD-Assets)
+        ("wine_bottles",             "Wine_bottles.usdz"),
+        ("liquor_bottles",           "Liquor_bottles.usdz"),
+    ]},
+}
 
 
 # ---------------------------------------------------------------------------
@@ -239,11 +258,13 @@ def _save_scale_corrections(corrections: dict) -> None:
 # Used to scan stage for prims matching a given asset key.
 _STEM_TO_KEY: dict = {}
 _KEY_TO_STEM: dict = {}
+_ASSET_UNIT_SCALE: dict[str, float] = {}
 for _k, _fp in ASSET_LIBRARY.items():
     _stem = os.path.splitext(os.path.basename(_fp))[0]
     _STEM_TO_KEY[_stem] = _k
     _STEM_TO_KEY[_stem.replace("-", "_")] = _k
     _KEY_TO_STEM[_k] = _stem
+    _ASSET_UNIT_SCALE[_k] = 1.0 if _fp.startswith(_USD_ASSETS) else 100.0
 
 
 class UsdSpawner:
@@ -261,7 +282,8 @@ class UsdSpawner:
         self._scale_corrections: dict = _load_scale_corrections()
 
         # Register outgoing events
-        for evt in ("spawnUsdResponse", "deleteUsdResponse", "replaceUsdResponse", "replaceAllUsdResponse"):
+        for evt in ("spawnUsdResponse", "deleteUsdResponse", "replaceUsdResponse", "replaceAllUsdResponse",
+                    "detectShelfRowsResponse", "replaceRowResponse"):
             messaging.register_event_type_to_send(evt)
             omni.kit.app.register_event_alias(
                 carb.events.type_from_string(evt), evt
@@ -342,6 +364,32 @@ class UsdSpawner:
                 observer_name="UsdSpawner:adjustAssetScale",
                 event_name="adjustAssetScale",
                 on_event=self._on_adjust_asset_scale,
+            )
+        )
+
+        # Subscribe to shelf-row detection request (browser shelf rows panel)
+        omni.kit.app.register_event_alias(
+            carb.events.type_from_string("detectShelfRowsRequest"),
+            "detectShelfRowsRequest",
+        )
+        self._subscriptions.append(
+            get_eventdispatcher().observe_event(
+                observer_name="UsdSpawner:detectShelfRowsRequest",
+                event_name="detectShelfRowsRequest",
+                on_event=self._on_detect_shelf_rows,
+            )
+        )
+
+        # Subscribe to replace-row request (chatbot: replace a specific global row)
+        omni.kit.app.register_event_alias(
+            carb.events.type_from_string("replaceRowRequest"),
+            "replaceRowRequest",
+        )
+        self._subscriptions.append(
+            get_eventdispatcher().observe_event(
+                observer_name="UsdSpawner:replaceRowRequest",
+                event_name="replaceRowRequest",
+                on_event=self._on_replace_row_request,
             )
         )
 
@@ -754,12 +802,12 @@ class UsdSpawner:
                     carb.log_warn(f"[UsdSpawner] Spawn: could not apply scale: {sc_err}")
 
         # Child prim holds the reference; its internal xformOps are unaffected.
-        # Scale by 100 to convert from meters (USDZ, metersPerUnit=1.0) to
-        # centimeters (store stage, metersPerUnit=0.01).  Remove this if your
-        # stage uses meters.
+        # Primary assets (metersPerUnit=1.0) need 100x to reach centimeter stage.
+        # USD-Assets (metersPerUnit=0.01) are already in centimeters → scale 1.0.
         ref_path = prim_path + "/Ref"
         ref_xform = UsdGeom.Xform.Define(stage, ref_path)
-        ref_xform.AddScaleOp().Set(Gf.Vec3f(100.0, 100.0, 100.0))
+        _unit_scale = _ASSET_UNIT_SCALE.get(prim_name, 100.0)
+        ref_xform.AddScaleOp().Set(Gf.Vec3f(_unit_scale, _unit_scale, _unit_scale))
         ref_xform.GetPrim().GetReferences().AddReference(usd_path)
 
         # Floor-snap: raise prim so its bounding box bottom touches the floor plane.
@@ -810,6 +858,24 @@ class UsdSpawner:
                     carb.log_warn(
                         f"[UsdSpawner] Floor-snap (axis={up_idx}): v_min={v_min:.1f}  "
                         f"floor={floor_level:.1f}  translate {old_v:.2f} → {cur[up_idx]:.2f}"
+                    )
+
+                # Horizontal centering: compensate for assets whose USDZ origin is at
+                # a geometry edge rather than the visual center. No-op for primary assets
+                # whose origins are already centered (delta ≈ 0).
+                h_axes = [i for i in (0, 1, 2) if i != up_idx]
+                cur = list(translate_op.Get(Usd.TimeCode.Default()))
+                h_adjusted = False
+                for h in h_axes:
+                    bbox_center_h = (rng.GetMin()[h] + rng.GetMax()[h]) / 2
+                    delta = bbox_center_h - cur[h]
+                    if abs(delta) > 0.5:
+                        cur[h] -= delta
+                        h_adjusted = True
+                if h_adjusted:
+                    translate_op.Set(Gf.Vec3d(*cur))
+                    carb.log_warn(
+                        f"[UsdSpawner] Spawn: horizontal bbox-center correction applied for '{prim_name}'"
                     )
         except Exception as snap_err:
             carb.log_warn(f"[UsdSpawner] Floor-snap failed (asset may be partially underground): {snap_err}")
@@ -1631,6 +1697,263 @@ class UsdSpawner:
             updated += 1
 
         carb.log_warn(f"[UsdSpawner] adjustAssetScale done — {updated} prim(s) updated")
+
+    # ------------------------------------------------------------------
+    # Shelf-row detection
+    # ------------------------------------------------------------------
+
+    def _reply_shelf_rows(self, payload: dict) -> None:
+        get_eventdispatcher().dispatch_event("detectShelfRowsResponse", payload=payload)
+
+    def _on_detect_shelf_rows(self, event) -> None:
+        """
+        Cluster spawned asset prims by shelf-row height (bbox bottom Z/Y).
+
+        If selected_prim_path is provided the scan is filtered to only prims
+        that share the same asset key as the selected prim, so the browser
+        panel shows rows only for that item type.
+
+        Payload (all optional):
+            tolerance_cm       – max gap within a single row (default 8 cm)
+            selected_prim_path – e.g. "/World/Cheetos_Cheddar_Jalapeno_3"
+
+        Response / shelf_rows.json format:
+            { "rows": [ { "row": 1, "floor_z": 127.8, "prim_count": 9,
+                          "prim_paths": [...] }, ... ],
+              "asset_key": "cheetos_cheddar_jalapeno" }
+        """
+        payload     = dict(event.payload)
+        tolerance   = float(payload.get("tolerance_cm", 8.0))
+        sel_path    = payload.get("selected_prim_path", None)
+
+        stage = omni.usd.get_context().get_stage()
+        if not stage:
+            self._reply_shelf_rows({"error": "No stage loaded", "rows": []})
+            return
+
+        up_axis  = self._detect_up_axis()
+        up_idx   = 2 if up_axis == "Z" else 1
+        xf_cache = UsdGeom.XformCache(Usd.TimeCode.Default())
+
+        world = stage.GetPrimAtPath("/World")
+        if not world:
+            self._reply_shelf_rows({"error": "No /World prim", "rows": []})
+            return
+
+        # Resolve filter key — selected path may be deep (/World/Prim/Geometry/Mesh)
+        filter_key: str | None = None
+        if sel_path:
+            sel_parts = sel_path.strip("/").split("/")
+            sel_name  = sel_parts[1] if len(sel_parts) >= 2 else sel_parts[0]
+            sel_base  = re.sub(r"_\d+$", "", sel_name)
+            filter_key = (
+                _STEM_TO_KEY.get(sel_name)
+                or _STEM_TO_KEY.get(sel_base)
+                or _STEM_TO_KEY.get(sel_name.replace("-", "_"))
+                or _STEM_TO_KEY.get(sel_base.replace("-", "_"))
+            )
+            if filter_key:
+                carb.log_warn(f"[UsdSpawner] detectShelfRows: filtering to asset_key='{filter_key}'")
+            else:
+                carb.log_warn(f"[UsdSpawner] detectShelfRows: could not resolve key for '{sel_name}', scanning all")
+
+        def _get_height(prim) -> float | None:
+            try:
+                world_xf  = xf_cache.GetLocalToWorldTransform(prim)
+                return round(world_xf.ExtractTranslation()[up_idx], 2)
+            except Exception as exc:
+                carb.log_warn(f"[UsdSpawner] detectShelfRows: xform failed for {prim.GetPath()}: {exc}")
+                return None
+
+        def _resolve_key(prim_name: str) -> str | None:
+            base = re.sub(r"_\d+$", "", prim_name)
+            return (
+                _STEM_TO_KEY.get(prim_name)
+                or _STEM_TO_KEY.get(base)
+                or _STEM_TO_KEY.get(prim_name.replace("-", "_"))
+                or _STEM_TO_KEY.get(base.replace("-", "_"))
+            )
+
+        def _cluster(floors: list[tuple[str, float]]) -> list[list[tuple[str, float]]]:
+            """Gap-based clustering sorted ascending — splits on gaps > tolerance."""
+            floors = sorted(floors, key=lambda x: x[1])
+            clusters: list[list[tuple[str, float]]] = []
+            cur: list[tuple[str, float]] = [floors[0]]
+            for path, z in floors[1:]:
+                if z - cur[-1][1] <= tolerance:
+                    cur.append((path, z))
+                else:
+                    clusters.append(cur)
+                    cur = [(path, z)]
+            clusters.append(cur)
+            return clusters
+
+        # --- Collect filtered asset heights ---
+        filtered_floors: list[tuple[str, float]] = []
+
+        for prim in world.GetChildren():
+            prim_name = prim.GetName()
+            asset_key = _resolve_key(prim_name)
+            if not asset_key:
+                continue
+            if filter_key and asset_key != filter_key:
+                continue
+            h = _get_height(prim)
+            if h is None:
+                continue
+            filtered_floors.append((str(prim.GetPath()), h))
+
+        if not filtered_floors:
+            self._reply_shelf_rows({"rows": [], "asset_key": filter_key or "all",
+                                    "message": "No matching asset prims found on stage"})
+            return
+
+        # --- Load previous scan to preserve consistent row numbering ---
+        ref_rows: list[tuple[float, int]] = []
+        if filter_key:
+            try:
+                with open(_SHELF_ROWS_FILE) as _rf:
+                    _prev = json.load(_rf)
+                if _prev.get("asset_key") == filter_key:
+                    ref_rows = [(_r["floor_z"], _r["row"]) for _r in _prev.get("rows", [])]
+            except Exception:
+                pass
+
+        def _row_num_from_ref(h: float) -> int | None:
+            if not ref_rows:
+                return None
+            nearest_z, nearest_row = min(ref_rows, key=lambda t: abs(t[0] - h))
+            return nearest_row if abs(nearest_z - h) <= tolerance * 4 else None
+
+        # --- Cluster filtered asset and assign row numbers ---
+        filtered_clusters = _cluster(filtered_floors)
+        filtered_clusters.sort(key=lambda g: g[0][1], reverse=True)
+
+        carb.log_warn(
+            f"[UsdSpawner] detectShelfRows: {len(filtered_floors)} prims for "
+            f"asset_key='{filter_key or 'all'}', "
+            f"height range [{filtered_floors[0][1]:.1f}…{filtered_floors[-1][1]:.1f}] cm  "
+            f"tolerance={tolerance:.1f} cm  up_axis={up_axis}  "
+            f"clusters={len(filtered_clusters)}"
+        )
+
+        rows = []
+        for seq_num, group in enumerate(filtered_clusters, start=1):
+            floor_z  = round(sum(v for _, v in group) / len(group), 2)
+            z_min    = group[0][1]
+            z_max    = group[-1][1]
+            row_num  = _row_num_from_ref(floor_z) or seq_num
+            rows.append({
+                "row":        row_num,
+                "floor_z":    floor_z,
+                "z_min":      z_min,
+                "z_max":      z_max,
+                "prim_count": len(group),
+                "prim_paths": [p for p, _ in group],
+            })
+            carb.log_warn(
+                f"[UsdSpawner] detectShelfRows: row {row_num}  "
+                f"floor_z={floor_z:.1f}  ({len(group)} prims)"
+            )
+
+        result = {
+            "up_axis":       up_axis,
+            "tolerance_cm":  tolerance,
+            "row_count":     len(rows),
+            "asset_key":     filter_key or "all",
+            "rows":          rows,
+        }
+
+        try:
+            os.makedirs(os.path.dirname(_SHELF_ROWS_FILE), exist_ok=True)
+            with open(_SHELF_ROWS_FILE, "w") as f:
+                json.dump(result, f, indent=2)
+        except Exception as exc:
+            carb.log_warn(f"[UsdSpawner] Could not save shelf_rows.json: {exc}")
+
+        self._reply_shelf_rows(result)
+
+    # ------------------------------------------------------------------
+    # Replace a specific shelf row via chatbot
+    # ------------------------------------------------------------------
+
+    def _on_replace_row_request(self, event) -> None:
+        """
+        Replace all items in a specific global shelf row with a new asset.
+
+        Payload:
+            asset_key        – asset currently occupying the row (e.g. "cheetos_double_cheese")
+            row              – global row number to replace (1 = top shelf)
+            target_asset_key – asset to place instead (e.g. "cheetos_cheddar_jalapeno")
+
+        Reads shelf_rows.json (written by detectShelfRowsRequest) to find the
+        prim_paths for the requested row, then delegates to _on_replace_all_request.
+
+        Response: replaceRowResponse { result, row, asset_key, target_asset_key,
+                                       replaced_count, error }
+        """
+        payload          = dict(event.payload)
+        asset_key        = str(payload.get("asset_key", ""))
+        row_num          = int(payload.get("row", 0))
+        target_asset_key = str(payload.get("target_asset_key", ""))
+
+        def _reply(ok: bool, msg: str, count: int = 0) -> None:
+            get_eventdispatcher().dispatch_event("replaceRowResponse", payload={
+                "result":           "success" if ok else "error",
+                "row":              row_num,
+                "asset_key":        asset_key,
+                "target_asset_key": target_asset_key,
+                "replaced_count":   count,
+                "error":            "" if ok else msg,
+                "message":          msg,
+            })
+
+        if not asset_key or not target_asset_key or not row_num:
+            _reply(False, "asset_key, row, and target_asset_key are required")
+            return
+        if target_asset_key not in ASSET_LIBRARY:
+            _reply(False, f"Unknown target asset: '{target_asset_key}'")
+            return
+
+        # Load the latest shelf_rows.json written by detectShelfRowsRequest
+        try:
+            with open(_SHELF_ROWS_FILE) as f:
+                shelf_data = json.load(f)
+        except Exception as exc:
+            _reply(False, f"Could not read shelf_rows.json: {exc}. Run Detect Rows first.")
+            return
+
+        stored_key = shelf_data.get("asset_key", "")
+        if stored_key != asset_key and stored_key != "all":
+            _reply(False,
+                   f"shelf_rows.json was last built for '{stored_key}', not '{asset_key}'. "
+                   f"Run Detect Rows on a {asset_key} item first.")
+            return
+
+        source_paths: list[str] = []
+        for row in shelf_data.get("rows", []):
+            if row.get("row") == row_num:
+                source_paths = row.get("prim_paths", [])
+                break
+
+        if not source_paths:
+            _reply(False, f"Row {row_num} not found for asset '{asset_key}'. "
+                          f"Available rows: {[r['row'] for r in shelf_data.get('rows', [])]}")
+            return
+
+        carb.log_warn(
+            f"[UsdSpawner] replaceRow: row {row_num} of '{asset_key}' → '{target_asset_key}'  "
+            f"({len(source_paths)} prims)"
+        )
+
+        # Delegate to replaceAll logic by dispatching internally
+        get_eventdispatcher().dispatch_event("replaceAllUsdRequest", payload={
+            "source_paths": source_paths,
+            "prim_name":    target_asset_key,
+        })
+
+        _reply(True, f"Replacing row {row_num} ({len(source_paths)} items) with {target_asset_key}",
+               count=len(source_paths))
 
     # ------------------------------------------------------------------
 

@@ -1,9 +1,10 @@
 {
   "_comment": "Edit this file to configure paths for your environment. Do not rename keys.",
 
-  "usd_base": "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/usd",
+  "usd_base":   "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/usd",
+  "usd_assets": "/workspace/shashika-ws/github-ws/usd-ws/USD-Assets",
 
-  "inventory_file": "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/asset_list_shop_already.json",
-
-  "stage_prims_file": "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/stage_prims.json"
+  "inventory_file":   "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/asset_list_shop_already.json",
+  "stage_prims_file": "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/stage_prims.json",
+  "shelf_rows_file":  "/workspace/shashika-ws/github-ws/omniverse-vs-agent-backend/shelf_rows.json"
 }
