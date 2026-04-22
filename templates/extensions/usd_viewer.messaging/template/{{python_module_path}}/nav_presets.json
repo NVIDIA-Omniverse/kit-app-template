@@ -1,0 +1,42 @@
+{
+    "pringles": {
+        "location": [202.81, 153.37, -57.66],
+        "rotation": [-2.75, 0.71, 0.03],
+        "description": "Pringles snack shelf"
+    },
+    "cheetos": {
+        "location": [180.60, 140.30, -62.09],
+        "rotation": [-21.39, -2.35, -0.86],
+        "description": "Cheetos snack area"
+    },
+    "coffee_station": {
+        "location": [-108.34, 270.27, -812.71],
+        "rotation": [1.96, 2.77, -0.09],
+        "description": "Coffee station"
+    },
+    "ufc_refresh_coconut_water": {
+        "location": [-151.78, 262.27, -647.68],
+        "rotation": [0.35, 91.57, 12.58],
+        "description": "UFC Refresh coconut water"
+    },
+    "coconut_water": {
+        "location": [-151.78, 262.27, -647.68],
+        "rotation": [0.35, 91.57, 12.58],
+        "description": "Coconut water section"
+    },
+    "atm_machine": {
+        "location": [298.48, 271.14, 380.75],
+        "rotation": [0.04, -90.23, -8.74],
+        "description": "ATM machine"
+    },
+    "atm": {
+        "location": [298.48, 271.14, 380.75],
+        "rotation": [0.04, -90.23, -8.74],
+        "description": "ATM machine"
+    },
+    "ibon_machine": {
+        "location": [357.39, 270.87, 28.77],
+        "rotation": [0.05, -90.52, -5.34],
+        "description": "iBon machine"
+    }
+}

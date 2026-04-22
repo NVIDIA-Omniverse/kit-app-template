@@ -58,6 +58,7 @@ class CustomMessageManager:
             # Camera nav position registry
             "navPositionsResponse",      # Full positions list (after any CRUD operation)
             "cameraPositionResponse",    # Current camera position query result
+            "navRoutesResponse",         # Waypoint routes list
         ]
 
         for message_type in outgoing_messages:
@@ -91,6 +92,10 @@ class CustomMessageManager:
             'setActiveStore':      self._on_set_active_store,
             'promoteNavPosition':  self._on_promote_nav_position,
             'saveAllAsBuiltin':    self._on_save_all_as_builtin,
+            # Waypoint route management
+            'saveNavRoute':        self._on_save_nav_route,
+            'deleteNavRoute':      self._on_delete_nav_route,
+            'getNavRoutes':        self._on_get_nav_routes,
         }
 
         ed = get_eventdispatcher()
@@ -1166,6 +1171,66 @@ class CustomMessageManager:
             carb.log_warn(f"[CustomMessageManager] Direct navigation failed: '{destination}'")
 
     # ── Per-store built-in preset handlers ──────────────────────────────────
+
+    # ── Waypoint route handlers ────────────────────────────────────────────
+
+    def _on_save_nav_route(self, event: carb.events.IEvent) -> None:
+        """
+        Handle saveNavRoute message.
+        Payload: {
+            destination: "pringles",
+            waypoints: [{location:[x,y,z], rotation:[rx,ry,rz]}, ...],
+            start: {location:[x,y,z], rotation:[rx,ry,rz]}  // optional
+        }
+        """
+        destination = event.payload.get("destination", "").strip()
+        waypoints = event.payload.get("waypoints", [])
+        if not destination:
+            carb.log_warn("[CustomMessageManager] saveNavRoute: empty destination ignored")
+            return
+        # Convert flat dicts from WebRTC payload
+        wp_list = []
+        for wp in waypoints:
+            loc = wp.get("location", [0, 0, 0])
+            rot = wp.get("rotation", [0, 0, 0])
+            wp_list.append({"location": list(loc), "rotation": list(rot)})
+
+        # Optional start position
+        start_raw = event.payload.get("start")
+        start = None
+        if start_raw and isinstance(start_raw, dict):
+            start = {
+                "location": list(start_raw.get("location", [0, 0, 0])),
+                "rotation": list(start_raw.get("rotation", [0, 0, 0])),
+            }
+
+        success = self._camera_navigation.save_route(destination, wp_list, start=start)
+        carb.log_info(
+            f"[CustomMessageManager] saveNavRoute '{destination}' "
+            f"({len(wp_list)} waypoints, start={'yes' if start else 'no'}) → saved={success}"
+        )
+        self._dispatch_nav_routes({"saved": success, "destination": destination})
+
+    def _on_delete_nav_route(self, event: carb.events.IEvent) -> None:
+        """Handle deleteNavRoute message.  Payload: { destination: "pringles" }"""
+        destination = event.payload.get("destination", "").strip()
+        if not destination:
+            return
+        success = self._camera_navigation.delete_route(destination)
+        carb.log_info(f"[CustomMessageManager] deleteNavRoute '{destination}' → success={success}")
+        self._dispatch_nav_routes({"deleted": success, "destination": destination})
+
+    def _on_get_nav_routes(self, event: carb.events.IEvent) -> None:
+        carb.log_info("[CustomMessageManager] getNavRoutes received")
+        self._dispatch_nav_routes()
+
+    def _dispatch_nav_routes(self, extra: dict = None) -> None:
+        """Send all routes to the web client."""
+        routes = self._camera_navigation.get_all_routes()
+        payload = {"routes": routes, **(extra or {})}
+        get_eventdispatcher().dispatch_event("navRoutesResponse", payload=payload)
+
+    # ── End waypoint route handlers ────────────────────────────────────────
 
     def _on_set_active_store(self, event: carb.events.IEvent) -> None:
         """

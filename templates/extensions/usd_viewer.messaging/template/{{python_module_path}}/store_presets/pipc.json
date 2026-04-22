@@ -1,77 +1,72 @@
 {
+  "entrance": {
+    "description": "Store entrance",
+    "location": [9.080565642302401, -1703.4389836796404, 256.96849256350947],
+    "rotation": [87.95724000000116, -8.002076793894616e-13, 1.6713499999955883]
+  },
+  "inside": {
+    "description": "Store inside",
+    "location": [-73.08297961438554, -220.53238465965495, 236.47821967483688],
+    "rotation": [88.95911000000119, -8.004064640570532e-13, -1.7036500000044117]
+  },
+  "coffe": {
+    "description": "Coffee area",
+    "location": [42.61716558901343, 149.5747354075745, 198.23391449888075],
+    "rotation": [84.3673553466797, -8.014997628265352e-13, -17.359901428222656]
+  },
   "pringles": {
+    "description": "Pringles snack shelf",
     "location": [202.81, 153.37, -57.66],
-    "rotation": [-2.75, 0.71, 0.03],
-    "description": "Pringles snack shelf"
+    "rotation": [-2.75, 0.71, 0.03]
   },
   "cheetos": {
+    "description": "Cheetos snack area",
     "location": [180.60, 140.30, -62.09],
-    "rotation": [-21.39, -2.35, -0.86],
-    "description": "Cheetos snack area"
+    "rotation": [-21.39, -2.35, -0.86]
   },
   "coffee_station": {
+    "description": "Coffee station",
     "location": [-108.34, 270.27, -812.71],
-    "rotation": [1.96, 2.77, -0.09],
-    "description": "Coffee station"
-  },
-  "ufc_refresh_coconut_water": {
-    "location": [-151.78, 262.27, -647.68],
-    "rotation": [0.35, 91.57, 12.58],
-    "description": "UFC Refresh coconut water"
+    "rotation": [1.96, 2.77, -0.09]
   },
   "coconut_water": {
+    "description": "Coconut water section",
     "location": [-151.78, 262.27, -647.68],
-    "rotation": [0.35, 91.57, 12.58],
-    "description": "Coconut water section"
+    "rotation": [0.35, 91.57, 12.58]
+  },
+  "ufc_refresh_coconut_water": {
+    "description": "UFC Refresh coconut water",
+    "location": [-151.78, 262.27, -647.68],
+    "rotation": [0.35, 91.57, 12.58]
   },
   "atm_machine": {
+    "description": "ATM machine",
     "location": [298.48, 271.14, 380.75],
-    "rotation": [0.04, -90.23, -8.74],
-    "description": "ATM machine"
-  },
-  "atm": {
-    "location": [298.48, 271.14, 380.75],
-    "rotation": [0.04, -90.23, -8.74],
-    "description": "ATM machine"
+    "rotation": [0.04, -90.23, -8.74]
   },
   "ibon_machine": {
+    "description": "iBon machine",
     "location": [357.39, 270.87, 28.77],
-    "rotation": [0.05, -90.52, -5.34],
-    "description": "iBon machine"
-  },
-  "ibon": {
-    "location": [357.39, 270.87, 28.77],
-    "rotation": [0.05, -90.52, -5.34],
-    "description": "iBon machine"
+    "rotation": [0.05, -90.52, -5.34]
   },
   "cashier": {
+    "description": "Cashier / Checkout counter",
     "location": [328.39, 268.79, -492.29],
-    "rotation": [0.43, -84.74, 4.67],
-    "description": "Cashier counter"
-  },
-  "checkout": {
-    "location": [328.39, 268.79, -492.29],
-    "rotation": [0.43, -84.74, 4.67],
-    "description": "Checkout counter"
+    "rotation": [0.43, -84.74, 4.67]
   },
   "olive_oil": {
+    "description": "Olive oil section",
     "location": [-119.81, 148.37, -450.42],
-    "rotation": [-0.04, 89.20, 2.48],
-    "description": "Olive oil section"
+    "rotation": [-0.04, 89.20, 2.48]
   },
   "snacks": {
+    "description": "Snacks section",
     "location": [202.81, 153.37, -57.66],
-    "rotation": [-2.75, 0.71, 0.03],
-    "description": "Snacks section"
+    "rotation": [-2.75, 0.71, 0.03]
   },
   "beverages": {
+    "description": "Beverages section",
     "location": [-151.78, 262.27, -647.68],
-    "rotation": [0.35, 91.57, 12.58],
-    "description": "Beverages section"
-  },
-  "drinks": {
-    "location": [-151.78, 262.27, -647.68],
-    "rotation": [0.35, 91.57, 12.58],
-    "description": "Drinks section"
+    "rotation": [0.35, 91.57, 12.58]
   }
 }
