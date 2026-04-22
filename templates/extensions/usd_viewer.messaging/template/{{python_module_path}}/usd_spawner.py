@@ -267,6 +267,34 @@ for _k, _fp in ASSET_LIBRARY.items():
     _ASSET_UNIT_SCALE[_k] = 1.0 if _fp.startswith(_USD_ASSETS) else 100.0
 
 
+def _resolve_prim_key(prim_name: str) -> str | None:
+    """Map a stage prim name (with optional numeric suffix) to an asset_key."""
+    base = re.sub(r"_\d+$", "", prim_name)
+    return (
+        _STEM_TO_KEY.get(prim_name)
+        or _STEM_TO_KEY.get(base)
+        or _STEM_TO_KEY.get(prim_name.replace("-", "_"))
+        or _STEM_TO_KEY.get(base.replace("-", "_"))
+    )
+
+
+def _gap_cluster(
+    floors: list[tuple[str, float]], tolerance: float
+) -> list[list[tuple[str, float]]]:
+    """Gap-based clustering (ascending sort) — splits where consecutive gap > tolerance."""
+    floors = sorted(floors, key=lambda x: x[1])
+    clusters: list[list[tuple[str, float]]] = []
+    cur: list[tuple[str, float]] = [floors[0]]
+    for path, z in floors[1:]:
+        if z - cur[-1][1] <= tolerance:
+            cur.append((path, z))
+        else:
+            clusters.append(cur)
+            cur = [(path, z)]
+    clusters.append(cur)
+    return clusters
+
+
 class UsdSpawner:
     """Listens for spawnUsdRequest messages and spawns USD assets on the stage."""
 
@@ -1705,31 +1733,17 @@ class UsdSpawner:
     def _reply_shelf_rows(self, payload: dict) -> None:
         get_eventdispatcher().dispatch_event("detectShelfRowsResponse", payload=payload)
 
-    def _on_detect_shelf_rows(self, event) -> None:
+    def detect_rows_for_key(
+        self, filter_key: str | None, tolerance: float = 8.0
+    ) -> dict:
         """
-        Cluster spawned asset prims by shelf-row height (bbox bottom Z/Y).
-
-        If selected_prim_path is provided the scan is filtered to only prims
-        that share the same asset key as the selected prim, so the browser
-        panel shows rows only for that item type.
-
-        Payload (all optional):
-            tolerance_cm       – max gap within a single row (default 8 cm)
-            selected_prim_path – e.g. "/World/Cheetos_Cheddar_Jalapeno_3"
-
-        Response / shelf_rows.json format:
-            { "rows": [ { "row": 1, "floor_z": 127.8, "prim_count": 9,
-                          "prim_paths": [...] }, ... ],
-              "asset_key": "cheetos_cheddar_jalapeno" }
+        Core shelf-row detection for a single asset_key (or all assets if None).
+        Returns the result dict, or None if the stage is unavailable.
+        Called directly from CustomMessageManager for multi-product analysis.
         """
-        payload     = dict(event.payload)
-        tolerance   = float(payload.get("tolerance_cm", 8.0))
-        sel_path    = payload.get("selected_prim_path", None)
-
         stage = omni.usd.get_context().get_stage()
         if not stage:
-            self._reply_shelf_rows({"error": "No stage loaded", "rows": []})
-            return
+            return None
 
         up_axis  = self._detect_up_axis()
         up_idx   = 2 if up_axis == "Z" else 1
@@ -1737,78 +1751,31 @@ class UsdSpawner:
 
         world = stage.GetPrimAtPath("/World")
         if not world:
-            self._reply_shelf_rows({"error": "No /World prim", "rows": []})
-            return
-
-        # Resolve filter key — selected path may be deep (/World/Prim/Geometry/Mesh)
-        filter_key: str | None = None
-        if sel_path:
-            sel_parts = sel_path.strip("/").split("/")
-            sel_name  = sel_parts[1] if len(sel_parts) >= 2 else sel_parts[0]
-            sel_base  = re.sub(r"_\d+$", "", sel_name)
-            filter_key = (
-                _STEM_TO_KEY.get(sel_name)
-                or _STEM_TO_KEY.get(sel_base)
-                or _STEM_TO_KEY.get(sel_name.replace("-", "_"))
-                or _STEM_TO_KEY.get(sel_base.replace("-", "_"))
-            )
-            if filter_key:
-                carb.log_warn(f"[UsdSpawner] detectShelfRows: filtering to asset_key='{filter_key}'")
-            else:
-                carb.log_warn(f"[UsdSpawner] detectShelfRows: could not resolve key for '{sel_name}', scanning all")
+            return None
 
         def _get_height(prim) -> float | None:
             try:
-                world_xf  = xf_cache.GetLocalToWorldTransform(prim)
-                return round(world_xf.ExtractTranslation()[up_idx], 2)
-            except Exception as exc:
-                carb.log_warn(f"[UsdSpawner] detectShelfRows: xform failed for {prim.GetPath()}: {exc}")
+                return round(
+                    xf_cache.GetLocalToWorldTransform(prim).ExtractTranslation()[up_idx], 2
+                )
+            except Exception:
                 return None
 
-        def _resolve_key(prim_name: str) -> str | None:
-            base = re.sub(r"_\d+$", "", prim_name)
-            return (
-                _STEM_TO_KEY.get(prim_name)
-                or _STEM_TO_KEY.get(base)
-                or _STEM_TO_KEY.get(prim_name.replace("-", "_"))
-                or _STEM_TO_KEY.get(base.replace("-", "_"))
-            )
-
-        def _cluster(floors: list[tuple[str, float]]) -> list[list[tuple[str, float]]]:
-            """Gap-based clustering sorted ascending — splits on gaps > tolerance."""
-            floors = sorted(floors, key=lambda x: x[1])
-            clusters: list[list[tuple[str, float]]] = []
-            cur: list[tuple[str, float]] = [floors[0]]
-            for path, z in floors[1:]:
-                if z - cur[-1][1] <= tolerance:
-                    cur.append((path, z))
-                else:
-                    clusters.append(cur)
-                    cur = [(path, z)]
-            clusters.append(cur)
-            return clusters
-
-        # --- Collect filtered asset heights ---
         filtered_floors: list[tuple[str, float]] = []
-
         for prim in world.GetChildren():
-            prim_name = prim.GetName()
-            asset_key = _resolve_key(prim_name)
-            if not asset_key:
+            key = _resolve_prim_key(prim.GetName())
+            if not key:
                 continue
-            if filter_key and asset_key != filter_key:
+            if filter_key and key != filter_key:
                 continue
             h = _get_height(prim)
-            if h is None:
-                continue
-            filtered_floors.append((str(prim.GetPath()), h))
+            if h is not None:
+                filtered_floors.append((str(prim.GetPath()), h))
 
         if not filtered_floors:
-            self._reply_shelf_rows({"rows": [], "asset_key": filter_key or "all",
-                                    "message": "No matching asset prims found on stage"})
-            return
+            return {"up_axis": up_axis, "tolerance_cm": tolerance,
+                    "row_count": 0, "asset_key": filter_key or "all", "rows": []}
 
-        # --- Load previous scan to preserve consistent row numbering ---
         ref_rows: list[tuple[float, int]] = []
         if filter_key:
             try:
@@ -1825,44 +1792,55 @@ class UsdSpawner:
             nearest_z, nearest_row = min(ref_rows, key=lambda t: abs(t[0] - h))
             return nearest_row if abs(nearest_z - h) <= tolerance * 4 else None
 
-        # --- Cluster filtered asset and assign row numbers ---
-        filtered_clusters = _cluster(filtered_floors)
-        filtered_clusters.sort(key=lambda g: g[0][1], reverse=True)
-
-        carb.log_warn(
-            f"[UsdSpawner] detectShelfRows: {len(filtered_floors)} prims for "
-            f"asset_key='{filter_key or 'all'}', "
-            f"height range [{filtered_floors[0][1]:.1f}…{filtered_floors[-1][1]:.1f}] cm  "
-            f"tolerance={tolerance:.1f} cm  up_axis={up_axis}  "
-            f"clusters={len(filtered_clusters)}"
-        )
+        clusters = _gap_cluster(filtered_floors, tolerance)
+        clusters.sort(key=lambda g: g[0][1], reverse=True)
 
         rows = []
-        for seq_num, group in enumerate(filtered_clusters, start=1):
-            floor_z  = round(sum(v for _, v in group) / len(group), 2)
-            z_min    = group[0][1]
-            z_max    = group[-1][1]
-            row_num  = _row_num_from_ref(floor_z) or seq_num
+        for seq_num, group in enumerate(clusters, start=1):
+            floor_z = round(sum(v for _, v in group) / len(group), 2)
+            row_num = _row_num_from_ref(floor_z) or seq_num
             rows.append({
                 "row":        row_num,
                 "floor_z":    floor_z,
-                "z_min":      z_min,
-                "z_max":      z_max,
+                "z_min":      group[0][1],
+                "z_max":      group[-1][1],
                 "prim_count": len(group),
                 "prim_paths": [p for p, _ in group],
             })
+
+        return {
+            "up_axis":      up_axis,
+            "tolerance_cm": tolerance,
+            "row_count":    len(rows),
+            "asset_key":    filter_key or "all",
+            "rows":         rows,
+        }
+
+    def _on_detect_shelf_rows(self, event) -> None:
+        """Handle detectShelfRowsRequest — resolve filter_key, detect, save, respond."""
+        payload   = dict(event.payload)
+        tolerance = float(payload.get("tolerance_cm", 8.0))
+        sel_path  = payload.get("selected_prim_path", None)
+
+        filter_key: str | None = None
+        if sel_path:
+            sel_parts  = sel_path.strip("/").split("/")
+            sel_name   = sel_parts[1] if len(sel_parts) >= 2 else sel_parts[0]
+            filter_key = _resolve_prim_key(sel_name)
             carb.log_warn(
-                f"[UsdSpawner] detectShelfRows: row {row_num}  "
-                f"floor_z={floor_z:.1f}  ({len(group)} prims)"
+                f"[UsdSpawner] detectShelfRows: "
+                f"{'filtering to ' + repr(filter_key) if filter_key else 'scanning all (no key for ' + repr(sel_name) + ')'}"
             )
 
-        result = {
-            "up_axis":       up_axis,
-            "tolerance_cm":  tolerance,
-            "row_count":     len(rows),
-            "asset_key":     filter_key or "all",
-            "rows":          rows,
-        }
+        result = self.detect_rows_for_key(filter_key, tolerance)
+
+        if result is None:
+            self._reply_shelf_rows({"error": "No stage loaded", "rows": []})
+            return
+
+        if not result["rows"]:
+            self._reply_shelf_rows({**result, "message": "No matching asset prims found on stage"})
+            return
 
         try:
             os.makedirs(os.path.dirname(_SHELF_ROWS_FILE), exist_ok=True)
