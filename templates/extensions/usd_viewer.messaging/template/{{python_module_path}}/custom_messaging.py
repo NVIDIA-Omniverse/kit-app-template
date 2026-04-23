@@ -55,6 +55,7 @@ class CustomMessageManager:
             # Planogram
             "planogramCaptureResponse",  # Small thumbnail after frame capture
             "planogramAnalysisResult",   # Structured row analysis from backend
+            "analyzeShelfResponse",      # Combined vision + row-detection planogram
             # Camera nav position registry
             "navPositionsResponse",      # Full positions list (after any CRUD operation)
             "cameraPositionResponse",    # Current camera position query result
@@ -81,6 +82,7 @@ class CustomMessageManager:
             # Planogram
             'planogramCaptureRequest': self._on_planogram_capture_request,
             'planogramAnalyzeRequest': self._on_planogram_analyze_request,
+            'analyzeShelfRequest':     self._on_analyze_shelf_request,
             # Camera nav position registry
             'getNavPositions':     self._on_get_nav_positions,
             'registerNavPosition': self._on_register_nav_position,
@@ -930,6 +932,145 @@ class CustomMessageManager:
         except Exception as exc:
             carb.log_warn(f"[CustomMessageManager] Frame compression failed ({exc}), using raw")
             return frame_b64, frame_b64
+
+    # ===== ANALYZE SHELF (vision product ID + row detection planogram) =====
+
+    def _on_analyze_shelf_request(self, event: carb.events.IEvent):
+        """Handle analyzeShelfRequest — capture frame, identify products, detect rows."""
+        carb.log_info("[CustomMessageManager] analyzeShelfRequest received")
+        asyncio.ensure_future(self._run_shelf_analysis(dict(event.payload)))
+
+    async def _run_shelf_analysis(self, payload: dict):
+        """
+        Full pipeline:
+        1. Capture viewport frame
+        2. POST to /api/identify-shelf-products → list of asset_keys
+        3. For each key, call usd_spawner.detect_rows_for_key()
+        4. Merge per-product rows into unified shelf levels by floor_z
+        5. Dispatch analyzeShelfResponse
+        """
+        import json as _json
+        import urllib.request as _urllib
+
+        tolerance  = float(payload.get("tolerance_cm", 8.0))
+        model      = payload.get("model", "qwen")
+        asset_keys = payload.get("asset_keys")  # pre-filled → skip vision (refresh mode)
+
+        def _err(msg: str):
+            get_eventdispatcher().dispatch_event(
+                "analyzeShelfResponse", payload={"success": False, "error": msg}
+            )
+
+        # 1. Capture frame (always — need a fresh thumbnail)
+        frame_b64 = await self._viewport_capture.capture_frame_async()
+        if not frame_b64:
+            _err("Frame capture failed")
+            return
+
+        thumbnail_b64, vision_b64 = self._compress_planogram_frame(frame_b64)
+
+        # 2. Identify products (skipped in refresh mode when asset_keys already known)
+        if not asset_keys:
+            backend = self._agent_client._base_url
+            url     = f"{backend}/api/identify-shelf-products"
+            body    = _json.dumps({"frame_data": vision_b64, "model": model}).encode("utf-8")
+            try:
+                loop = asyncio.get_event_loop()
+                resp = await loop.run_in_executor(
+                    None,
+                    lambda: _json.loads(
+                        _urllib.urlopen(
+                            _urllib.Request(url, data=body,
+                                            headers={"Content-Type": "application/json"},
+                                            method="POST"),
+                            timeout=120,
+                        ).read().decode("utf-8")
+                    ),
+                )
+                asset_keys = resp.get("products", [])
+            except Exception as exc:
+                carb.log_error(f"[CustomMessageManager] identify-shelf-products failed: {exc}")
+                _err(f"Product identification failed: {exc}")
+                return
+
+            if not asset_keys:
+                _err("No products recognised in the captured frame")
+                return
+
+        carb.log_info(f"[CustomMessageManager] analyzeShelf ({'refresh' if payload.get('asset_keys') else 'full'}): {len(asset_keys)} products → {asset_keys}")
+
+        # 3. Row detection per product
+        all_rows: dict = {}
+        for key in asset_keys:
+            result = self._usd_spawner.detect_rows_for_key(key, tolerance)
+            if result and result.get("rows"):
+                all_rows[key] = result["rows"]
+                carb.log_info(f"[CustomMessageManager] analyzeShelf: {key} → {len(result['rows'])} rows")
+
+        if not all_rows:
+            _err("No shelf rows detected for any identified product")
+            return
+
+        # 4. Merge into unified shelf levels aligned by floor_z
+        shelf_levels = self._merge_shelf_levels(all_rows, tolerance)
+
+        # Strip prim_paths before sending — arrays can exceed the 65 KB WebRTC limit
+        for lv in shelf_levels:
+            for prod in lv.get("products", {}).values():
+                prod.pop("prim_paths", None)
+
+        # 5. Respond
+        get_eventdispatcher().dispatch_event(
+            "analyzeShelfResponse",
+            payload={
+                "success":      True,
+                "shelf_levels": shelf_levels,
+                "asset_keys":   list(all_rows.keys()),
+                "thumbnail":    thumbnail_b64,
+                "tolerance_cm": tolerance,
+            },
+        )
+
+    @staticmethod
+    def _merge_shelf_levels(all_rows: dict, tolerance: float) -> list:
+        """
+        Align per-product rows into shared shelf levels by floor_z proximity.
+        Returns [{level, floor_z, products: {asset_key: {count, prim_paths}}}]
+        """
+        entries = sorted(
+            [(row["floor_z"], key, row)
+             for key, rows in all_rows.items()
+             for row in rows],
+            key=lambda x: x[0],
+            reverse=True,
+        )
+        if not entries:
+            return []
+
+        # Cluster by floor_z gap (2× tolerance since products on the same shelf
+        # level may not share exactly the same Z origin)
+        clusters: list = []
+        cur = [entries[0]]
+        for entry in entries[1:]:
+            if abs(entry[0] - cur[-1][0]) <= tolerance * 2:
+                cur.append(entry)
+            else:
+                clusters.append(cur)
+                cur = [entry]
+        clusters.append(cur)
+
+        shelf_levels = []
+        for level_num, cluster in enumerate(clusters, start=1):
+            avg_z = round(sum(e[0] for e in cluster) / len(cluster), 2)
+            products: dict = {}
+            for _, key, row in cluster:
+                if key not in products:
+                    products[key] = {"count": 0, "prim_paths": []}
+                products[key]["count"]      += row["prim_count"]
+                products[key]["prim_paths"] += row["prim_paths"]
+            shelf_levels.append({"level": level_num, "floor_z": avg_z, "products": products})
+
+        return shelf_levels
 
     # ===== CAMERA NAV POSITION REGISTRY =====
 
