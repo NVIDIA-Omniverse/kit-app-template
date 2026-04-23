@@ -3,13 +3,13 @@
     <package name="repo_man" version="2.1.0"/>
   </dependency>
   <dependency name="repo_build" linkPath="../../_repo/deps/repo_build">
-    <package name="repo_build" version="1.23.1"/>
+    <package name="repo_build" version="1.27.2"/>
   </dependency>
   <dependency name="repo_kit_tools" linkPath="../../_repo/deps/repo_kit_tools">
     <package name="repo_kit_tools" version="1.18.0"/>
   </dependency>
   <dependency name="repo_test" linkPath="../../_repo/deps/repo_test">
-    <package name="repo_test" version="2.43.2" />
+    <package name="repo_test" version="2.46.1" />
   </dependency>
   <dependency name="repo_package" linkPath="../../_repo/deps/repo_package">
     <package name="repo_package" version="6.1.1" />
@@ -18,6 +18,6 @@
     <package name="repo_kit_template" version="2.3.1" />
   </dependency>
   <dependency name="repo_usd" linkPath="../../_repo/deps/repo_usd">
-    <package name="repo_usd" version="5.0.26" />
+    <package name="repo_usd" version="5.0.29" />
   </dependency>
 </project>

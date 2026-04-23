@@ -30,7 +30,7 @@ import sys
 
 
 MIN_PYTHON_VERSION = (3, 10, 0)
-MAX_PYTHON_VERSION = (3, 11, 2)
+MAX_PYTHON_VERSION = (3, 12, 13)
 
 
 def is_valid_python_version(version: tuple[int, int, int] = sys.version_info[:3]):
@@ -89,7 +89,7 @@ def get_packages_root(conf_dir: str) -> str:
             )
         elif platform_name == "Linux":
             try:
-                cache_root = os.environ["XDG_HOME_CACHE"]
+                cache_root = os.environ["XDG_CACHE_HOME"]
             except KeyError:
                 cache_root = os.path.join(os.path.expanduser("~"), ".cache")
             return os.path.join(cache_root, "packman")
