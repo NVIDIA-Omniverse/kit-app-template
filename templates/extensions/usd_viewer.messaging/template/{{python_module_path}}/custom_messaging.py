@@ -283,6 +283,7 @@ class CustomMessageManager:
         session_id = payload.get('session_id', str(uuid.uuid4()))
         request_id = payload.get('request_id', str(uuid.uuid4()))
         context = payload.get('context', {})
+        language = payload.get('language') or context.get('language') or 'en'
 
         carb.log_info(f"[CustomMessageManager] Chat message received: {message[:50]}...")
 
@@ -294,12 +295,13 @@ class CustomMessageManager:
             'message': message,
             'session_id': session_id,
             'context': context,
+            'language': language,
             'cancelled': False
         }
 
         # Process chat asynchronously
         asyncio.ensure_future(
-            self._process_chat_message(request_id, message, session_id, context)
+            self._process_chat_message(request_id, message, session_id, context, language)
         )
 
     def _on_chat_cancel(self, event: carb.events.IEvent):
@@ -316,7 +318,8 @@ class CustomMessageManager:
         request_id: str,
         message: str,
         session_id: str,
-        context: Dict[str, Any]
+        context: Dict[str, Any],
+        language: str,
     ):
         """Process a chat message through the agent backend"""
         try:
@@ -352,7 +355,8 @@ class CustomMessageManager:
             chat_request = ChatRequest(
                 message=message,
                 session_id=session_id,
-                context=enriched_context
+                context=enriched_context,
+                language=language,
             )
 
             response = await self._agent_client.send_chat_message(chat_request)
@@ -369,7 +373,8 @@ class CustomMessageManager:
                     original_message=message,
                     session_id=session_id,
                     action_params=response.action_params or {},
-                    context=enriched_context
+                    context=enriched_context,
+                    language=language,
                 )
             elif response.action == AgentAction.GET_SCENE_INFO:
                 # Agent requested scene information
@@ -378,7 +383,8 @@ class CustomMessageManager:
                     original_message=message,
                     session_id=session_id,
                     response=response,
-                    context=enriched_context
+                    context=enriched_context,
+                    language=language,
                 )
             elif response.action == AgentAction.NAVIGATE_TO:
                 # Agent requested camera navigation to a location
@@ -455,7 +461,8 @@ class CustomMessageManager:
         original_message: str,
         session_id: str,
         action_params: Dict[str, Any],
-        context: Dict[str, Any]
+        context: Dict[str, Any],
+        language: str,
     ):
         """Handle the capture_frame action from agent"""
         carb.log_info("[CustomMessageManager] Capturing viewport frame for analysis...")
@@ -496,7 +503,8 @@ class CustomMessageManager:
                 message=resolved_query,
                 session_id=session_id,
                 frame_data=frame_data,
-                context=context
+                context=context,
+                language=language,
             )
 
             response = await self._agent_client.send_chat_message(chat_request)
@@ -521,7 +529,8 @@ class CustomMessageManager:
             frame_data=frame_data,
             original_query=resolved_query,
             session_id=session_id,
-            context=context
+            context=context,
+            language=language,
         )
 
         if self._is_request_cancelled(request_id):
@@ -560,7 +569,8 @@ class CustomMessageManager:
         original_message: str,
         session_id: str,
         response: AgentResponse,
-        context: Dict[str, Any]
+        context: Dict[str, Any],
+        language: str,
     ):
         """Handle the get_scene_info action from agent"""
         # Gather scene information
@@ -575,7 +585,8 @@ class CustomMessageManager:
         chat_request = ChatRequest(
             message=original_message,
             session_id=session_id,
-            context=updated_context
+            context=updated_context,
+            language=language,
         )
 
         followup_response = await self._agent_client.send_chat_message(chat_request)

@@ -42,6 +42,7 @@ class ChatRequest:
     session_id: str
     frame_data: Optional[str] = None  # Base64 encoded image
     context: Optional[Dict[str, Any]] = None
+    language: str = "en"
 
 
 class AgentClient:
@@ -86,7 +87,8 @@ class AgentClient:
         payload = {
             "message": request.message,
             "session_id": request.session_id,
-            "context": request.context or {}
+            "context": request.context or {},
+            "language": request.language,
         }
 
         if request.frame_data:
@@ -133,7 +135,8 @@ class AgentClient:
         payload = {
             "message": request.message,
             "session_id": request.session_id,
-            "context": request.context or {}
+            "context": request.context or {},
+            "language": request.language,
         }
 
         if request.frame_data:
@@ -176,7 +179,8 @@ class AgentClient:
         frame_data: str,
         original_query: str,
         session_id: str,
-        context: Optional[Dict[str, Any]] = None
+        context: Optional[Dict[str, Any]] = None,
+        language: str = "en",
     ) -> AgentResponse:
         """
         Send a captured frame to the vision agent for analysis.
@@ -186,6 +190,7 @@ class AgentClient:
             original_query: The original user query
             session_id: Session identifier
             context: Additional context
+            language: Response language code
 
         Returns:
             AgentResponse with the analysis
@@ -194,7 +199,7 @@ class AgentClient:
             import aiohttp
         except ImportError:
             return await self._send_analysis_urllib(
-                frame_data, original_query, session_id, context
+                frame_data, original_query, session_id, context, language
             )
 
         url = f"{self._base_url}/api/analyze"
@@ -203,7 +208,8 @@ class AgentClient:
             "frame_data": frame_data,
             "query": original_query,
             "session_id": session_id,
-            "context": context or {}
+            "context": context or {},
+            "language": language,
         }
 
         try:
@@ -237,7 +243,8 @@ class AgentClient:
         frame_data: str,
         original_query: str,
         session_id: str,
-        context: Optional[Dict[str, Any]]
+        context: Optional[Dict[str, Any]],
+        language: str,
     ) -> AgentResponse:
         """Fallback analysis using urllib"""
         import urllib.request
@@ -249,7 +256,8 @@ class AgentClient:
             "frame_data": frame_data,
             "query": original_query,
             "session_id": session_id,
-            "context": context or {}
+            "context": context or {},
+            "language": language,
         }
 
         try:
