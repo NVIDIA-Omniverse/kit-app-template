@@ -1245,6 +1245,7 @@ class CustomMessageManager:
         carb.log_info(f"[CustomMessageManager] setActiveStore '{store_key}'")
         self._camera_navigation.set_active_store(store_key)
         self._dispatch_nav_positions({"store_key": store_key})
+        self._dispatch_nav_routes({"store_key": store_key})
 
     def _on_promote_nav_position(self, event: carb.events.IEvent) -> None:
         """
