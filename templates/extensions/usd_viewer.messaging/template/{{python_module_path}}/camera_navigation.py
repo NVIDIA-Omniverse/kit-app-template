@@ -634,13 +634,26 @@ class CameraNavigation:
         try:
             self._animation_running = True
 
-            for seg_idx, pose in enumerate(poses):
-                ok = await self._animate_segment(
-                    translate_op, rotate_op, pose, speed,
-                    is_last=(seg_idx == len(poses) - 1),
+            # Catmull-Rom spline interpolation
+            # Add current position as the first pose to ensure smooth departure from the current location
+            current_pos = translate_op.Get()
+            current_rot = rotate_op.Get()
+            poses.insert(0, {"location": list(current_pos), "rotation": list(current_rot)})
+            segments = []
+            for i in range(len(poses) - 1):
+                p0 = poses[i - 1] if i - 1 >= 0 else poses[i]
+                p1 = poses[i]
+                p2 = poses[i + 1]
+                p3 = poses[i + 2] if i + 2 < len(poses) else poses[i + 1]
+                segments.append([p0, p1, p2, p3])
+            
+            for _, segment in enumerate(segments):
+                ok = await self._animate_segment_catmull_rom(
+                    translate_op, rotate_op, segment
                 )
                 if not ok:
                     return False
+            
 
             self._animation_running = False
             carb.log_info(f"[CameraNavigation] Arrived at: {nav_key}")
@@ -657,41 +670,25 @@ class CameraNavigation:
             self._animation_running = False
             return False
 
-    async def _animate_segment(
+
+    async def _animate_segment_catmull_rom(
         self,
         translate_op,
         rotate_op,
-        target_pose: Dict[str, Any],
-        speed: float,
-        is_last: bool = True,
+        segment: List[Dict[str, Any]],
     ) -> bool:
         """
-        Animate the camera from its current position to *target_pose*.
-
-        For intermediate waypoints (is_last=False) the easing uses
-        ease-in-out so the camera accelerates *and* decelerates,
-        giving smooth transitions between segments.
-        For the final segment (is_last=True) it uses ease-out only
-        (fast start, gentle stop) for a cinematic arrival.
-
-        Rotation is interpolated via the shortest angular path (±180°)
-        to prevent the camera from spinning the wrong way around.
-
-        Returns False if the animation was cancelled mid-flight.
+        Animate the camera using Catmull-Rom splines for smooth position interpolation,
+        and Shortest-Delta Euler interpolation for predictable rotation.
         """
         from pxr import Gf
 
-        tx, ty, tz = target_pose["location"]
-        rx, ry, rz = target_pose["rotation"]
+        p0, p1, p2, p3 = segment
+        num_frames = 60
 
-        current_pos = translate_op.Get()
-        current_rot = rotate_op.Get()
-
-        dist = math.sqrt(
-            (tx - current_pos[0])**2 +
-            (ty - current_pos[1])**2 +
-            (tz - current_pos[2])**2
-        )
+        # --- PREPARE ROTATION DELTAS ---
+        current_rot = p1["rotation"]
+        target_rot = p2["rotation"]
 
         # Compute shortest-path rotation deltas (wrap to ±180°)
         def _shortest_delta(current_deg: float, target_deg: float) -> float:
@@ -700,45 +697,28 @@ class CameraNavigation:
                 d -= 360.0
             return d
 
-        drx = _shortest_delta(float(current_rot[0]), rx)
-        dry = _shortest_delta(float(current_rot[1]), ry)
-        drz = _shortest_delta(float(current_rot[2]), rz)
+        drx = _shortest_delta(float(current_rot[0]), float(target_rot[0]))
+        dry = _shortest_delta(float(current_rot[1]), float(target_rot[1]))
+        drz = _shortest_delta(float(current_rot[2]), float(target_rot[2]))
 
-        # Frame count from distance
-        if is_last:
-            dist_frames = max(60, min(180, int(dist / 4.0 / speed)))
-        else:
-            dist_frames = max(50, min(150, int(dist / 3.5 / speed)))
-
-        # Rotation-aware floor: ~1.5 frames per degree of the largest rotation
-        max_rot = max(abs(drx), abs(dry), abs(drz))
-        rot_frames = int(max_rot * 1.5 / speed)
-
-        frames = max(dist_frames, rot_frames)
-
-        for i in range(frames + 1):
+        for i in range(num_frames):
             if not self._animation_running:
                 carb.log_info("[CameraNavigation] Animation stopped")
                 return False
 
-            t = i / frames
-            if is_last:
-                # Ease-out exponential (fast start, smooth stop)
-                t = 1.0 - math.pow(2.0, -10.0 * t) if t < 1.0 else 1.0
-            else:
-                # Ease-in-out cubic (smoother than quadratic, gentler start)
-                if t < 0.5:
-                    t = 4.0 * t * t * t
-                else:
-                    t = 1.0 - (-2.0 * t + 2.0) ** 3 / 2.0
+            t = i / (num_frames - 1)
 
-            new_pos = Gf.Vec3d(
-                current_pos[0] + (tx - current_pos[0]) * t,
-                current_pos[1] + (ty - current_pos[1]) * t,
-                current_pos[2] + (tz - current_pos[2]) * t,
+            # --- 1. POSITION (Catmull-Rom Curved Path) ---
+            new_pos = self._catmull_rom_spline(
+                Gf.Vec3d(*p0["location"]),
+                Gf.Vec3d(*p1["location"]),
+                Gf.Vec3d(*p2["location"]),
+                Gf.Vec3d(*p3["location"]),
+                t
             )
             translate_op.Set(new_pos)
 
+            # --- 2. ROTATION (Predictable Euler Shortest-Path) ---
             new_rot = Gf.Vec3f(
                 float(current_rot[0]) + drx * t,
                 float(current_rot[1]) + dry * t,
@@ -747,11 +727,24 @@ class CameraNavigation:
             rotate_op.Set(new_rot)
 
             await asyncio.sleep(1 / 60)
-
-        # Snap to exact target
-        translate_op.Set(Gf.Vec3d(tx, ty, tz))
-        rotate_op.Set(Gf.Vec3f(rx, ry, rz))
+        
+        # Snap to exact target at the end to prevent micro-drifts
+        translate_op.Set(Gf.Vec3d(*p2["location"]))
+        rotate_op.Set(Gf.Vec3f(*p2["rotation"]))
+        
         return True
+
+
+
+    def _catmull_rom_spline(self, p0, p1, p2, p3, t):
+        t2 = t * t
+        t3 = t2 * t
+        return 0.5 * (
+            (2.0 * p1) +
+            (-p0 + p2) * t +
+            (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * t2 +
+            (-p0 + 3.0 * p1 - 3.0 * p2 + p3) * t3
+        )
 
     def stop(self):
         """Stop any running camera animation"""
