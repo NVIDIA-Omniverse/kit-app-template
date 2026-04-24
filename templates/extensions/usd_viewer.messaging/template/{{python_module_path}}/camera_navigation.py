@@ -539,8 +539,6 @@ class CameraNavigation:
             tx, ty, tz = destination.get("location", (0.0, 0.0, 0.0))
             rx, ry, rz = destination.get("rotation", (0.0, 0.0, 0.0))
             destination_key = f"custom_{tx:.1f}_{ty:.1f}_{tz:.1f}"
-            self.add_position(destination_key, (tx, ty, tz), (rx, ry, rz), description="Custom Target")
-            destination = destination_key
 
             # Instant teleport
             try:
