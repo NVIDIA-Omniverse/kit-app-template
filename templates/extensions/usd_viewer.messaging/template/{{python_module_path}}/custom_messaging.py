@@ -1315,7 +1315,7 @@ class CustomMessageManager:
         carb.log_info(f"[CustomMessageManager] navigateTo '{destination}' instant={instant}")
         asyncio.ensure_future(self._do_navigate_direct(destination, instant, speed))
 
-    async def _do_navigate_direct(self, destination: str, instant: bool, speed: float) -> None:
+    async def _do_navigate_direct(self, destination: str|Dict, instant: bool, speed: float) -> None:
         success = await self._camera_navigation.navigate_to(
             destination=destination, instant=instant, speed=speed
         )

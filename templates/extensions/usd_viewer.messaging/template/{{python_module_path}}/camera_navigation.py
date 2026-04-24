@@ -519,7 +519,7 @@ class CameraNavigation:
 
     async def navigate_to(
         self,
-        destination: str,
+        destination: str|Dict,
         speed: float = 1.0,
         instant: bool = False
     ) -> bool:
@@ -527,13 +527,52 @@ class CameraNavigation:
         Navigate camera to a named destination.
 
         Args:
-            destination: Name of the destination (e.g., "pringles", "coffee")
+            destination: Name of the destination (e.g., "pringles", "coffee") or a dict with explicit location/rotation:
             speed: Animation speed multiplier (default 1.0)
             instant: If True, teleport instantly without animation
 
         Returns:
             True if navigation started successfully, False otherwise
         """
+         # -------- Navigation to specified location & rotation --------
+        if isinstance(destination, dict):
+            tx, ty, tz = destination.get("location", (0.0, 0.0, 0.0))
+            rx, ry, rz = destination.get("rotation", (0.0, 0.0, 0.0))
+            destination_key = f"custom_{tx:.1f}_{ty:.1f}_{tz:.1f}"
+            self.add_position(destination_key, (tx, ty, tz), (rx, ry, rz), description="Custom Target")
+            destination = destination_key
+
+            # Instant teleport
+            try:
+                # Stop any running animation
+                self._animation_running = False
+                await asyncio.sleep(0.05)  # Brief pause to let previous animation stop
+
+                # Disable action graphs
+                self._disable_action_graph()
+
+                # Get camera operations
+                _, translate_op, rotate_op = self._get_camera_and_ops()
+
+                if not translate_op or not rotate_op:
+                    carb.log_error("[CameraNavigation] Could not get camera transform ops")
+                    return False
+
+                from pxr import Gf
+                translate_op.Set(Gf.Vec3d(tx, ty, tz))
+                rotate_op.Set(Gf.Vec3f(rx, ry, rz))
+                carb.log_info(f"[CameraNavigation] Teleported to: {destination_key}")
+
+                if self._on_arrival_callback:
+                    self._on_arrival_callback(destination_key)
+
+                return True
+            except Exception as e:
+                carb.log_error(f"[CameraNavigation] Teleport failed: {e}")
+                return False
+
+
+        # -------- Navigation to named destination --------
         matched_position = self.find_position(destination)
 
         # Check if this destination is a route-only target (no matching position)
