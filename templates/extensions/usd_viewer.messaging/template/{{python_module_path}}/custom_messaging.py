@@ -59,6 +59,7 @@ class CustomMessageManager:
             # Camera nav position registry
             "navPositionsResponse",      # Full positions list (after any CRUD operation)
             "cameraPositionResponse",    # Current camera position query result
+            "navRoutesResponse",         # Waypoint routes list
         ]
 
         for message_type in outgoing_messages:
@@ -93,6 +94,10 @@ class CustomMessageManager:
             'setActiveStore':      self._on_set_active_store,
             'promoteNavPosition':  self._on_promote_nav_position,
             'saveAllAsBuiltin':    self._on_save_all_as_builtin,
+            # Waypoint route management
+            'saveNavRoute':        self._on_save_nav_route,
+            'deleteNavRoute':      self._on_delete_nav_route,
+            'getNavRoutes':        self._on_get_nav_routes,
         }
 
         ed = get_eventdispatcher()
@@ -278,6 +283,7 @@ class CustomMessageManager:
         session_id = payload.get('session_id', str(uuid.uuid4()))
         request_id = payload.get('request_id', str(uuid.uuid4()))
         context = payload.get('context', {})
+        language = payload.get('language') or context.get('language') or 'en'
 
         carb.log_info(f"[CustomMessageManager] Chat message received: {message[:50]}...")
 
@@ -289,12 +295,13 @@ class CustomMessageManager:
             'message': message,
             'session_id': session_id,
             'context': context,
+            'language': language,
             'cancelled': False
         }
 
         # Process chat asynchronously
         asyncio.ensure_future(
-            self._process_chat_message(request_id, message, session_id, context)
+            self._process_chat_message(request_id, message, session_id, context, language)
         )
 
     def _on_chat_cancel(self, event: carb.events.IEvent):
@@ -311,7 +318,8 @@ class CustomMessageManager:
         request_id: str,
         message: str,
         session_id: str,
-        context: Dict[str, Any]
+        context: Dict[str, Any],
+        language: str,
     ):
         """Process a chat message through the agent backend"""
         try:
@@ -347,7 +355,8 @@ class CustomMessageManager:
             chat_request = ChatRequest(
                 message=message,
                 session_id=session_id,
-                context=enriched_context
+                context=enriched_context,
+                language=language,
             )
 
             response = await self._agent_client.send_chat_message(chat_request)
@@ -364,7 +373,8 @@ class CustomMessageManager:
                     original_message=message,
                     session_id=session_id,
                     action_params=response.action_params or {},
-                    context=enriched_context
+                    context=enriched_context,
+                    language=language,
                 )
             elif response.action == AgentAction.GET_SCENE_INFO:
                 # Agent requested scene information
@@ -373,7 +383,8 @@ class CustomMessageManager:
                     original_message=message,
                     session_id=session_id,
                     response=response,
-                    context=enriched_context
+                    context=enriched_context,
+                    language=language,
                 )
             elif response.action == AgentAction.NAVIGATE_TO:
                 # Agent requested camera navigation to a location
@@ -450,7 +461,8 @@ class CustomMessageManager:
         original_message: str,
         session_id: str,
         action_params: Dict[str, Any],
-        context: Dict[str, Any]
+        context: Dict[str, Any],
+        language: str,
     ):
         """Handle the capture_frame action from agent"""
         carb.log_info("[CustomMessageManager] Capturing viewport frame for analysis...")
@@ -459,6 +471,9 @@ class CustomMessageManager:
         width = action_params.get('width', 1280)
         height = action_params.get('height', 720)
         followup_intent = action_params.get('followup_intent')  # e.g., 'demand_forecast', 'ec_search'
+        # Use the intent-classifier's resolved_query (self-contained rewrite) so the
+        # vision agent receives a fully contextualised question.
+        resolved_query = action_params.get('resolved_query', original_message)
 
         # Capture the viewport
         frame_data = await self._viewport_capture.capture_frame_async(
@@ -483,12 +498,13 @@ class CustomMessageManager:
         if followup_intent:
             carb.log_info(f"[CustomMessageManager] Followup intent: {followup_intent}, sending to /api/chat with frame...")
 
-            # Send back to chat endpoint with frame data
+            # Send back to chat endpoint with frame data (use resolved_query)
             chat_request = ChatRequest(
-                message=original_message,
+                message=resolved_query,
                 session_id=session_id,
                 frame_data=frame_data,
-                context=context
+                context=context,
+                language=language,
             )
 
             response = await self._agent_client.send_chat_message(chat_request)
@@ -511,9 +527,10 @@ class CustomMessageManager:
 
         analysis_response = await self._agent_client.send_frame_for_analysis(
             frame_data=frame_data,
-            original_query=original_message,
+            original_query=resolved_query,
             session_id=session_id,
-            context=context
+            context=context,
+            language=language,
         )
 
         if self._is_request_cancelled(request_id):
@@ -552,7 +569,8 @@ class CustomMessageManager:
         original_message: str,
         session_id: str,
         response: AgentResponse,
-        context: Dict[str, Any]
+        context: Dict[str, Any],
+        language: str,
     ):
         """Handle the get_scene_info action from agent"""
         # Gather scene information
@@ -567,7 +585,8 @@ class CustomMessageManager:
         chat_request = ChatRequest(
             message=original_message,
             session_id=session_id,
-            context=updated_context
+            context=updated_context,
+            language=language,
         )
 
         followup_response = await self._agent_client.send_chat_message(chat_request)
@@ -1305,6 +1324,66 @@ class CustomMessageManager:
 
     # ── Per-store built-in preset handlers ──────────────────────────────────
 
+    # ── Waypoint route handlers ────────────────────────────────────────────
+
+    def _on_save_nav_route(self, event: carb.events.IEvent) -> None:
+        """
+        Handle saveNavRoute message.
+        Payload: {
+            destination: "pringles",
+            waypoints: [{location:[x,y,z], rotation:[rx,ry,rz]}, ...],
+            start: {location:[x,y,z], rotation:[rx,ry,rz]}  // optional
+        }
+        """
+        destination = event.payload.get("destination", "").strip()
+        waypoints = event.payload.get("waypoints", [])
+        if not destination:
+            carb.log_warn("[CustomMessageManager] saveNavRoute: empty destination ignored")
+            return
+        # Convert flat dicts from WebRTC payload
+        wp_list = []
+        for wp in waypoints:
+            loc = wp.get("location", [0, 0, 0])
+            rot = wp.get("rotation", [0, 0, 0])
+            wp_list.append({"location": list(loc), "rotation": list(rot)})
+
+        # Optional start position
+        start_raw = event.payload.get("start")
+        start = None
+        if start_raw and isinstance(start_raw, dict):
+            start = {
+                "location": list(start_raw.get("location", [0, 0, 0])),
+                "rotation": list(start_raw.get("rotation", [0, 0, 0])),
+            }
+
+        success = self._camera_navigation.save_route(destination, wp_list, start=start)
+        carb.log_info(
+            f"[CustomMessageManager] saveNavRoute '{destination}' "
+            f"({len(wp_list)} waypoints, start={'yes' if start else 'no'}) → saved={success}"
+        )
+        self._dispatch_nav_routes({"saved": success, "destination": destination})
+
+    def _on_delete_nav_route(self, event: carb.events.IEvent) -> None:
+        """Handle deleteNavRoute message.  Payload: { destination: "pringles" }"""
+        destination = event.payload.get("destination", "").strip()
+        if not destination:
+            return
+        success = self._camera_navigation.delete_route(destination)
+        carb.log_info(f"[CustomMessageManager] deleteNavRoute '{destination}' → success={success}")
+        self._dispatch_nav_routes({"deleted": success, "destination": destination})
+
+    def _on_get_nav_routes(self, event: carb.events.IEvent) -> None:
+        carb.log_info("[CustomMessageManager] getNavRoutes received")
+        self._dispatch_nav_routes()
+
+    def _dispatch_nav_routes(self, extra: dict = None) -> None:
+        """Send all routes to the web client."""
+        routes = self._camera_navigation.get_all_routes()
+        payload = {"routes": routes, **(extra or {})}
+        get_eventdispatcher().dispatch_event("navRoutesResponse", payload=payload)
+
+    # ── End waypoint route handlers ────────────────────────────────────────
+
     def _on_set_active_store(self, event: carb.events.IEvent) -> None:
         """
         Handle setActiveStore message from the web client.
@@ -1318,6 +1397,7 @@ class CustomMessageManager:
         carb.log_info(f"[CustomMessageManager] setActiveStore '{store_key}'")
         self._camera_navigation.set_active_store(store_key)
         self._dispatch_nav_positions({"store_key": store_key})
+        self._dispatch_nav_routes({"store_key": store_key})
 
     def _on_promote_nav_position(self, event: carb.events.IEvent) -> None:
         """

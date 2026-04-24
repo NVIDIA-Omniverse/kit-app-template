@@ -5,12 +5,15 @@ import asyncio
 import json
 import math
 import os
-from typing import Dict, Any, Optional, Tuple, Callable
+from typing import Dict, Any, List, Optional, Tuple, Callable
 
 import carb
 
 # JSON file to persist user-registered camera positions (sibling of this .py file)
 NAV_PRESETS_FILE = os.path.join(os.path.dirname(__file__), "nav_presets.json")
+
+# JSON file to persist waypoint routes (sibling of this .py file)
+NAV_ROUTES_FILE = os.path.join(os.path.dirname(__file__), "nav_routes.json")
 
 # Directory that holds one JSON file per store key (e.g. pipc.json, 711.json)
 STORE_PRESETS_DIR = os.path.join(os.path.dirname(__file__), "store_presets")
@@ -34,8 +37,14 @@ class CameraNavigation:
         # Merged view used for navigation
         self._positions: Dict[str, Dict[str, Any]] = {}
 
-        # Load custom positions from disk and merge
+        # Waypoint routes: keyed by destination name, each is a list of waypoints
+        # that the camera visits in order before reaching the final destination.
+        # Format: { "destination_key": { "waypoints": [{"location":[x,y,z], "rotation":[rx,ry,rz]}, ...] } }
+        self._routes: Dict[str, Dict[str, Any]] = {}
+
+        # Load custom positions and routes from disk and merge
         self._load_custom_positions()
+        self._load_routes()
         self._rebuild_positions()
 
         carb.log_info(f"[CameraNavigation] Initialized with camera: {camera_path}")
@@ -214,6 +223,106 @@ class CameraNavigation:
         return result
 
     # ===== END JSON PERSISTENCE =====
+
+    # ===== ROUTE MANAGEMENT =====
+
+    def _load_routes(self) -> None:
+        """Load waypoint routes from nav_routes.json."""
+        if not os.path.exists(NAV_ROUTES_FILE):
+            return
+        try:
+            with open(NAV_ROUTES_FILE, "r") as f:
+                data: Dict[str, Any] = json.load(f)
+            self._routes = {k.lower(): v for k, v in data.items()}
+            carb.log_info(f"[CameraNavigation] Loaded {len(self._routes)} routes from disk")
+        except Exception as e:
+            carb.log_error(f"[CameraNavigation] Failed to load nav_routes.json: {e}")
+
+    def _save_routes_to_disk(self) -> bool:
+        """Persist _routes to nav_routes.json."""
+        try:
+            with open(NAV_ROUTES_FILE, "w") as f:
+                json.dump(self._routes, f, indent=2)
+            return True
+        except Exception as e:
+            carb.log_error(f"[CameraNavigation] Failed to write nav_routes.json: {e}")
+            return False
+
+    def save_route(
+        self,
+        destination: str,
+        waypoints: List[Dict[str, Any]],
+        start: Optional[Dict[str, Any]] = None,
+    ) -> bool:
+        """
+        Register a waypoint route for a destination.
+
+        Args:
+            destination: The target position name (must exist in _positions).
+            waypoints: Ordered list of intermediate points the camera visits
+                       before arriving at the destination.  Each element:
+                       {"location": [x,y,z], "rotation": [rx,ry,rz]}
+            start: Optional starting pose.  If provided the camera will
+                   move here before beginning the smooth
+                   animation through the waypoints.  Same format as a
+                   waypoint: {"location": [x,y,z], "rotation": [rx,ry,rz]}.
+                   If omitted the camera lerps from its current position.
+        """
+        key = destination.lower().strip().replace(" ", "_")
+        route_data: Dict[str, Any] = {"waypoints": waypoints}
+        if start:
+            route_data["start"] = start
+        self._routes[key] = route_data
+        saved = self._save_routes_to_disk()
+        carb.log_info(
+            f"[CameraNavigation] Saved route for '{key}' "
+            f"with {len(waypoints)} waypoint(s)"
+            f"{' + start position' if start else ''}"
+        )
+        return saved
+
+    def delete_route(self, destination: str) -> bool:
+        """Remove the waypoint route for a destination."""
+        key = destination.lower().strip().replace(" ", "_")
+        if key not in self._routes:
+            return False
+        del self._routes[key]
+        return self._save_routes_to_disk()
+
+    def get_route(self, destination: str) -> Optional[List[Dict[str, Any]]]:
+        """Return the waypoint list for a destination, or None."""
+        key = destination.lower().strip().replace(" ", "_")
+        route = self._routes.get(key)
+        return route["waypoints"] if route else None
+
+    def get_route_start(self, destination: str) -> Optional[Dict[str, Any]]:
+        """Return the start pose for a route, or None if not set."""
+        key = destination.lower().strip().replace(" ", "_")
+        route = self._routes.get(key)
+        if route:
+            return route.get("start")
+        return None
+
+    def find_route(self, name: str) -> Optional[str]:
+        """Find a route by name (fuzzy matching), same logic as find_position."""
+        name_lower = name.lower().strip()
+        if name_lower in self._routes:
+            return name_lower
+        for key in self._routes:
+            if name_lower in key or key in name_lower:
+                return key
+        for key in self._routes:
+            key_words = key.replace("_", " ").split()
+            name_words = name_lower.replace("_", " ").split()
+            if any(w in key_words for w in name_words):
+                return key
+        return None
+
+    def get_all_routes(self) -> Dict[str, Any]:
+        """Return all registered routes."""
+        return self._routes.copy()
+
+    # ===== END ROUTE MANAGEMENT =====
 
     def set_on_arrival_callback(self, callback: Callable[[str], None]):
         """Set callback to be called when camera arrives at destination"""
@@ -425,12 +534,20 @@ class CameraNavigation:
         Returns:
             True if navigation started successfully, False otherwise
         """
-        matched = self.find_position(destination)
+        matched_position = self.find_position(destination)
 
-        if not matched:
+        # Check if this destination is a route-only target (no matching position)
+        matched_route = self.find_route(destination)
+        is_route_only = matched_position is None and matched_route is not None
+
+        if not matched_position and not is_route_only:
             carb.log_warn(f"[CameraNavigation] Unknown destination: {destination}")
-            carb.log_info(f"[CameraNavigation] Available: {list(self._positions.keys())}")
+            carb.log_info(f"[CameraNavigation] Available positions: {list(self._positions.keys())}")
+            carb.log_info(f"[CameraNavigation] Available routes: {list(self._routes.keys())}")
             return False
+
+        # For route-only destinations, use the route key for lookups
+        nav_key = matched_position if matched_position else matched_route
 
         # Stop any running animation
         self._animation_running = False
@@ -446,9 +563,19 @@ class CameraNavigation:
             carb.log_error("[CameraNavigation] Could not get camera transform ops")
             return False
 
-        target = self._positions[matched]
-        tx, ty, tz = target["location"]
-        rx, ry, rz = target["rotation"]
+        if matched_position:
+            target = self._positions[matched_position]
+            tx, ty, tz = target["location"]
+            rx, ry, rz = target["rotation"]
+        else:
+            # Route-only: use the last waypoint of the route as the final target
+            route_wps = self.get_route(nav_key) or []
+            if not route_wps:
+                carb.log_error(f"[CameraNavigation] Route '{nav_key}' has no waypoints")
+                return False
+            last_wp = route_wps[-1]
+            tx, ty, tz = last_wp["location"]
+            rx, ry, rz = last_wp["rotation"]
 
         if instant:
             # Instant teleport
@@ -456,73 +583,70 @@ class CameraNavigation:
                 from pxr import Gf
                 translate_op.Set(Gf.Vec3d(tx, ty, tz))
                 rotate_op.Set(Gf.Vec3f(rx, ry, rz))
-                carb.log_info(f"[CameraNavigation] Teleported to: {matched}")
+                carb.log_info(f"[CameraNavigation] Teleported to: {matched_position}")
 
                 if self._on_arrival_callback:
-                    self._on_arrival_callback(matched)
+                    self._on_arrival_callback(matched_position)
 
                 return True
             except Exception as e:
                 carb.log_error(f"[CameraNavigation] Teleport failed: {e}")
                 return False
 
-        # Animated movement
+        # Build the list of poses to visit: route start (if any) + waypoints + final target
+        route_waypoints = self.get_route(nav_key) or []
+        route_start = self.get_route_start(nav_key)
+
+        poses = []
+        # If the route defines a start position, prepend it so the camera
+        # smoothly navigates there first before following the waypoints.
+        if route_start:
+            poses.append({
+                "location": list(route_start["location"]),
+                "rotation": list(route_start["rotation"]),
+            })
+
+        poses.extend(
+            {"location": list(wp["location"]), "rotation": list(wp["rotation"])}
+            for wp in route_waypoints
+        )
+
+        if is_route_only:
+            # For route-only destinations the last waypoint IS the destination,
+            # so don't duplicate it.  If the route has a start or intermediate
+            # waypoints we already have the full path.
+            if len(poses) == 0:
+                # Edge case: route with no waypoints and no start — nothing to animate
+                carb.log_error(f"[CameraNavigation] Route '{nav_key}' is empty")
+                return False
+        else:
+            # Append the position as final destination
+            poses.append({"location": [tx, ty, tz], "rotation": [rx, ry, rz]})
+
+        carb.log_info(
+            f"[CameraNavigation] Navigating to {nav_key} via "
+            f"{len(poses) - 1} waypoint(s)"
+            f"{' (route-only)' if is_route_only else ''}"
+            f"{' (with route start)' if route_start else ''}"
+        )
+
+        # Animated movement through all poses
         try:
-            from pxr import Gf
-
-            current_pos = translate_op.Get()
-            current_rot = rotate_op.Get()
-
-            # Calculate distance and frames
-            dist = math.sqrt(
-                (tx - current_pos[0])**2 +
-                (ty - current_pos[1])**2 +
-                (tz - current_pos[2])**2
-            )
-
-            # More frames for longer distances, adjusted by speed
-            frames = max(60, min(180, int(dist / 4.0 / speed)))
-
-            carb.log_info(f"[CameraNavigation] Navigating to {matched} ({frames} frames)")
-
             self._animation_running = True
 
-            for i in range(frames + 1):
-                if not self._animation_running:
-                    carb.log_info("[CameraNavigation] Animation stopped")
+            for seg_idx, pose in enumerate(poses):
+                ok = await self._animate_segment(
+                    translate_op, rotate_op, pose, speed,
+                    is_last=(seg_idx == len(poses) - 1),
+                )
+                if not ok:
                     return False
 
-                # Ease-out exponential for smooth deceleration
-                t = i / frames
-                t = 1.0 - math.pow(2.0, -10.0 * t) if t < 1.0 else 1.0
-
-                # Interpolate position
-                new_pos = Gf.Vec3d(
-                    current_pos[0] + (tx - current_pos[0]) * t,
-                    current_pos[1] + (ty - current_pos[1]) * t,
-                    current_pos[2] + (tz - current_pos[2]) * t,
-                )
-                translate_op.Set(new_pos)
-
-                # Interpolate rotation
-                new_rot = Gf.Vec3f(
-                    current_rot[0] + (rx - current_rot[0]) * t,
-                    current_rot[1] + (ry - current_rot[1]) * t,
-                    current_rot[2] + (rz - current_rot[2]) * t,
-                )
-                rotate_op.Set(new_rot)
-
-                await asyncio.sleep(1/60)  # ~60 FPS
-
-            # Ensure final position is exact
-            translate_op.Set(Gf.Vec3d(tx, ty, tz))
-            rotate_op.Set(Gf.Vec3f(rx, ry, rz))
-
             self._animation_running = False
-            carb.log_info(f"[CameraNavigation] Arrived at: {matched}")
+            carb.log_info(f"[CameraNavigation] Arrived at: {nav_key}")
 
             if self._on_arrival_callback:
-                self._on_arrival_callback(matched)
+                self._on_arrival_callback(nav_key)
 
             return True
 
@@ -532,6 +656,102 @@ class CameraNavigation:
             carb.log_error(f"[CameraNavigation] Traceback: {traceback.format_exc()}")
             self._animation_running = False
             return False
+
+    async def _animate_segment(
+        self,
+        translate_op,
+        rotate_op,
+        target_pose: Dict[str, Any],
+        speed: float,
+        is_last: bool = True,
+    ) -> bool:
+        """
+        Animate the camera from its current position to *target_pose*.
+
+        For intermediate waypoints (is_last=False) the easing uses
+        ease-in-out so the camera accelerates *and* decelerates,
+        giving smooth transitions between segments.
+        For the final segment (is_last=True) it uses ease-out only
+        (fast start, gentle stop) for a cinematic arrival.
+
+        Rotation is interpolated via the shortest angular path (±180°)
+        to prevent the camera from spinning the wrong way around.
+
+        Returns False if the animation was cancelled mid-flight.
+        """
+        from pxr import Gf
+
+        tx, ty, tz = target_pose["location"]
+        rx, ry, rz = target_pose["rotation"]
+
+        current_pos = translate_op.Get()
+        current_rot = rotate_op.Get()
+
+        dist = math.sqrt(
+            (tx - current_pos[0])**2 +
+            (ty - current_pos[1])**2 +
+            (tz - current_pos[2])**2
+        )
+
+        # Compute shortest-path rotation deltas (wrap to ±180°)
+        def _shortest_delta(current_deg: float, target_deg: float) -> float:
+            d = (target_deg - current_deg) % 360.0
+            if d > 180.0:
+                d -= 360.0
+            return d
+
+        drx = _shortest_delta(float(current_rot[0]), rx)
+        dry = _shortest_delta(float(current_rot[1]), ry)
+        drz = _shortest_delta(float(current_rot[2]), rz)
+
+        # Frame count from distance
+        if is_last:
+            dist_frames = max(60, min(180, int(dist / 4.0 / speed)))
+        else:
+            dist_frames = max(50, min(150, int(dist / 3.5 / speed)))
+
+        # Rotation-aware floor: ~1.5 frames per degree of the largest rotation
+        max_rot = max(abs(drx), abs(dry), abs(drz))
+        rot_frames = int(max_rot * 1.5 / speed)
+
+        frames = max(dist_frames, rot_frames)
+
+        for i in range(frames + 1):
+            if not self._animation_running:
+                carb.log_info("[CameraNavigation] Animation stopped")
+                return False
+
+            t = i / frames
+            if is_last:
+                # Ease-out exponential (fast start, smooth stop)
+                t = 1.0 - math.pow(2.0, -10.0 * t) if t < 1.0 else 1.0
+            else:
+                # Ease-in-out cubic (smoother than quadratic, gentler start)
+                if t < 0.5:
+                    t = 4.0 * t * t * t
+                else:
+                    t = 1.0 - (-2.0 * t + 2.0) ** 3 / 2.0
+
+            new_pos = Gf.Vec3d(
+                current_pos[0] + (tx - current_pos[0]) * t,
+                current_pos[1] + (ty - current_pos[1]) * t,
+                current_pos[2] + (tz - current_pos[2]) * t,
+            )
+            translate_op.Set(new_pos)
+
+            new_rot = Gf.Vec3f(
+                float(current_rot[0]) + drx * t,
+                float(current_rot[1]) + dry * t,
+                float(current_rot[2]) + drz * t,
+            )
+            rotate_op.Set(new_rot)
+
+            await asyncio.sleep(1 / 60)
+
+        # Snap to exact target
+        translate_op.Set(Gf.Vec3d(tx, ty, tz))
+        rotate_op.Set(Gf.Vec3f(rx, ry, rz))
+        return True
 
     def stop(self):
         """Stop any running camera animation"""

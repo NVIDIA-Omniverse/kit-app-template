@@ -1,7 +1,38 @@
 {
   "_comment": "Per-asset scale corrections applied on the outer Xform (after unit-conversion scale). Assets from USD-Assets with metersPerUnit=0.01 use unit_scale=1.0 so these values are the full effective scale.",
-  "doritos_nacho":  { "scale_x": 0.1, "scale_y": 0.1, "scale_z": 0.1 },
-  "doritos_bags":   { "scale_x": 0.1, "scale_y": 0.1, "scale_z": 0.1 },
-  "wine_bottles":   { "scale_x": 0.1, "scale_y": 0.1, "scale_z": 0.1 },
-  "liquor_bottles": { "scale_x": 0.1, "scale_y": 0.1, "scale_z": 0.1 }
+  "doritos_nacho": {
+    "scale_x": 0.1,
+    "scale_y": 0.1,
+    "scale_z": 0.1
+  },
+  "doritos_bags": {
+    "scale_x": 0.1,
+    "scale_y": 0.1,
+    "scale_z": 0.1
+  },
+  "wine_bottles": {
+    "scale_x": 0.1,
+    "scale_y": 0.1,
+    "scale_z": 0.1
+  },
+  "liquor_bottles": {
+    "scale_x": 0.1,
+    "scale_y": 0.1,
+    "scale_z": 0.1
+  },
+  "lipton_milktea": {
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "scale_z": 1.0
+  },
+  "cheetos_cheddar_jalapeno": {
+    "scale_x": 0.7,
+    "scale_y": 0.7,
+    "scale_z": 0.7
+  },
+  "cheetos_puffs": {
+    "scale_x": 0.7,
+    "scale_y": 0.7,
+    "scale_z": 0.7
+  }
 }
