@@ -1,0 +1,239 @@
+version: '3.8'
+
+services:
+  usd-viewer-1:
+    image: 1_streaming
+    container_name: usd-viewer-1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - /workspace/adrian/multi-omniverse/assets/:/workspace/adrian/multi-omniverse/assets/
+    ports:
+      - "8011:8011/tcp"
+      - "49101:49101/tcp"
+      - "48100-48120:48100-48120/udp"
+      - "48100-48120:48100-48120/tcp"
+    command: >
+      --no-window
+      --dev-bundle
+      --/log/level=info
+      --/app/auto_load_usd="/workspace/adrian/multi-omniverse/assets/7eleven-demo-store-citycafe-v2/7eleven-demo-store.usd"
+      --/exts/omni.kit.livestream.core/publicIp="172.20.166.3"
+      --/exts/omni.services.transport.server.http/host="0.0.0.0"
+      --/exts/omni.services.streamclient.webrtc/ice_servers/0/urls/0="stun:stun.l.google.com:19302"
+      --/exts/omni.services.transport.server.http/port=8011
+      --/exts/omni.kit.livestream.app/primaryStream/signalPort=49101
+      --/exts/omni.kit.livestream.app/primaryStream/streamPort=48100
+
+  usd-viewer-2:
+    image: 1_streaming
+    container_name: usd-viewer-2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - /workspace/adrian/multi-omniverse/assets/:/workspace/adrian/multi-omniverse/assets/
+    ports:
+      - "8012:8012/tcp"
+      - "49102:49102/tcp"
+      - "48200-48220:48200-48220/udp"
+      - "48200-48220:48200-48220/tcp"
+    command: >
+      --no-window
+      --dev-bundle
+      --/log/level=info
+      --/app/auto_load_usd="/workspace/adrian/multi-omniverse/assets/7eleven-demo-store-citycafe-v2/7eleven-demo-store.usd"
+      --/exts/omni.kit.livestream.core/publicIp="172.20.166.3"
+      --/exts/omni.services.transport.server.http/host="0.0.0.0"
+      --/exts/omni.services.streamclient.webrtc/ice_servers/0/urls/0="stun:stun.l.google.com:19302"
+      --/exts/omni.services.transport.server.http/port=8012
+      --/exts/omni.kit.livestream.app/primaryStream/signalPort=49102
+      --/exts/omni.kit.livestream.app/primaryStream/streamPort=48200
+
+
+  usd-viewer-3:
+    image: 1_streaming
+    container_name: usd-viewer-3
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - /workspace/adrian/multi-omniverse/assets/:/workspace/adrian/multi-omniverse/assets/
+    ports:
+      - "8013:8013/tcp"
+      - "49103:49103/tcp"
+      - "48300-48320:48300-48320/udp"
+      - "48300-48320:48300-48320/tcp"
+    command: >
+      --no-window
+      --dev-bundle
+      --/log/level=info
+      --/app/auto_load_usd="/workspace/adrian/multi-omniverse/assets/7eleven-demo-store-citycafe-v2/7eleven-demo-store.usd"
+      --/exts/omni.kit.livestream.core/publicIp="172.20.166.3"
+      --/exts/omni.services.transport.server.http/host="0.0.0.0"
+      --/exts/omni.services.streamclient.webrtc/ice_servers/0/urls/0="stun:stun.l.google.com:19302"
+      --/exts/omni.services.transport.server.http/port=8013
+      --/exts/omni.kit.livestream.app/primaryStream/signalPort=49103
+      --/exts/omni.kit.livestream.app/primaryStream/streamPort=48300
+
+
+  usd-viewer-4:
+    image: 1_streaming
+    container_name: usd-viewer-4
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - /workspace/adrian/multi-omniverse/assets/:/workspace/adrian/multi-omniverse/assets/
+    ports:
+      - "8014:8014/tcp"
+      - "49104:49104/tcp"
+      - "48400-48420:48400-48420/udp"
+      - "48400-48420:48400-48420/tcp"
+    command: >
+      --no-window
+      --dev-bundle
+      --/log/level=info
+      --/app/auto_load_usd="/workspace/adrian/multi-omniverse/assets/7eleven-demo-store-citycafe-v2/7eleven-demo-store.usd"
+      --/exts/omni.kit.livestream.core/publicIp="172.20.166.3"
+      --/exts/omni.services.transport.server.http/host="0.0.0.0"
+      --/exts/omni.services.streamclient.webrtc/ice_servers/0/urls/0="stun:stun.l.google.com:19302"
+      --/exts/omni.services.transport.server.http/port=8014
+      --/exts/omni.kit.livestream.app/primaryStream/signalPort=49104
+      --/exts/omni.kit.livestream.app/primaryStream/streamPort=48400
+  
+  usd-viewer-5:
+    image: 1_streaming
+    container_name: usd-viewer-5
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - /workspace/adrian/multi-omniverse/assets/:/workspace/adrian/multi-omniverse/assets/
+    ports:
+      - "8015:8015/tcp"
+      - "49105:49105/tcp"
+      - "48500-48520:48500-48520/udp"
+      - "48500-48520:48500-48520/tcp"
+    command: >
+      --no-window
+      --dev-bundle
+      --/log/level=info
+      --/app/auto_load_usd="/workspace/adrian/multi-omniverse/assets/7eleven-demo-store-citycafe-v2/7eleven-demo-store.usd"
+      --/exts/omni.kit.livestream.core/publicIp="172.20.166.3"
+      --/exts/omni.services.transport.server.http/host="0.0.0.0"
+      --/exts/omni.services.streamclient.webrtc/ice_servers/0/urls/0="stun:stun.l.google.com:19302"
+      --/exts/omni.services.transport.server.http/port=8015
+      --/exts/omni.kit.livestream.app/primaryStream/signalPort=49105
+      --/exts/omni.kit.livestream.app/primaryStream/streamPort=48500
+
+
+  usd-viewer-6:
+    image: 1_streaming
+    container_name: usd-viewer-6
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - /workspace/adrian/multi-omniverse/assets/:/workspace/adrian/multi-omniverse/assets/
+    ports:
+      - "8016:8016/tcp"
+      - "49106:49106/tcp"
+      - "48600-48620:48600-48620/udp"
+      - "48600-48620:48600-48620/tcp"
+    command: >
+      --no-window
+      --dev-bundle
+      --/log/level=info
+      --/app/auto_load_usd="/workspace/adrian/multi-omniverse/assets/7eleven-demo-store-citycafe-v2/7eleven-demo-store.usd"
+      --/exts/omni.kit.livestream.core/publicIp="172.20.166.3"
+      --/exts/omni.services.transport.server.http/host="0.0.0.0"
+      --/exts/omni.services.streamclient.webrtc/ice_servers/0/urls/0="stun:stun.l.google.com:19302"
+      --/exts/omni.services.transport.server.http/port=8016
+      --/exts/omni.kit.livestream.app/primaryStream/signalPort=49106
+      --/exts/omni.kit.livestream.app/primaryStream/streamPort=48600
+
+  
+  usd-viewer-7:
+    image: 1_streaming
+    container_name: usd-viewer-7
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - /workspace/adrian/multi-omniverse/assets/:/workspace/adrian/multi-omniverse/assets/
+    ports:
+      - "8017:8017/tcp"
+      - "49107:49107/tcp"
+      - "48700-48720:48700-48720/udp"
+      - "48700-48720:48700-48720/tcp"
+    command: >
+      --no-window
+      --dev-bundle
+      --/log/level=info
+      --/app/auto_load_usd="/workspace/adrian/multi-omniverse/assets/7eleven-demo-store-citycafe-v2/7eleven-demo-store.usd"
+      --/exts/omni.kit.livestream.core/publicIp="172.20.166.3"
+      --/exts/omni.services.transport.server.http/host="0.0.0.0"
+      --/exts/omni.services.streamclient.webrtc/ice_servers/0/urls/0="stun:stun.l.google.com:19302"
+      --/exts/omni.services.transport.server.http/port=8017
+      --/exts/omni.kit.livestream.app/primaryStream/signalPort=49107
+      --/exts/omni.kit.livestream.app/primaryStream/streamPort=48700
+
+
+  usd-viewer-8:
+    image: 1_streaming
+    container_name: usd-viewer-8
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - /workspace/adrian/multi-omniverse/assets/:/workspace/adrian/multi-omniverse/assets/
+    ports:
+      - "8018:8018/tcp"
+      - "49108:49108/tcp"
+      - "48800-48820:48800-48820/udp"
+      - "48800-48820:48800-48820/tcp"
+    command: >
+      --no-window
+      --dev-bundle
+      --/log/level=info
+      --/app/auto_load_usd="/workspace/adrian/multi-omniverse/assets/7eleven-demo-store-citycafe-v2/7eleven-demo-store.usd"
+      --/exts/omni.kit.livestream.core/publicIp="172.20.166.3"
+      --/exts/omni.services.transport.server.http/host="0.0.0.0"
+      --/exts/omni.services.streamclient.webrtc/ice_servers/0/urls/0="stun:stun.l.google.com:19302"
+      --/exts/omni.services.transport.server.http/port=8018
+      --/exts/omni.kit.livestream.app/primaryStream/signalPort=49108
+      --/exts/omni.kit.livestream.app/primaryStream/streamPort=48800
