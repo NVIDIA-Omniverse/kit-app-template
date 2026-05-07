@@ -31,6 +31,7 @@ template_name = "omni.usd_explorer"
 "omni.kit.collaboration.telemetry" = {}
 "omni.kit.collaboration.viewport.camera" = {}
 "omni.kit.context_menu" = {}
+"omni.kit.converter.cad" = { order = 1000 }
 "omni.kit.developer.bundle" = {}
 "omni.kit.manipulator.camera" = {} # Manipulator for the Viewport
 "omni.kit.manipulator.prim" = {}
@@ -84,6 +85,7 @@ template_name = "omni.usd_explorer"
 "omni.kit.window.file" = {}
 "omni.kit.window.filepicker" = {}
 "omni.kit.window.material" = {}  # Material Management and browsing
+"omni.kit.window.modifier.titlebar" = {}
 "omni.kit.window.preferences" = { order = 1000 } # Execute last so the menu is in the correct place
 "omni.kit.window.property" = {}
 "omni.kit.window.section" = {}
@@ -103,13 +105,6 @@ template_name = "omni.usd_explorer"
 "omni.warp.core" = {}
 "usdrt.scenegraph" = {}
 "{{ setup_extension_name }}" = { order = 10000 }  # This is your application setup Extensions. order = 10000 makes it run last
-
-[dependencies."filter:platform"."windows-x86_64"]
-"omni.kit.window.modifier.titlebar" = {version = "=107.0.2"}  # Use exact version to avoid supported target platform check
-"omni.kit.converter.cad" = {order = 1000} # allow other deps like asset_importer to load first
-
-[dependencies."filter:platform"."linux-x86_64"]
-"omni.kit.converter.cad" = {order = 1000} # allow other deps like asset_importer to load first
 
 [settings.app]
 name = "{{ application_display_name }}"
@@ -135,13 +130,6 @@ generateVersionLockExclude = [
 ]
 registryEnabled = true
 skipPublishVerification = false
-
-[settings.app.extensions."filter:platform"."linux-x86_64"]
-# Windows only extensions. For all of them set exact=true to not be included into generated version lock.
-# That will break linux otherwise, as version lock is platform agnostic currently.
-excluded = [
-	"omni.kit.window.modifier.titlebar",
-]
 
 [settings.app.exts.folders]
 '++' = [   # Search paths for extensions.

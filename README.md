@@ -4,10 +4,6 @@
   <img src="readme-assets/kit_app_template_banner.png" width=100% />
 </p>
 
-## :memo: Feature Branch Information
-**This repository is based on a Feature Branch of the Omniverse Kit SDK.** Feature Branches are regularly updated and best suited for testing and prototyping.
-For stable, production-oriented development, please use the [Production Branch of the Kit SDK on NVIDIA GPU Cloud (NGC)](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/omniverse/collections/omniverse_enterprise_25h1).
-
 [Omniverse Release Information](https://docs.omniverse.nvidia.com/dev-overview/latest/omniverse-releases.html#)
 
 
@@ -278,6 +274,15 @@ Here's a brief overview of some key tools:
 - **Launch (`./repo.sh launch`or`.\repo.bat launch`):** Starts your compiled application or extension.
 
 - **Testing (`./repo.sh test` or `.\repo.bat test`):** Facilitates the execution of test suites for your extensions, ensuring code quality and functionality.
+
+  - By default The repository is set up to test without invoking the application window. To run tests with the application window open, a configuration section needs to be added into the `repo.toml` file:
+  ```
+  [repo_test.suites."alltests"]
+  args = [
+  "--/exts/omni.kit.test/pyCoverageEnabled=1", # Enable test coverage in report
+  "--", # every parameter after will be passed directly to each extension tests as parameters
+  ]
+  ```
 
 - **Packaging (`./repo.sh package` or `.\repo.bat package`):** Aids in packaging your application for distribution, making it easier to share or deploy in cloud environments.
 
