@@ -70,8 +70,6 @@ Ensure your system is set up with the following to work with Omniverse Applicati
 
 - [**Git**](https://git-scm.com/downloads): For version control and repository management
 
-- [**Git LFS**](https://git-lfs.com/): For managing large files within the repository
-
 - **(Windows - C++ Only) Microsoft Visual Studio (2019 or 2022)**: You can install the latest version from [Visual Studio Downloads](https://visualstudio.microsoft.com/downloads/). Ensure that the **Desktop development with C++** workload is selected.  [Additional information on Windows development configuration](readme-assets/additional-docs/windows_developer_configuration.md)
 
 - **(Windows - C++ Only) Windows SDK**: Install this alongside MSVC. You can find it as part of the Visual Studio Installer. [Additional information on Windows development configuration](readme-assets/additional-docs/windows_developer_configuration.md)
