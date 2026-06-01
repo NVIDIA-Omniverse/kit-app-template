@@ -19,14 +19,6 @@ To get started with the USD Viewer template, ensure your development environment
 
 > **NOTE:** Example commands should be executed in **powershell** in Windows and **terminal** in Linux.
 
-:warning: **Important:** Before proceeding with the cloning step, ensure that Git Large File Storage (Git LFS) is installed on your system. To verify this, run the following command in your terminal:
-
-```bash
-git lfs --version
-```
-
-If the command returns a version number, Git LFS is installed correctly. If not, you will need to install Git LFS. You can download and install it from the official website [here](https://git-lfs.github.com/).
-
 #### Cloning the Repository
 
 ```bash
