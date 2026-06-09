@@ -2,16 +2,35 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [109.0.6] - 2026-06-09
+
+### Added
+- Added the `omni.kit.renderer.ready` extension to the USD Viewer template
+  - Emits an `RTX ready` log message once the renderer has finished initializing, making it easier to confirm shader compilation has completed when diagnosing streaming or shader caching issues
+
+### Changed
+- Update to `Kit 109.0.6`
+  - [Kit 109.0.6 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_6.html)
+
+### Removed
+- Removed the Git LFS prerequisite from the setup instructions; Git LFS is no longer required to clone or use the repository
+
 ## [109.0.5] - 2026-04-23
+
+### Changed
 - Update to `Kit 109.0.5`
   - [Kit 109.0.5 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_5.html)
 
 ## [109.0.4] - 2026-03-18
+
+### Changed
 - Update to `Kit 109.0.4`
   - [Kit 109.0.4 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_4.html)
 - Updated `stage_management.py` in `usd_viewer.messaging` extension template to make prims selectable in viewport
 
 ## [109.0.3] - 2026-01-26
+
+### Changed
 - Update to `Kit 109.0.3`
   - [Kit 109.0.3 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_3.html)
 

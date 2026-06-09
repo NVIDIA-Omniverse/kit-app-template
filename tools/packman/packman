@@ -27,7 +27,7 @@ else
 	PM_CURL_SILENT="-s -S"
 	PM_WGET_QUIET="--quiet"
 fi
-export PM_PACKMAN_VERSION=8.2.2
+export PM_PACKMAN_VERSION=8.3.0
 
 
 cleanup() {
@@ -101,7 +101,7 @@ main() {
             if [ $exit_code -eq 0 ]; then
                 return 0
             fi
-            
+
             if [ $TRIES -lt $MAX_TRIES ]; then
                 echo "Attempt $TRIES failed. Retrying in $DELAY seconds ..."
                 sleep $DELAY
@@ -142,8 +142,9 @@ main() {
     {
         PLATFORM=`uname`
         PROCESSOR=`uname -m`
-        PYTHON_VERSION=3.12.13-nv1
+        PYTHON_VERSION=3.12.13-nv3
         PYTHON_EXE=python
+        PYTHON_CONTAINER=tar.gz
 
         if [ $PLATFORM == 'Darwin' ]; then
             PYTHON_PACKAGE=3.12.13-macos-aarch64
@@ -154,6 +155,7 @@ main() {
         elif [[ $PLATFORM =~ ^MINGW.* ]] && [ $PROCESSOR == 'x86_64' ]; then
             PYTHON_PACKAGE=$PYTHON_VERSION-windows-x86_64
             PYTHON_EXE=python.exe
+            PYTHON_CONTAINER=zip
         else
             echo "Operating system not supported"
             return 1
@@ -168,9 +170,13 @@ main() {
 
         if [ ! -f "$PM_PYTHON" ]; then
             PYTHON_PACKAGE_TMP=$(generate_temp_file_name)
-            fetch_file_from_s3 "python@$PYTHON_PACKAGE.tar.gz" "$PYTHON_PACKAGE_TMP" || return 1
+            fetch_file_from_s3 "python@$PYTHON_PACKAGE.$PYTHON_CONTAINER" "$PYTHON_PACKAGE_TMP" || return 1
             echo "Unpacking python"
-            tar -xf "$PYTHON_PACKAGE_TMP" -C "$PYTHON_INSTALL_FOLDER" || return 1
+            if [ "$PYTHON_CONTAINER" == "zip" ]; then
+                unzip -q "$PYTHON_PACKAGE_TMP" -d "$PYTHON_INSTALL_FOLDER" || return 1
+            else
+                tar -xf "$PYTHON_PACKAGE_TMP" -C "$PYTHON_INSTALL_FOLDER" || return 1
+            fi
             rm "$PYTHON_PACKAGE_TMP" || return 1
         fi
     }
@@ -224,7 +230,7 @@ main() {
             fi
         done < "$PM_VAR_PATH"
     fi
-        
+
     # Return success
     return 0
 }
