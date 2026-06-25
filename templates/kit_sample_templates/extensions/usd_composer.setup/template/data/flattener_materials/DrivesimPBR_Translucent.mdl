@@ -1,0 +1,284 @@
+/*****************************************************************************
+*     Copyright 1986-2020 NVIDIA Corporation. All rights reserved.
+******************************************************************************
+
+ MDL MATERIALS ARE PROVIDED PURSUANT TO AN END USER LICENSE  AGREEMENT,
+ WHICH WAS ACCEPTED IN ORDER TO GAIN ACCESS TO THIS FILE.  IN PARTICULAR, 
+ THE MDL MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF 
+ COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL NVIDIA
+ CORPORATION BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING
+ ANY GENERAL, SPECIAL,  INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, 
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF 
+ THE USE OR INABILITY TO USE THE MDL MATERIALS OR FROM OTHER DEALINGS IN 
+ THE MDL MATERIALS.
+*/
+
+mdl 1.4;
+
+import ::df::*;
+import ::state::*;
+import ::math::*;
+import ::base::*;
+import ::tex::*;
+import ::anno::*;
+
+import ::nvidia::core_definitions::file_texture;
+import ::nvidia::core_definitions::normalmap_texture;
+
+float4 raw_file_texture(
+    uniform texture_2d texture
+        [[ anno::description("The input texture") ]],
+    base::texture_coordinate_info uvw = base::texture_coordinate_info()
+        [[ anno::description("Custom value for texture coordinate") ]],
+    uniform float2 crop_u = float2(0.0, 1.0)
+        [[ anno::description("Restricts the texture access to sub-domain of the texture in the u direction") ]],
+    uniform float2 crop_v = float2(0.0, 1.0)
+        [[ anno::description("Restricts the texture access to sub-domain of the texture in the v direction") ]],
+    uniform tex::wrap_mode wrap_u = tex::wrap_repeat
+        [[ anno::description("Wrapping mode in the u direction") ]],
+    uniform tex::wrap_mode wrap_v = tex::wrap_repeat
+        [[ anno::description("Wrapping mode in the v direction") ]]
+)
+[[
+    anno::description("General texturing function for 2D bitmap texture stored in a file"),
+    anno::noinline()
+]]
+{
+    return tex::lookup_float4(texture, float2(uvw.position.x, uvw.position.y), wrap_u, wrap_v, crop_u, crop_v);
+}
+
+export material DrivesimPBR_Translucent(
+  // -------------------- SPECULAR REFLECTION/TRANSMISSION ----------------------
+  uniform float ior_constant = 1.1f
+  [[
+    anno::display_name("Index of Refraction"),
+    anno::hard_range(0.0,5.),
+    anno::description("Index of Refraction of the material"),
+    anno::in_group("Specular")
+  ]],
+  uniform float reflection_roughness_constant = 0.5f
+  [[
+    anno::display_name("Roughness Amount"),
+    anno::hard_range(0.0,1.),
+    anno::description("Higher roughness values lead to more blurry reflections"),
+    anno::in_group("Specular")
+  ]],
+  uniform float reflection_roughness_texture_influence = 0.0f
+  [[
+    anno::display_name("Roughness Map Influence"),
+    anno::hard_range(0.0, 1.),
+    anno::description("Blends between the constant value and the lookup of the roughness texture"),
+    anno::in_group("Specular")
+  ]],
+  uniform texture_2d reflectionroughness_texture = texture_2d()
+  [[
+    anno::display_name("Roughness Map"),
+    anno::in_group("Specular")
+  ]],
+
+  // -------------------- VOLUME ----------------------
+  color transmittance_color = color(1.0, 1.0f, 1.0f)
+  [[
+    anno::display_name("Transmittance Color"),
+    anno::description("Expected transmittance after the specified transmittance distance through the volume."),
+    anno::in_group("Volume")
+  ]],
+  float transmittance_measurement_distance = 1.0f
+  [[
+    anno::display_name("Transmittance Measurement Distance"),
+    anno::description("Distance to match the transmittance through the volume at."),
+    anno::in_group("Volume")
+  ]],
+
+  // -------------------- EMISSIVE ----------------------
+  uniform bool enable_thin_walled = false
+  [[
+    anno::display_name("Enable Thin Walled"),
+    anno::description("Enables thin walled logic"),
+    anno::in_group("Geometry")
+  ]],
+  
+  // -------------------- EMISSIVE ----------------------
+  uniform bool enable_emission = false
+  [[
+    anno::display_name("Enable Emission"),
+    anno::description("Enables the emission of light from the material"),
+    anno::in_group("Emissive")
+  ]],
+  color emissive_color = color(1.0, 0.1, 0.1)
+  [[
+    anno::enable_if("enable_emission == true"),
+    anno::display_name("Emissive Color"),
+    anno::description("The emission color"),
+    anno::in_group("Emissive")
+  ]],
+  uniform texture_2d emissive_mask_texture = texture_2d()
+  [[
+    anno::enable_if("enable_emission == true"),
+    anno::display_name("Emissive Mask Map"),
+    anno::description("The texture masking the emissive color"),
+    anno::in_group("Emissive")
+  ]],
+  uniform float emissive_intensity = 40.f
+  [[
+    anno::enable_if("enable_emission == true"),
+    anno::display_name("Emissive Intensity"),
+    anno::description("Intensity of the emission"),
+    anno::in_group("Emissive")
+  ]],
+  uniform bool enable_emissive_flipbook = false
+  [[
+    anno::display_name("Enable Flipbook for emission"),
+    anno::description("Allows the use of animated emissive textures (e.g. video screens)"),
+    anno::in_group("Emissive")
+  ]],
+  uniform int2 flipbook_dim = int2(1,1)
+  [[
+    anno::enable_if("enable_emissive_flipbook == true"),
+    anno::display_name("Flipbook Rows/Columns"),
+    anno::description("How many rows and columns are in the flipbook?"),
+    anno::in_group("Emissive")
+  ]],
+  uniform int target_fps = 1
+  [[
+    anno::enable_if("enable_emissive_flipbook == true"),
+    anno::display_name("Flipbook Target FPS"),
+    anno::description("Playback speed in frames per second"),
+    anno::in_group("Emissive")
+  ]],
+
+  // -------------------- NORMAL ----------------------
+  uniform float bump_factor = 1.f
+  [[
+    anno::display_name("Normal Map Strength"),
+    anno::description("Strength of normal map."),
+    anno::in_group("Normal")
+  ]],
+  uniform texture_2d normalmap_texture = texture_2d()
+  [[
+    anno::display_name("Normal Map"),
+    anno::in_group("Normal")
+  ]],
+
+  // -------------------- UV ADJUSTMENTS ----------------------
+  uniform bool project_uvw = false
+  [[
+    anno::display_name("Enable Project UVW Coordinates"),
+    anno::description("When enabled, UV coordinates will be generated by projecting them from a coordinate system"),
+    anno::in_group("UV")
+  ]],
+  uniform bool world_or_object = false
+  [[
+    anno::enable_if("project_uvw == true"),
+    anno::display_name("Enable World Space"),
+    anno::description("When set to 'true' uses world space for projection, when 'false' object space is used"),
+    anno::in_group("UV")
+  ]],
+  uniform float2 texture_translate =  float2(0.0f)
+  [[
+    anno::display_name("Texture Translate"),
+    anno::description("Controls position of texture."),
+    anno::in_group("UV")
+  ]],
+  uniform float2 texture_scale =  float2(1.0f)
+  [[
+    anno::display_name("Texture Scale"),
+    anno::description("Larger number increases size of texture."),
+    anno::in_group("UV")
+  ]],
+  uniform float2 texture_speed =  float2(0.0f)
+  [[
+    anno::display_name("Texture Speed"),
+    anno::description("Scrolling texture animation speed in UVs per sec."),
+    anno::in_group("UV")
+  ]]
+)
+[[
+  anno::display_name("Drivesim PBR Translucent"),
+  anno::description("Supports the translucent material model of the Drivesim Renderer"),
+  anno::version( 1, 0, 0),
+  anno::author("NVIDIA CORPORATION"), 
+  anno::key_words(string[]("Drivesim", "PBR", "translucent", "omniverse", "generic"))
+]]
+ = let {
+
+  base::texture_coordinate_system the_system = world_or_object ? base::texture_coordinate_world : base::texture_coordinate_object;
+    
+  base::texture_coordinate_info uvw = project_uvw ? 
+                                        base::coordinate_projection(
+                                            coordinate_system: the_system,
+                                            texture_space: 0,
+                                            projection_type: base::projection_cubic ) :
+                                        base::coordinate_source(
+                                            coordinate_system: base::texture_coordinate_uvw,
+                                            texture_space: 0
+  );
+
+  // Need to use a small value so the compiler doesnt optimize out this var...
+  float t = 0.00000001;//state::animation_time();
+  base::texture_coordinate_info transformed_uvw =  base::transform_coordinate(
+                  transform: base::rotation_translation_scale(
+                  scaling: float3(texture_scale.x, texture_scale.y, 1.0),
+                  rotation: float3(0.0, 0.0, 0.0 ),
+                  translation: float3(texture_translate.x + t * texture_speed.x, texture_translate.y + t * texture_speed.y, 0.0)),
+                  coordinate: uvw );
+
+  color volume_absorption_coefficient = -math::log(transmittance_color) / (transmittance_measurement_distance*0.01);
+
+  float roughness_lookup = tex::texture_isvalid(reflectionroughness_texture) ?
+                           raw_file_texture(texture: reflectionroughness_texture, uvw: transformed_uvw).x :
+                           reflection_roughness_constant;
+  float reflection_roughness =  math::lerp(reflection_roughness_constant, roughness_lookup, reflection_roughness_texture_influence);
+
+  float roughness_squared = reflection_roughness * reflection_roughness;
+
+  bsdf final_bsdf = df::microfacet_ggx_smith_bsdf(
+    roughness_u: roughness_squared,
+    roughness_v: roughness_squared,
+    tint: color(1.0, 1.0, 1.0),
+    mode: df::scatter_reflect_transmit
+  );
+
+  int rows = flipbook_dim.x;
+  int columns = flipbook_dim.y;
+  int numFrames = rows * columns;
+  varying int frameIdx = int(state::animation_time() * target_fps) % numFrames;
+  varying float2 baseUV = float2(transformed_uvw.position.x, transformed_uvw.position.y);
+  varying float2 emissiveUV = enable_emissive_flipbook
+              ? ((baseUV + float2(frameIdx % rows, frameIdx / rows)) / float2(rows, columns))
+              : baseUV;
+
+  color emissive_mask = tex::texture_isvalid(emissive_mask_texture)
+              ? tex::lookup_color(emissive_mask_texture, emissiveUV, tex::wrap_repeat, tex::wrap_repeat)
+              : color(1.0);
+
+  // Normal calculations
+  float3 normal_lookup =  tex::texture_isvalid(normalmap_texture) ?
+              base::tangent_space_normal_texture(
+              texture:        normalmap_texture,  
+              factor:         bump_factor,
+              uvw:            transformed_uvw
+              ) : state::normal();
+
+
+} in material(
+  thin_walled: enable_thin_walled,
+  surface: material_surface(
+    scattering: final_bsdf,
+    emission:  material_emission (
+      df::diffuse_edf(),
+      intensity: enable_emission ? emissive_color * emissive_mask * color(emissive_intensity) : color(0)
+    )
+  ),
+  ior: color(ior_constant),
+  volume: material_volume(
+    scattering: df::anisotropic_vdf(),
+    absorption_coefficient: volume_absorption_coefficient,
+    scattering_coefficient: color(0.0f, 0.0f, 0.0f)
+  ),
+  geometry: material_geometry(
+    normal: normal_lookup
+  )
+);

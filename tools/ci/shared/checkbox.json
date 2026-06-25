@@ -1,0 +1,5 @@
+{
+  "checkbox": {
+    "CB_PUBLISH_NGC": "Publish containers to NGC"
+  }
+} 

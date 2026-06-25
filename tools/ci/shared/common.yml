@@ -1,0 +1,26 @@
+# Common CI configuration for NGC container publishing
+
+# Checkbox validation job
+validate-checkboxes:
+  stage: preprocess
+  extends:
+    - .runner-utility-linux-x86_64
+    - .linux-x86_64-ubuntu-22-image
+  script:
+    - |
+      echo "Validating NGC publishing checkbox configuration..."
+      if [[ -f "CHECKBOXES.env" ]]; then
+        echo "Found checkbox configuration:"
+        cat CHECKBOXES.env
+        if [[ "${CB_PUBLISH_NGC:-0}" == "1" ]]; then
+          echo "== NGC container publishing is ENABLED =="
+        else
+          echo "== NGC container publishing is DISABLED =="
+        fi
+      else
+        echo "No checkbox configuration found"
+      fi
+  needs:
+    - prepare-conditional-pipelines
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" 

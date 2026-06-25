@@ -2,15 +2,38 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [110.1.1] - 2026-05-07
+
+## [110.1.2] - 2026-06-24
+
+### Added
+
+- Added the `omni.kit.renderer.ready` extension to the USD Viewer template
+  - Emits an `RTX ready` log message once the renderer has finished initializing, making it easier to confirm shader compilation has completed when diagnosing streaming or shader caching issues
 
 ### Changed
+
+- Updated to `Kit 110.1.2`
+  - [Kit 110.1.2 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_1_2.html)
+
+### Deprecated
+
+- Deprecated the `-p` / `--package` option for `repo launch`; it will be removed in a future release. To run a packaged application, decompress the archive and launch the extracted application directly (see Packaging An Application)
+
+### Removed
+
+- Removed the Git LFS prerequisite from the setup instructions; Git LFS is no longer required to clone or use the repository
+- Removed the Graphics Delivery Network (GDN) streaming option from the templates
+
+## [110.1.1] - 2026-05-06
+
+### Changed
+
 - Updated to `Kit 110.1.1`
   - [Kit 110.1.1 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_1_1.html)
   - [Kit 110.1.1 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_1_1_highlights.html)
-  - `omni.kit.converter.cad` and `omni.kit.window.modifier.titlebar` cross dependency resolved for target platform check.
+- `omni.kit.converter.cad` and `omni.kit.window.modifier.titlebar` cross dependency resolved for target platform check
 
-## [110.1.0] - 2026-04-15
+## [110.1.0] - 2026-04-06
 
 ### Changed
 
@@ -388,3 +411,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Top level build .bat/.sh scripts in favor of using `repo build` directly
 - Predefined `define_app` declarations from `premake5.lua` in favor of developer defined applications
 - Predefined source/apps in favor of templates for developers to build from
+

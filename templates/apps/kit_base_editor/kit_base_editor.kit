@@ -84,10 +84,17 @@ renderer.gpuEnumeration.glInterop.enabled = false # Improves startup speed.
 renderer.asyncInit = true # Don't block while renderer inits
 rtx.ecoMode.enabled = true
 rtx.hydra.mdlMaterialWarmup = true # start loading the MDL shaders needed before any delegate is actually created.
+# AUTOREMOVE: BEGIN
+# Ensure that externally built apps are keeping telemetry anonymized.
+_ = """
+# AUTOREMOVE: END
 telemetry.disableInternalSessionCheck = true
 telemetry.enableAnonymousAppName = true
 telemetry.enableAnonymousData = true
 privacy.externalBuild = true
+# AUTOREMOVE: BEGIN
+"""
+# AUTOREMOVE: END
 
 
 [settings.app]

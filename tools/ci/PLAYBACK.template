@@ -1,0 +1,13 @@
+[omni_{template_name}]
+application_name = "{template_name}"
+application_display_name = "{template_display_name}"
+version = "{version}"
+add_layers = "Yes"
+selected_layers = [ "{ovc_streaming_option}",]
+
+[omni_{template_name}.extensions.omni_{template_name}_setup]
+extension_name = "{template_name}_setup_extension"
+extension_display_name = "{template_display_name} Setup Extension"
+version = "{version}"
+
+[omni_{template_name}.templates.{ovc_streaming_option_name}]
