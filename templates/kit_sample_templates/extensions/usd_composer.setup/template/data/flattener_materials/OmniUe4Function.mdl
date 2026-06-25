@@ -1,0 +1,1168 @@
+/******************************************************************************
+ *       Copyright 1986, 2019 NVIDIA ARC GmbH. All rights reserved.           *
+ ******************************************************************************
+ 
+Permission is hereby granted by NVIDIA Corporation ("NVIDIA"), free of charge,
+to any person obtaining a copy of the sample definition code that uses our 
+Material Definition Language (the "MDL Materials"), to reproduce and distribute
+the MDL Materials, including without limitation the rights to use, copy, merge,
+publish, distribute, and sell modified and unmodified copies of the MDL 
+Materials, and to permit persons to whom the MDL Materials is furnished to do
+so, in all cases solely for use with NVIDIA’s Material Definition Language,
+subject to the following further conditions:
+
+1. The above copyright notices, this list of conditions, and the disclaimer
+that follows shall be retained in all copies of one or more of the MDL
+Materials, including in any software with which the MDL Materials are bundled,
+redistributed, and/or sold, and included either as stand-alone text files,
+human-readable headers or in the appropriate machine-readable metadata fields
+within text or binary files as long as those fields can be easily viewed by the
+user, as applicable.
+2. The name of NVIDIA shall not be used to promote, endorse or advertise any 
+Modified Version without specific prior written permission, except a) to comply
+ with the notice requirements otherwise contained herein; or b) to acknowledge
+the contribution(s) of NVIDIA.
+
+THE MDL MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT,
+TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL NVIDIA CORPORATION BE LIABLE FOR 
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, 
+INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF 
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE
+THE MDL MATERIALS OR FROM OTHER DEALINGS IN THE MDL MATERIALS.
+*/
+
+//* 1.0.1 - using absolute import paths when importing standard modules
+
+mdl 1.3;
+
+import ::df::*;
+import ::state::*;
+import ::math::*;
+import ::tex::*;
+import ::anno::*;
+
+
+export float3x3 matrix_inverse(float3x3 matrix)
+[[
+    anno::description("Inverse the 3x3 matrix"),
+    anno::noinline()
+]]
+{
+	float determinant = (matrix[0][0] * matrix[1][1] * matrix[2][2] + matrix[1][0] * matrix[2][1] * matrix[0][2] + matrix[2][0] * matrix[0][1] * matrix[1][2]) - (matrix[0][2] * matrix[1][1] * matrix[2][0] + matrix[1][2] * matrix[2][1] * matrix[0][0] + matrix[2][2] * matrix[0][1] * matrix[1][0]);
+	float rdet = 1.0f / determinant;
+	
+	float3x3 result;
+	
+	result[0][0] = rdet * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]);
+	result[0][1] = -rdet * (matrix[0][1] * matrix[2][2] - matrix[0][2] * matrix[2][1]);
+	result[0][2] = rdet * (matrix[0][1] * matrix[1][2] - matrix[0][2] * matrix[1][1]);
+	
+	result[1][0] = -rdet * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]);
+	result[1][1] = rdet * (matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0]);
+	result[1][2] = -rdet * (matrix[0][0] * matrix[1][2] - matrix[0][2] * matrix[1][0]);
+	
+	result[2][0] = rdet * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0]);
+	result[2][1] = -rdet * (matrix[0][0] * matrix[2][1] - matrix[0][1] * matrix[2][0]);
+	result[2][2] = rdet * (matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]);
+
+	return result;
+}
+
+export float3 transform_vector_from_tangent_to_world(float3 vector)
+[[
+    anno::description("Transform vector from tangent space to world space"),
+    anno::noinline()
+]]
+{
+	float3x3 tangent_to_world = float3x3(state::texture_tangent_u(0), state::texture_tangent_v(0), state::normal());
+	return tangent_to_world * vector;
+}
+
+export float3 transform_vector_from_world_to_tangent(float3 vector)
+[[
+    anno::description("Transform vector from world space to tangent space"),
+    anno::noinline()
+]]
+{
+	float3x3 tangent_to_world = float3x3(state::texture_tangent_u(0), state::texture_tangent_v(0), state::normal());
+	
+	// inverse tangent to world matrix
+	float3x3 world_to_tangent = matrix_inverse(tangent_to_world);
+	
+	return world_to_tangent * vector;	
+}
+
+export float4 unpack_normal_map(
+    float4 texture_sample = float4(0.0, 0.0, 1.0, 1.0)
+    )
+[[
+    anno::description("Unpack a normal stored in a normal map"),
+    anno::noinline()
+]]
+{
+    float2 normal_xy = float2(texture_sample.x, texture_sample.y);
+
+	normal_xy = normal_xy * float2(2.0,2.0) - float2(1.0,1.0);
+	float normal_z = math::sqrt( math::saturate( 1.0 - math::dot( normal_xy, normal_xy ) ) );
+	return float4( normal_xy.x, normal_xy.y, normal_z, 1.0 );
+}
+
+// for get color value from normal.
+export float4 pack_normal_map(
+    float4 texture_sample = float4(0.0, 0.0, 1.0, 1.0)
+    )
+[[
+    anno::description("Pack to color from a normal")
+]]
+{
+    float2 return_xy = float2(texture_sample.x, texture_sample.y);
+
+	return_xy = (return_xy + float2(1.0,1.0)) / float2(2.0,2.0);
+	
+	return float4( return_xy.x, return_xy.y, 0.0, 1.0 );
+}
+
+export float4 greyscale_texture_lookup(
+    float4 texture_sample = float4(0.0, 0.0, 0.0, 1.0)
+    )
+[[
+    anno::description("Sampling a greyscale texture"),
+    anno::noinline()
+]]
+{
+    return float4(texture_sample.x, texture_sample.x, texture_sample.x, texture_sample.x);
+}     
+
+export float3 pixel_normal_world_space()
+[[
+    anno::description("Pixel normal in world space"),
+    anno::noinline()
+]]
+{
+    return state::transform_normal(state::coordinate_internal,state::coordinate_world,state::normal());
+}
+
+export float3 vertex_normal_world_space()
+[[
+    anno::description("Vertex normal in world space"),
+    anno::noinline()
+]]
+{
+    return state::transform_normal(state::coordinate_internal,state::coordinate_world,state::normal());
+}
+
+export float3 landscape_normal_world_space()
+[[
+    anno::description("Landscape normal in world space")
+]]
+{
+	float3 normalFromNormalmap = math::floor((::vertex_normal_world_space() * 0.5 + 0.5) * 255.0) / 255.0 * 2.0 - 1.0;
+	
+	float2 normalXY = float2(normalFromNormalmap.x, normalFromNormalmap.y);
+	return float3(normalXY.x, normalXY.y, math::sqrt(math::saturate(1.0 - math::dot(normalXY, normalXY))));
+}
+
+// Different implementation specific between mdl and hlsl for smoothstep
+export float smoothstep(float a, float b, float l)
+{
+	if (a < b)
+	{
+		return math::smoothstep(a, b, l);
+	}
+	else if (a > b)
+	{
+		return 1.0 - math::smoothstep(b, a, l);
+	}
+	else
+	{
+		return l <= a ? 0.0 : 1.0;
+	}
+}
+
+export float2 smoothstep(float2 a, float2 b, float2 l)
+{
+	return float2(smoothstep(a.x, b.x, l.x), smoothstep(a.y, b.y, l.y));
+}
+
+export float3 smoothstep(float3 a, float3 b, float3 l)
+{
+	return float3(smoothstep(a.x, b.x, l.x), smoothstep(a.y, b.y, l.y), smoothstep(a.z, b.z, l.z));
+}
+
+export float4 smoothstep(float4 a, float4 b, float4 l)
+{
+	return float4(smoothstep(a.x, b.x, l.x), smoothstep(a.y, b.y, l.y), smoothstep(a.z, b.z, l.z), smoothstep(a.w, b.w, l.w));
+}
+
+export float2 smoothstep(float2 a, float2 b, float l)
+{
+	return float2(smoothstep(a.x, b.x, l), smoothstep(a.y, b.y, l));
+}
+
+export float3 smoothstep(float3 a, float3 b, float l)
+{
+	return float3(smoothstep(a.x, b.x, l), smoothstep(a.y, b.y, l), smoothstep(a.z, b.z, l));
+}
+
+export float4 smoothstep(float4 a, float4 b, float l)
+{
+	return float4(smoothstep(a.x, b.x, l), smoothstep(a.y, b.y, l), smoothstep(a.z, b.z, l), smoothstep(a.w, b.w, l));
+}
+
+//------------------ Random from UE4 -----------------------
+float length2(float3 v)
+{
+	return math::dot(v, v);
+}
+
+float3 GetPerlinNoiseGradientTextureAt(uniform texture_2d PerlinNoiseGradientTexture, float3 v)
+{
+	const float2 ZShear = float2(17.0f, 89.0f);
+
+	float2 OffsetA = v.z * ZShear;
+	float2 TexA = (float2(v.x, v.y) + OffsetA + 0.5f) / 128.0f;
+	float4 PerlinNoise = tex::lookup_float4(PerlinNoiseGradientTexture,float2(TexA.x,1.0-TexA.y),tex::wrap_repeat,tex::wrap_repeat);
+	return float3(PerlinNoise.x, PerlinNoise.y, PerlinNoise.z) * 2.0 - 1.0;
+}
+
+float3 SkewSimplex(float3 In)
+{
+	return In + math::dot(In, float3(1.0 / 3.0f) );
+}
+float3 UnSkewSimplex(float3 In)
+{
+	return In - math::dot(In, float3(1.0 / 6.0f) );
+}
+
+// 3D random number generator inspired by PCGs (permuted congruential generator)
+// Using a **simple** Feistel cipher in place of the usual xor shift permutation step
+// @param v = 3D integer coordinate
+// @return three elements w/ 16 random bits each (0-0xffff).
+// ~8 ALU operations for result.x    (7 mad, 1 >>)
+// ~10 ALU operations for result.xy  (8 mad, 2 >>)
+// ~12 ALU operations for result.xyz (9 mad, 3 >>)
+
+//TODO: uint3
+int3 Rand3DPCG16(int3 p)
+{
+	// taking a signed int then reinterpreting as unsigned gives good behavior for negatives
+	//TODO: uint3
+	int3 v = int3(p);
+
+	// Linear congruential step. These LCG constants are from Numerical Recipies
+	// For additional #'s, PCG would do multiple LCG steps and scramble each on output
+	// So v here is the RNG state
+	v = v * 1664525 + 1013904223;
+
+	// PCG uses xorshift for the final shuffle, but it is expensive (and cheap
+	// versions of xorshift have visible artifacts). Instead, use simple MAD Feistel steps
+	//
+	// Feistel ciphers divide the state into separate parts (usually by bits)
+	// then apply a series of permutation steps one part at a time. The permutations
+	// use a reversible operation (usually ^) to part being updated with the result of
+	// a permutation function on the other parts and the key.
+	//
+	// In this case, I'm using v.x, v.y and v.z as the parts, using + instead of ^ for
+	// the combination function, and just multiplying the other two parts (no key) for 
+	// the permutation function.
+	//
+	// That gives a simple mad per round.
+	v.x += v.y*v.z;
+	v.y += v.z*v.x;
+	v.z += v.x*v.y;
+	v.x += v.y*v.z;
+	v.y += v.z*v.x;
+	v.z += v.x*v.y;
+
+	// only top 16 bits are well shuffled
+	return v >> 16;
+}
+
+// Wraps noise for tiling texture creation
+// @param v = unwrapped texture parameter
+// @param bTiling = true to tile, false to not tile
+// @param RepeatSize = number of units before repeating
+// @return either original or wrapped coord
+float3 NoiseTileWrap(float3 v,  bool bTiling, float RepeatSize)
+{
+	return bTiling ? (math::frac(v / RepeatSize) * RepeatSize) : v;
+}
+
+// Evaluate polynomial to get smooth transitions for Perlin noise
+// only needed by Perlin functions in this file
+// scalar(per component): 2 add, 5 mul
+float4 PerlinRamp(float4 t)
+{
+	return t * t * t * (t * (t * 6 - 15) + 10); 
+}
+
+// Blum-Blum-Shub-inspired pseudo random number generator
+// http://www.umbc.edu/~olano/papers/mNoise.pdf
+// real BBS uses ((s*s) mod M) with bignums and M as the product of two huge Blum primes
+// instead, we use a single prime M just small enough not to overflow
+// note that the above paper used 61, which fits in a half, but is unusably bad
+// @param Integer valued floating point seed
+// @return random number in range [0,1)
+// ~8 ALU operations (5 *, 3 frac)
+float RandBBSfloat(float seed)
+{
+	float BBS_PRIME24 = 4093.0;
+	float s = math::frac(seed / BBS_PRIME24);
+	s = math::frac(s * s * BBS_PRIME24);
+	s = math::frac(s * s * BBS_PRIME24);
+	return s;
+}
+
+// Modified noise gradient term
+// @param seed - random seed for integer lattice position
+// @param offset - [-1,1] offset of evaluation point from lattice point
+// @return gradient direction (xyz) and contribution (w) from this lattice point
+float4 MGradient(int seed, float3 offset)
+{
+	//TODO uint
+	int rand = Rand3DPCG16(int3(seed,0,0)).x;
+	int3 MGradientMask = int3(0x8000, 0x4000, 0x2000);
+	float3 MGradientScale = float3(1.0 / 0x4000, 1.0 / 0x2000, 1.0 / 0x1000);
+	float3 direction = float3(int3(rand, rand, rand) & MGradientMask) * MGradientScale - 1;
+	return float4(direction.x, direction.y, direction.z, math::dot(direction, offset));
+}
+
+// compute Perlin and related noise corner seed values
+// @param v = 3D noise argument, use float3(x,y,0) for 2D or float3(x,0,0) for 1D
+// @param bTiling = true to return seed values for a repeating noise pattern
+// @param RepeatSize = integer units before tiling in each dimension
+// @param seed000-seed111 = hash function seeds for the eight corners
+// @return fractional part of v
+struct SeedValue
+{
+	float3 fv = float3(0);
+	float seed000 = 0;
+	float seed001 = 0;
+	float seed010 = 0;
+	float seed011 = 0;
+	float seed100 = 0;
+	float seed101 = 0;
+	float seed110 = 0;
+	float seed111 = 0;
+};
+
+SeedValue NoiseSeeds(float3 v, bool bTiling, float RepeatSize)
+{
+	SeedValue seeds;
+	seeds.fv = math::frac(v);
+	float3 iv = math::floor(v);
+
+	const float3 primes = float3(19, 47, 101);
+
+	if (bTiling)
+	{	// can't algebraically combine with primes
+		seeds.seed000 = math::dot(primes, NoiseTileWrap(iv, true, RepeatSize));
+		seeds.seed100 = math::dot(primes, NoiseTileWrap(iv + float3(1, 0, 0), true, RepeatSize));
+		seeds.seed010 = math::dot(primes, NoiseTileWrap(iv + float3(0, 1, 0), true, RepeatSize));
+		seeds.seed110 = math::dot(primes, NoiseTileWrap(iv + float3(1, 1, 0), true, RepeatSize));
+		seeds.seed001 = math::dot(primes, NoiseTileWrap(iv + float3(0, 0, 1), true, RepeatSize));
+		seeds.seed101 = math::dot(primes, NoiseTileWrap(iv + float3(1, 0, 1), true, RepeatSize));
+		seeds.seed011 = math::dot(primes, NoiseTileWrap(iv + float3(0, 1, 1), true, RepeatSize));
+		seeds.seed111 = math::dot(primes, NoiseTileWrap(iv + float3(1, 1, 1), true, RepeatSize));
+	}
+	else
+	{	// get to combine offsets with multiplication by primes in this case
+		seeds.seed000 = math::dot(iv, primes);
+		seeds.seed100 = seeds.seed000 + primes.x;
+		seeds.seed010 = seeds.seed000 + primes.y;
+		seeds.seed110 = seeds.seed100 + primes.y;
+		seeds.seed001 = seeds.seed000 + primes.z;
+		seeds.seed101 = seeds.seed100 + primes.z;
+		seeds.seed011 = seeds.seed010 + primes.z;
+		seeds.seed111 = seeds.seed110 + primes.z;
+	}
+
+	return seeds;
+}
+
+struct SimplexWeights
+{
+	float4 Result = float4(0);
+	float3 PosA = float3(0);
+	float3 PosB = float3(0);
+	float3 PosC = float3(0);
+	float3 PosD = float3(0);
+};
+
+// Computed weights and sample positions for simplex interpolation
+// @return float4(a,b,c, d) Barycentric coordinate defined as Filtered = Tex(PosA) * a + Tex(PosB) * b + Tex(PosC) * c + Tex(PosD) * d
+SimplexWeights ComputeSimplexWeights3D(float3 OrthogonalPos)
+{
+	SimplexWeights weights;
+	float3 OrthogonalPosFloor = math::floor(OrthogonalPos);
+
+	weights.PosA = OrthogonalPosFloor;
+	weights.PosB = weights.PosA + float3(1, 1, 1);
+
+	OrthogonalPos -= OrthogonalPosFloor;
+
+	float Largest = math::max(OrthogonalPos.x, math::max(OrthogonalPos.y, OrthogonalPos.z));
+	float Smallest = math::min(OrthogonalPos.x, math::min(OrthogonalPos.y, OrthogonalPos.z));
+
+	weights.PosC = weights.PosA + float3(Largest == OrthogonalPos.x, Largest == OrthogonalPos.y, Largest == OrthogonalPos.z);
+	weights.PosD = weights.PosA + float3(Smallest != OrthogonalPos.x, Smallest != OrthogonalPos.y, Smallest != OrthogonalPos.z);
+
+	float RG = OrthogonalPos.x - OrthogonalPos.y;
+	float RB = OrthogonalPos.x - OrthogonalPos.z;
+	float GB = OrthogonalPos.y - OrthogonalPos.z;
+
+	weights.Result.z = 
+		  math::min(math::max(0, RG), math::max(0, RB))		// X
+		+ math::min(math::max(0, -RG), math::max(0, GB))		// Y
+		+ math::min(math::max(0, -RB), math::max(0, -GB));	// Z
+	
+	weights.Result.w = 
+		  math::min(math::max(0, -RG), math::max(0, -RB))		// X
+		+ math::min(math::max(0, RG), math::max(0, -GB))		// Y
+		+ math::min(math::max(0, RB), math::max(0, GB));		// Z
+
+	weights.Result.y = Smallest;
+	weights.Result.x = 1.0f - weights.Result.y - weights.Result.z - weights.Result.w;
+
+	return weights;
+}
+
+// filtered 3D gradient simple noise (few texture lookups, high quality)
+// @param v >0
+// @return random number in the range -1 .. 1
+float SimplexNoise3D_TEX(uniform texture_2d PerlinNoiseGradientTexture, float3 EvalPos)
+{
+	float3 OrthogonalPos = SkewSimplex(EvalPos);
+
+	SimplexWeights Weights = ComputeSimplexWeights3D(OrthogonalPos);
+
+	// can be optimized to 1 or 2 texture lookups (4 or 8 channel encoded in 32 bit)
+	float3 A = GetPerlinNoiseGradientTextureAt(PerlinNoiseGradientTexture, Weights.PosA);
+	float3 B = GetPerlinNoiseGradientTextureAt(PerlinNoiseGradientTexture, Weights.PosB);
+	float3 C = GetPerlinNoiseGradientTextureAt(PerlinNoiseGradientTexture, Weights.PosC);
+	float3 D = GetPerlinNoiseGradientTextureAt(PerlinNoiseGradientTexture, Weights.PosD);
+	
+	Weights.PosA = UnSkewSimplex(Weights.PosA);
+	Weights.PosB = UnSkewSimplex(Weights.PosB);
+	Weights.PosC = UnSkewSimplex(Weights.PosC);
+	Weights.PosD = UnSkewSimplex(Weights.PosD);
+
+	float DistanceWeight;
+
+	DistanceWeight = math::saturate(0.6f - length2(EvalPos - Weights.PosA));	DistanceWeight *= DistanceWeight; DistanceWeight *= DistanceWeight;
+	float a = math::dot(A, EvalPos - Weights.PosA) * DistanceWeight;
+	DistanceWeight = math::saturate(0.6f - length2(EvalPos - Weights.PosB));	DistanceWeight *= DistanceWeight; DistanceWeight *= DistanceWeight;
+	float b = math::dot(B, EvalPos - Weights.PosB) * DistanceWeight;
+	DistanceWeight = math::saturate(0.6f - length2(EvalPos - Weights.PosC));	DistanceWeight *= DistanceWeight; DistanceWeight *= DistanceWeight;
+	float c = math::dot(C, EvalPos - Weights.PosC) * DistanceWeight;
+	DistanceWeight = math::saturate(0.6f - length2(EvalPos - Weights.PosD));	DistanceWeight *= DistanceWeight; DistanceWeight *= DistanceWeight;
+	float d = math::dot(D, EvalPos - Weights.PosD) * DistanceWeight;
+
+	return 32 * (a + b + c + d);
+}
+
+// filtered 3D noise, can be optimized
+// @param v = 3D noise argument, use float3(x,y,0) for 2D or float3(x,0,0) for 1D
+// @param bTiling = repeat noise pattern
+// @param RepeatSize = integer units before tiling in each dimension
+// @return random number in the range -1 .. 1
+float GradientNoise3D_TEX(uniform texture_2d PerlinNoiseGradientTexture, float3 v, bool bTiling, float RepeatSize)
+{
+	bTiling = true;
+	float3 fv = math::frac(v);
+	float3 iv0 = NoiseTileWrap(math::floor(v), bTiling, RepeatSize);
+	float3 iv1 = NoiseTileWrap(iv0 + 1, bTiling, RepeatSize);
+
+	const int2 ZShear = int2(17, 89);
+	
+	float2 OffsetA = iv0.z * ZShear;
+	float2 OffsetB = OffsetA + ZShear;	// non-tiling, use relative offset
+	if (bTiling)						// tiling, have to compute from wrapped coordinates
+	{
+		OffsetB = iv1.z * ZShear;
+	}
+
+	// Texture size scale factor
+	float ts = 1 / 128.0f;
+
+	// texture coordinates for iv0.xy, as offset for both z slices
+	float2 TexA0 = (float2(iv0.x, iv0.y) + OffsetA + 0.5f) * ts;
+	float2 TexB0 = (float2(iv0.x, iv0.y) + OffsetB + 0.5f) * ts;
+
+	// texture coordinates for iv1.xy, as offset for both z slices
+	float2 TexA1 = TexA0 + ts;	// for non-tiling, can compute relative to existing coordinates
+	float2 TexB1 = TexB0 + ts;
+	if (bTiling)				// for tiling, need to compute from wrapped coordinates
+	{
+		TexA1 = (float2(iv1.x, iv1.y) + OffsetA + 0.5f) * ts;
+		TexB1 = (float2(iv1.x, iv1.y) + OffsetB + 0.5f) * ts;
+	}
+
+
+	// can be optimized to 1 or 2 texture lookups (4 or 8 channel encoded in 8, 16 or 32 bit)
+	float4 PerlinNoise = tex::lookup_float4(PerlinNoiseGradientTexture,float2(TexA0.x,1.0-TexA0.y),tex::wrap_repeat,tex::wrap_repeat);
+	float3 PerlinNoiseColor = float3(PerlinNoise.x, PerlinNoise.y, PerlinNoise.z);
+	float3 A = PerlinNoiseColor * 2 - 1;
+	PerlinNoise = tex::lookup_float4(PerlinNoiseGradientTexture,float2(TexA1.x,1.0-TexA0.y),tex::wrap_repeat,tex::wrap_repeat);
+	PerlinNoiseColor = float3(PerlinNoise.x, PerlinNoise.y, PerlinNoise.z);
+	float3 B = PerlinNoiseColor * 2 - 1;
+	PerlinNoise = tex::lookup_float4(PerlinNoiseGradientTexture,float2(TexA0.x,1.0-TexA1.y),tex::wrap_repeat,tex::wrap_repeat);
+	PerlinNoiseColor = float3(PerlinNoise.x, PerlinNoise.y, PerlinNoise.z);
+	float3 C = PerlinNoiseColor * 2 - 1;
+	PerlinNoise = tex::lookup_float4(PerlinNoiseGradientTexture,float2(TexA1.x,1.0-TexA1.y),tex::wrap_repeat,tex::wrap_repeat);
+	PerlinNoiseColor = float3(PerlinNoise.x, PerlinNoise.y, PerlinNoise.z);
+	float3 D = PerlinNoiseColor * 2 - 1;
+	PerlinNoise = tex::lookup_float4(PerlinNoiseGradientTexture,float2(TexB0.x,1.0-TexB0.y),tex::wrap_repeat,tex::wrap_repeat);
+	PerlinNoiseColor = float3(PerlinNoise.x, PerlinNoise.y, PerlinNoise.z);
+	float3 E = PerlinNoiseColor * 2 - 1;
+	PerlinNoise = tex::lookup_float4(PerlinNoiseGradientTexture,float2(TexB1.x,1.0-TexB0.y),tex::wrap_repeat,tex::wrap_repeat);
+	PerlinNoiseColor = float3(PerlinNoise.x, PerlinNoise.y, PerlinNoise.z);
+	float3 F = PerlinNoiseColor * 2 - 1;
+	PerlinNoise = tex::lookup_float4(PerlinNoiseGradientTexture,float2(TexB0.x,1.0-TexB1.y),tex::wrap_repeat,tex::wrap_repeat);
+	PerlinNoiseColor = float3(PerlinNoise.x, PerlinNoise.y, PerlinNoise.z);
+	float3 G = PerlinNoiseColor * 2 - 1;
+	PerlinNoise = tex::lookup_float4(PerlinNoiseGradientTexture,float2(TexB1.x,1.0-TexB1.y),tex::wrap_repeat,tex::wrap_repeat);
+	PerlinNoiseColor = float3(PerlinNoise.x, PerlinNoise.y, PerlinNoise.z);
+	float3 H = PerlinNoiseColor * 2 - 1;
+
+	float a = math::dot(A, fv - float3(0, 0, 0));
+	float b = math::dot(B, fv - float3(1, 0, 0));
+	float c = math::dot(C, fv - float3(0, 1, 0));
+	float d = math::dot(D, fv - float3(1, 1, 0));
+	float e = math::dot(E, fv - float3(0, 0, 1));
+	float f = math::dot(F, fv - float3(1, 0, 1));
+	float g = math::dot(G, fv - float3(0, 1, 1));
+	float h = math::dot(H, fv - float3(1, 1, 1));
+
+	float4 Weights = PerlinRamp(math::frac(float4(fv.x, fv.y, fv.z, 0)));
+	
+	float i = math::lerp(math::lerp(a, b, Weights.x), math::lerp(c, d, Weights.x), Weights.y);
+	float j = math::lerp(math::lerp(e, f, Weights.x), math::lerp(g, h, Weights.x), Weights.y);
+
+	return math::lerp(i, j, Weights.z);
+}
+
+// @return random number in the range -1 .. 1
+// scalar: 6 frac, 31 mul/mad, 15 add, 
+float FastGradientPerlinNoise3D_TEX(uniform texture_3d PerlinNoise3DTexture, float3 xyz)
+{
+	// needs to be the same value when creating the PerlinNoise3D texture
+	float Extent = 16;
+
+	// last texel replicated and needed for filtering
+	// scalar: 3 frac, 6 mul
+	xyz = math::frac(xyz / (Extent - 1)) * (Extent - 1);
+
+	// scalar: 3 frac
+	float3 uvw = math::frac(xyz);
+	// = floor(xyz);
+	// scalar: 3 add
+	float3 p0 = xyz - uvw;
+//	float3 f = math::pow(uvw, 2) * 3.0f - math::pow(uvw, 3) * 2.0f;	// original perlin hermite (ok when used without bump mapping)
+	// scalar: 2*3 add 5*3 mul
+	float4 pr = PerlinRamp(float4(uvw.x, uvw.y, uvw.z, 0));
+	float3 f = float3(pr.x, pr.y, pr.z);	// new, better with continues second derivative for bump mapping
+	// scalar: 3 add
+	float3 p = p0 + f;
+	// scalar: 3 mad
+	// TODO: need reverse???
+	float4 NoiseSample = tex::lookup_float4(PerlinNoise3DTexture, p / Extent + 0.5f / Extent);	// +0.5f to get rid of bilinear offset
+
+	// reconstruct from 8bit (using mad with 2 constants and dot4 was same instruction count)
+	// scalar: 4 mad, 3 mul, 3 add 
+	float3 n = float3(NoiseSample.x, NoiseSample.y, NoiseSample.z) * 255.0f / 127.0f - 1.0f;
+	float d = NoiseSample.w * 255.f - 127;
+	return math::dot(xyz, n) - d;
+}
+
+// Perlin-style "Modified Noise"
+// http://www.umbc.edu/~olano/papers/index.html#mNoise
+// @param v = 3D noise argument, use float3(x,y,0) for 2D or float3(x,0,0) for 1D
+// @param bTiling = repeat noise pattern
+// @param RepeatSize = integer units before tiling in each dimension
+// @return random number in the range -1 .. 1
+float GradientNoise3D_ALU(float3 v, bool bTiling, float RepeatSize)
+{
+	SeedValue seeds = NoiseSeeds(v, bTiling, RepeatSize);
+
+	float rand000 = MGradient(int(seeds.seed000), seeds.fv - float3(0, 0, 0)).w;
+	float rand100 = MGradient(int(seeds.seed100), seeds.fv - float3(1, 0, 0)).w;
+	float rand010 = MGradient(int(seeds.seed010), seeds.fv - float3(0, 1, 0)).w;
+	float rand110 = MGradient(int(seeds.seed110), seeds.fv - float3(1, 1, 0)).w;
+	float rand001 = MGradient(int(seeds.seed001), seeds.fv - float3(0, 0, 1)).w;
+	float rand101 = MGradient(int(seeds.seed101), seeds.fv - float3(1, 0, 1)).w;
+	float rand011 = MGradient(int(seeds.seed011), seeds.fv - float3(0, 1, 1)).w;
+	float rand111 = MGradient(int(seeds.seed111), seeds.fv - float3(1, 1, 1)).w;
+
+	float4 Weights = PerlinRamp(float4(seeds.fv.x, seeds.fv.y, seeds.fv.z, 0));
+
+	float i = math::lerp(math::lerp(rand000, rand100, Weights.x), math::lerp(rand010, rand110, Weights.x), Weights.y);
+	float j = math::lerp(math::lerp(rand001, rand101, Weights.x), math::lerp(rand011, rand111, Weights.x), Weights.y);
+	return math::lerp(i, j, Weights.z);
+}
+
+// 3D value noise - used to be incorrectly called Perlin noise
+// @param v = 3D noise argument, use float3(x,y,0) for 2D or float3(x,0,0) for 1D
+// @param bTiling = repeat noise pattern
+// @param RepeatSize = integer units before tiling in each dimension
+// @return random number in the range -1 .. 1
+float ValueNoise3D_ALU(float3 v, bool bTiling, float RepeatSize)
+{
+	SeedValue seeds = NoiseSeeds(v, bTiling, RepeatSize);
+
+	float rand000 = RandBBSfloat(seeds.seed000) * 2 - 1;
+	float rand100 = RandBBSfloat(seeds.seed100) * 2 - 1;
+	float rand010 = RandBBSfloat(seeds.seed010) * 2 - 1;
+	float rand110 = RandBBSfloat(seeds.seed110) * 2 - 1;
+	float rand001 = RandBBSfloat(seeds.seed001) * 2 - 1;
+	float rand101 = RandBBSfloat(seeds.seed101) * 2 - 1;
+	float rand011 = RandBBSfloat(seeds.seed011) * 2 - 1;
+	float rand111 = RandBBSfloat(seeds.seed111) * 2 - 1;
+	
+	float4 Weights = PerlinRamp(float4(seeds.fv.x, seeds.fv.y, seeds.fv.z, 0));
+	
+	float i = math::lerp(math::lerp(rand000, rand100, Weights.x), math::lerp(rand010, rand110, Weights.x), Weights.y);
+	float j = math::lerp(math::lerp(rand001, rand101, Weights.x), math::lerp(rand011, rand111, Weights.x), Weights.y);
+	return math::lerp(i, j, Weights.z);
+}
+
+// 3D jitter offset within a voronoi noise cell
+// @param pos - integer lattice corner
+// @return random offsets vector
+float3 VoronoiCornerSample(float3 pos, int Quality)
+{
+	// random values in [-0.5, 0.5]
+	float3 noise = float3(Rand3DPCG16(int3(pos))) / 0xffff - 0.5;
+
+	// quality level 1 or 2: searches a 2x2x2 neighborhood with points distributed on a sphere
+	// scale factor to guarantee jittered points will be found within a 2x2x2 search
+	if (Quality <= 2)
+	{
+		return math::normalize(noise) * 0.2588;
+	}
+
+	// quality level 3: searches a 3x3x3 neighborhood with points distributed on a sphere
+	// scale factor to guarantee jittered points will be found within a 3x3x3 search
+	if (Quality == 3)
+	{
+		return math::normalize(noise) * 0.3090;
+	}
+
+	// quality level 4: jitter to anywhere in the cell, needs 4x4x4 search
+	return noise;
+}
+
+// compare previous best with a new candidate
+// not producing point locations makes it easier for compiler to eliminate calculations when they're not needed
+// @param minval = location and distance of best candidate seed point before the new one
+// @param candidate = candidate seed point
+// @param offset = 3D offset to new candidate seed point
+// @param bDistanceOnly = if true, only set maxval.w with distance, otherwise maxval.w is distance and maxval.xyz is position
+// @return position (if bDistanceOnly is false) and distance to closest seed point so far
+float4 VoronoiCompare(float4 minval, float3 candidate, float3 offset, bool bDistanceOnly)
+{
+	if (bDistanceOnly)
+	{
+		return float4(0, 0, 0, math::min(minval.w, math::dot(offset, offset)));
+	}
+	else
+	{
+		float newdist = math::dot(offset, offset);
+		return newdist > minval.w ? minval : float4(candidate.x, candidate.y, candidate.z, newdist);
+	}
+}
+
+// 220 instruction Worley noise
+float4 VoronoiNoise3D_ALU(float3 v, int Quality, bool bTiling, float RepeatSize, bool bDistanceOnly)
+{
+	float3 fv = math::frac(v),  fv2 = math::frac(v + 0.5);
+	float3 iv = math::floor(v), iv2 = math::floor(v + 0.5);
+
+	// with initial minimum distance = infinity (or at least bigger than 4), first min is optimized away
+	float4 mindist = float4(0,0,0,100);
+	float3 p, offset;
+
+	// quality level 3: do a 3x3x3 search
+	if (Quality == 3)
+	{
+		int offset_x;
+		int offset_y;
+		int offset_z;
+		for (offset_x = -1; offset_x <= 1; ++offset_x)
+		{
+			for (offset_y = -1; offset_y <= 1; ++offset_y)
+			{
+				for (offset_z = -1; offset_z <= 1; ++offset_z)
+				{
+					offset = float3(offset_x, offset_y, offset_z);
+					p = offset + VoronoiCornerSample(NoiseTileWrap(iv2 + offset, bTiling, RepeatSize), Quality);
+					mindist = VoronoiCompare(mindist, iv2 + p, fv2 - p, bDistanceOnly);
+				}
+			}
+		}
+	}
+
+	// everybody else searches a base 2x2x2 neighborhood
+	else
+	{
+		int offset_x;
+		int offset_y;
+		int offset_z;
+		for (offset_x = 0; offset_x <= 1; ++offset_x)
+		{
+			for (offset_y = 0; offset_y <= 1; ++offset_y)
+			{
+				for (offset_z = 0; offset_z <= 1; ++offset_z)
+				{
+					offset = float3(offset_x, offset_y, offset_z);
+					p = offset + VoronoiCornerSample(NoiseTileWrap(iv + offset, bTiling, RepeatSize), Quality);
+					mindist = VoronoiCompare(mindist, iv + p, fv - p, bDistanceOnly);
+
+					// quality level 2, do extra set of points, offset by half a cell
+					if (Quality == 2)
+					{
+						// 467 is just an offset to a different area in the random number field to avoid similar neighbor artifacts
+						p = offset + VoronoiCornerSample(NoiseTileWrap(iv2 + offset, bTiling, RepeatSize) + 467, Quality);
+						mindist = VoronoiCompare(mindist, iv2 + p, fv2 - p, bDistanceOnly);
+					}
+				}
+			}
+		}
+	}
+
+	// quality level 4: add extra sets of four cells in each direction
+	if (Quality >= 4)
+	{
+		int offset_x;
+		int offset_y;
+		int offset_z;	
+		for (offset_x = -1; offset_x <= 2; offset_x += 3)
+		{
+			for (offset_y = 0; offset_y <= 1; ++offset_y)
+			{
+				for (offset_z = 0; offset_z <= 1; ++offset_z)
+				{
+					offset = float3(offset_x, offset_y, offset_z);
+					// along x axis
+					p = offset + VoronoiCornerSample(NoiseTileWrap(iv + offset, bTiling, RepeatSize), Quality);
+					mindist = VoronoiCompare(mindist, iv + p, fv - p, bDistanceOnly);
+
+					// along y axis
+					p = float3(offset.y, offset.z, offset.x) + VoronoiCornerSample(NoiseTileWrap(iv + float3(offset.y, offset.z, offset.x), bTiling, RepeatSize), Quality);
+					mindist = VoronoiCompare(mindist, iv + p, fv - p, bDistanceOnly);
+
+					// along z axis
+					p = float3(offset.z, offset.x, offset.y) + VoronoiCornerSample(NoiseTileWrap(iv + float3(offset.z, offset.x, offset.y), bTiling, RepeatSize), Quality);
+					mindist = VoronoiCompare(mindist, iv + p, fv - p, bDistanceOnly);
+				}
+			}
+		}
+	}
+
+	// transform squared distance to real distance
+	return float4(mindist.x, mindist.y, mindist.z, math::sqrt(mindist.w));
+}
+
+// Coordinates for corners of a Simplex tetrahedron
+// Based on McEwan et al., Efficient computation of noise in GLSL, JGT 2011
+// @param v = 3D noise argument
+// @return 4 corner locations
+float4x3 SimplexCorners(float3 v)
+{
+	// find base corner by skewing to tetrahedral space and back
+	float3 tet = math::floor(v + v.x/3 + v.y/3 + v.z/3);
+	float3 base = tet - tet.x/6 - tet.y/6 - tet.z/6;
+	float3 f = v - base;
+
+	// Find offsets to other corners (McEwan did this in tetrahedral space,
+	// but since skew is along x=y=z axis, this works in Euclidean space too.)
+	float3 g = math::step(float3(f.y,f.z,f.x), float3(f.x,f.y,f.z)), h = 1 - float3(g.z, g.x, g.y);
+	float3 a1 = math::min(g, h) - 1.0 / 6.0, a2 = math::max(g, h) - 1.0 / 3.0;
+
+	// four corners
+	return float4x3(base, base + a1, base + a2, base + 0.5);
+}
+
+// Improved smoothing function for simplex noise
+// @param f = fractional distance to four tetrahedral corners
+// @return weight for each corner
+float4 SimplexSmooth(float4x3 f)
+{
+	const float scale = 1024. / 375.;	// scale factor to make noise -1..1
+	float4 d = float4(math::dot(f[0], f[0]), math::dot(f[1], f[1]), math::dot(f[2], f[2]), math::dot(f[3], f[3]));
+	float4 s = math::saturate(2 * d);
+	return (1 * scale + s*(-3 * scale + s*(3 * scale - s*scale)));
+}
+
+// Derivative of simplex noise smoothing function
+// @param f = fractional distanc eto four tetrahedral corners
+// @return derivative of smoothing function for each corner by x, y and z
+float3x4 SimplexDSmooth(float4x3 f)
+{
+	const float scale = 1024. / 375.;	// scale factor to make noise -1..1
+	float4 d = float4(math::dot(f[0], f[0]), math::dot(f[1], f[1]), math::dot(f[2], f[2]), math::dot(f[3], f[3]));
+	float4 s = math::saturate(2 * d);
+	s = -12 * scale + s*(24 * scale - s * 12 * scale);
+
+	return float3x4(
+		s * float4(f[0][0], f[1][0], f[2][0], f[3][0]),
+		s * float4(f[0][1], f[1][1], f[2][1], f[3][1]),
+		s * float4(f[0][2], f[1][2], f[2][2], f[3][2]));
+}
+
+// Simplex noise and its Jacobian derivative
+// @param v = 3D noise argument
+// @param bTiling = whether to repeat noise pattern
+// @param RepeatSize = integer units before tiling in each dimension, must be a multiple of 3
+// @return float3x3 Jacobian in J[*].xyz, vector noise in J[*].w
+//     J[0].w, J[1].w, J[2].w is a Perlin-style simplex noise with vector output, e.g. (Nx, Ny, Nz)
+//     J[i].x is X derivative of the i'th component of the noise so J[2].x is dNz/dx
+// You can use this to compute the noise, gradient, curl, or divergence:
+//   float3x4 J = JacobianSimplex_ALU(...);
+//   float3 VNoise = float3(J[0].w, J[1].w, J[2].w);	// 3D noise
+//   float3 Grad = J[0].xyz;							// gradient of J[0].w
+//   float3 Curl = float3(J[1][2]-J[2][1], J[2][0]-J[0][2], J[0][1]-J[1][2]);
+//   float Div = J[0][0]+J[1][1]+J[2][2];
+// All of these are confirmed to compile out all unneeded terms.
+// So Grad of X doesn't compute Y or Z components, and VNoise doesn't do any of the derivative computation.
+float3x4 JacobianSimplex_ALU(float3 v, bool bTiling, float RepeatSize)
+{
+	int3 MGradientMask = int3(0x8000, 0x4000, 0x2000);
+	float3 MGradientScale = float3(1. / 0x4000, 1. / 0x2000, 1. / 0x1000);
+
+	// corners of tetrahedron
+	float4x3 T = SimplexCorners(v);
+	// TODO: uint3
+	int3 rand = int3(0);
+	float4x3 gvec0 = float4x3(1.0);
+	float4x3 gvec1 = float4x3(1.0);
+	float4x3 gvec2 = float4x3(1.0);
+	float4x3 fv = float4x3(1.0);
+	float3x4 grad = float3x4(1.0);
+
+	// processing of tetrahedral vertices, unrolled
+	// to compute gradient at each corner
+	fv[0] = v - T[0];
+	rand = Rand3DPCG16(int3(math::floor(NoiseTileWrap(6 * T[0] + 0.5, bTiling, RepeatSize))));
+	gvec0[0] = float3(int3(rand.x,rand.x,rand.x) & MGradientMask) * MGradientScale - 1;
+	gvec1[0] = float3(int3(rand.y,rand.y,rand.y) & MGradientMask) * MGradientScale - 1;
+	gvec2[0] = float3(int3(rand.z,rand.z,rand.z) & MGradientMask) * MGradientScale - 1;
+	grad[0][0] = math::dot(gvec0[0], fv[0]);
+	grad[1][0] = math::dot(gvec1[0], fv[0]);
+	grad[2][0] = math::dot(gvec2[0], fv[0]);
+
+	fv[1] = v - T[1];
+	rand = Rand3DPCG16(int3(math::floor(NoiseTileWrap(6 * T[1] + 0.5, bTiling, RepeatSize))));
+	gvec0[1] = float3(int3(rand.x,rand.x,rand.x) & MGradientMask) * MGradientScale - 1;
+	gvec1[1] = float3(int3(rand.y,rand.y,rand.y) & MGradientMask) * MGradientScale - 1;
+	gvec1[1] = float3(int3(rand.z,rand.z,rand.z) & MGradientMask) * MGradientScale - 1;
+	grad[0][1] = math::dot(gvec0[1], fv[1]);
+	grad[1][1] = math::dot(gvec1[1], fv[1]);
+	grad[2][1] = math::dot(gvec2[1], fv[1]);
+
+	fv[2] = v - T[2];
+	rand = Rand3DPCG16(int3(math::floor(NoiseTileWrap(6 * T[2] + 0.5, bTiling, RepeatSize))));
+	gvec0[2] = float3(int3(rand.x,rand.x,rand.x) & MGradientMask) * MGradientScale - 1;
+	gvec1[2] = float3(int3(rand.y,rand.y,rand.y) & MGradientMask) * MGradientScale - 1;
+	gvec2[2] = float3(int3(rand.z,rand.z,rand.z) & MGradientMask) * MGradientScale - 1;
+	grad[0][2] = math::dot(gvec0[2], fv[2]);
+	grad[1][2] = math::dot(gvec1[2], fv[2]);
+	grad[2][2] = math::dot(gvec2[2], fv[2]);
+
+	fv[3] = v - T[3];
+	rand = Rand3DPCG16(int3(math::floor(NoiseTileWrap(6 * T[3] + 0.5, bTiling, RepeatSize))));
+	gvec0[3] = float3(int3(rand.x,rand.x,rand.x) & MGradientMask) * MGradientScale - 1;
+	gvec1[3] = float3(int3(rand.y,rand.y,rand.y) & MGradientMask) * MGradientScale - 1;
+	gvec2[3] = float3(int3(rand.z,rand.z,rand.z) & MGradientMask) * MGradientScale - 1;
+	grad[0][3] = math::dot(gvec0[3], fv[3]);
+	grad[1][3] = math::dot(gvec1[3], fv[3]);
+	grad[2][3] = math::dot(gvec2[3], fv[3]);
+
+	// blend gradients
+	float4 sv = SimplexSmooth(fv);
+	float3x4 ds = SimplexDSmooth(fv);
+
+	float3x4 jacobian = float3x4(1.0);
+	float3 vec0 = gvec0*sv + grad[0]*ds; // NOTE: mdl is column major, convert from UE4 (row major)
+	jacobian[0] = float4(vec0.x, vec0.y, vec0.z, math::dot(sv, grad[0]));
+	float3 vec1 = gvec1*sv + grad[1]*ds;
+	jacobian[1] = float4(vec1.x, vec1.y, vec1.z, math::dot(sv, grad[1]));
+	float3 vec2 = gvec2*sv + grad[2]*ds;
+	jacobian[2] = float4(vec2.x, vec2.y, vec2.z, math::dot(sv, grad[2]));
+
+	return jacobian;
+}
+
+// While RepeatSize is a float here, the expectation is that it would be largely integer values coming in from the UI. The downstream logic assumes
+// floats for all called functions (NoiseTileWrap) and this prevents any float-to-int conversion errors from automatic type conversion.
+float Noise3D_Multiplexer(uniform texture_2d PerlinNoiseGradientTexture, uniform texture_3d PerlinNoise3DTexture, int Function, float3 Position, int Quality, bool bTiling, float RepeatSize)
+{
+	// verified, HLSL compiled out the switch if Function is a constant
+	switch(Function)
+	{
+		case 0:
+			return SimplexNoise3D_TEX(PerlinNoiseGradientTexture, Position);
+		case 1:
+			return GradientNoise3D_TEX(PerlinNoiseGradientTexture, Position, bTiling, RepeatSize);
+		case 2:
+			return FastGradientPerlinNoise3D_TEX(PerlinNoise3DTexture, Position);
+		case 3:
+			return GradientNoise3D_ALU(Position, bTiling, RepeatSize);
+		case 4:
+			return ValueNoise3D_ALU(Position, bTiling, RepeatSize);
+		case 5:
+			return VoronoiNoise3D_ALU(Position, Quality, bTiling, RepeatSize, true).w * 2.0 - 1.0;
+	}
+	return 0;
+}
+//----------------------------------------------------------
+
+export float noise(uniform texture_2d PerlinNoiseGradientTexture, uniform texture_3d PerlinNoise3DTexture, float3 Position, float Scale, float Quality, float Function, float Turbulence, float Levels, float OutputMin, float OutputMax, float LevelScale, float FilterWidth, float Tiling, float RepeatSize)
+[[
+    anno::description("Noise"),
+    anno::noinline()
+]]
+{
+	Position *= Scale;
+	FilterWidth *= Scale;
+
+	float Out = 0.0f;
+	float OutScale = 1.0f;
+	float InvLevelScale = 1.0f / LevelScale;
+	
+	int iFunction(Function);
+	int iQuality(Quality);
+	int iLevels(Levels);
+	bool bTurbulence(Turbulence);
+	bool bTiling(Tiling);
+	
+	for(int i = 0; i < iLevels; ++i)
+	{
+		// fade out noise level that are too high frequent (not done through dynamic branching as it usually requires gradient instructions)
+		OutScale *= math::saturate(1.0 - FilterWidth);
+
+		if(bTurbulence)
+		{
+			Out += math::abs(Noise3D_Multiplexer(PerlinNoiseGradientTexture, PerlinNoise3DTexture, iFunction, Position, iQuality, bTiling, RepeatSize)) * OutScale;
+		}
+		else
+		{
+			Out += Noise3D_Multiplexer(PerlinNoiseGradientTexture, PerlinNoise3DTexture, iFunction, Position, iQuality, bTiling, RepeatSize) * OutScale;
+		}
+
+		Position *= LevelScale;
+		RepeatSize *= LevelScale;
+		OutScale *= InvLevelScale;
+		FilterWidth *= LevelScale;
+	}
+
+	if(!bTurbulence)
+	{
+		// bring -1..1 to 0..1 range
+		Out = Out * 0.5f + 0.5f;
+	}
+
+	// Out is in 0..1 range
+	return math::lerp(OutputMin, OutputMax, Out);
+}
+
+// Material node for noise functions returning a vector value
+// @param LevelScale usually 2 but higher values allow efficient use of few levels
+// @return in user defined range (OutputMin..OutputMax)
+export float4 vector4_noise(float3 Position, float Quality, float Function, float Tiling, float TileSize)
+[[
+    anno::description("Vector Noise"),
+    anno::noinline()
+]]
+{
+	float4 result = float4(0,0,0,1);
+	float3 ret = float3(0);
+	int iQuality = int(Quality);
+	int iFunction = int(Function);
+	bool bTiling = Tiling > 0.0;
+	
+	float3x4 Jacobian = JacobianSimplex_ALU(Position, bTiling, TileSize);	// compiled out if not used
+
+	// verified, HLSL compiled out the switch if Function is a constant
+	switch (iFunction)
+	{
+	case 0:	// Cellnoise
+		ret = float3(Rand3DPCG16(int3(math::floor(NoiseTileWrap(Position, bTiling, TileSize))))) / 0xffff;
+		result = float4(ret.x, ret.y, ret.z, 1);
+		break;
+	case 1: // Color noise
+		ret = float3(Jacobian[0].w, Jacobian[1].w, Jacobian[2].w);
+		result = float4(ret.x, ret.y, ret.z, 1);
+		break;
+	case 2: // Gradient
+		result = Jacobian[0];
+		break;
+	case 3: // Curl
+		ret = float3(Jacobian[2][1] - Jacobian[1][2], Jacobian[0][2] - Jacobian[2][0], Jacobian[1][0] - Jacobian[0][1]);
+		result = float4(ret.x, ret.y, ret.z, 1);
+		break;
+	case 4: // Voronoi
+		result = VoronoiNoise3D_ALU(Position, iQuality, bTiling, TileSize, false);
+		break;
+	}
+	return result;
+}
+
+export float3 vector3_noise(float3 Position, float Quality, float Function, float Tiling, float TileSize)
+[[
+    anno::description("Vector Noise float3 version"),
+    anno::noinline()
+]]
+{
+	float4 noise = vector4_noise(Position, Quality, Function, Tiling, TileSize);
+	return float3(noise.x, noise.y, noise.z);
+}
+
+
+// workaround for ue4 fresnel (without supporting for camera vector) : replacing it with 0.0, means facing to the view
+export float fresnel(float exponent [[anno::unused()]], float base_reflect_fraction [[anno::unused()]], float3 normal [[anno::unused()]])
+[[
+    anno::description("Fresnel"),
+    anno::noinline()
+]]
+{
+	return 0.0;
+}
+
+export float fresnel_function(float3 normal_vector [[anno::unused()]], float3 camera_vector [[anno::unused()]], 
+                                bool invert_fresnel [[anno::unused()]], float power [[anno::unused()]], 
+                                bool use_cheap_contrast [[anno::unused()]], float cheap_contrast_dark [[anno::unused()]], float cheap_contrast_bright [[anno::unused()]], 
+                                bool clamp_fresnel_dot_product [[anno::unused()]])
+[[
+    anno::description("Fresnel Function"),
+    anno::noinline()
+]]
+{
+	return 0.0;
+}
+
+export float3 camera_vector()
+[[
+    anno::description("Camera Vector"),
+    anno::noinline()
+]]
+{
+	// assume camera postion is 0,0,0
+	return math::normalize(float3(0) - state::transform_point(state::coordinate_internal,state::coordinate_world,state::position()));
+}
+
+export float pixel_depth()
+[[
+    anno::description("Pixel Depth"),
+    anno::noinline()
+]]
+{
+	return 256.0f;
+}
+
+export float scene_depth()
+[[
+    anno::description("Scene Depth")
+]]
+{
+	return 65500.0f;
+}
+
+export float3 scene_color()
+[[
+    anno::description("Scene Color")
+]]
+{
+	return float3(1.0f);
+}
+
+export float4 vertex_color()
+[[
+    anno::description("Vertex Color"),
+    anno::noinline()
+]]
+{
+	return float4(1.0f);
+}
+
+export float4 vertex_color_from_coordinate(int VertexColorCoordinateIndex)
+[[
+    anno::description("Vertex Color for float2 PrimVar"),
+    anno::noinline()
+]]
+{
+	// Kit only supports 4 uv sets, 2 uvs are available to vertex color. if vertex color index is invalid, output the constant WHITE color intead
+	return (VertexColorCoordinateIndex > 2) ? float4(1.0f) : float4(state::texture_coordinate(VertexColorCoordinateIndex).x, state::texture_coordinate(VertexColorCoordinateIndex).y, state::texture_coordinate(VertexColorCoordinateIndex+1).x, state::texture_coordinate(VertexColorCoordinateIndex+1).y);
+}
+
+export float3 camera_position()
+[[
+    anno::description("Camera Position"),
+    anno::noinline()
+]]
+{
+	return float3(1000.0f, 0, 0);
+}
+
+export float3 rotate_about_axis(float4 NormalizedRotationAxisAndAngle, float3 PositionOnAxis, float3 Position)
+[[
+    anno::description("Rotates Position about the given axis by the given angle")
+]]
+{
+	// Project Position onto the rotation axis and find the closest point on the axis to Position
+	float3 NormalizedRotationAxis = float3(NormalizedRotationAxisAndAngle.x,NormalizedRotationAxisAndAngle.y,NormalizedRotationAxisAndAngle.z);
+	float3 ClosestPointOnAxis = PositionOnAxis + NormalizedRotationAxis * math::dot(NormalizedRotationAxis, Position - PositionOnAxis);
+	// Construct orthogonal axes in the plane of the rotation
+	float3 UAxis = Position - ClosestPointOnAxis;
+	float3 VAxis = math::cross(NormalizedRotationAxis, UAxis);
+	float[2] SinCosAngle = math::sincos(NormalizedRotationAxisAndAngle.w);
+	// Rotate using the orthogonal axes
+	float3 R = UAxis * SinCosAngle[1] + VAxis * SinCosAngle[0];
+	// Reconstruct the rotated world space position
+	float3 RotatedPosition = ClosestPointOnAxis + R;
+	// Convert from position to a position offset
+	return RotatedPosition - Position;
+}
+
+export float2 rotate_scale_offset_texcoords(float2 InTexCoords, float4 InRotationScale, float2 InOffset)
+[[
+    anno::description("Returns a float2 texture coordinate after 2x2 transform and offset applied")
+]]
+{
+	return float2(math::dot(InTexCoords, float2(InRotationScale.x, InRotationScale.y)), math::dot(InTexCoords, float2(InRotationScale.z, InRotationScale.w))) + InOffset;
+}
+
+export float3 reflection_custom_world_normal(float3 WorldNormal, bool bNormalizeInputNormal)
+[[
+    anno::description("Reflection vector about the specified world space normal")
+]]
+{
+	if (bNormalizeInputNormal)
+	{
+		WorldNormal = math::normalize(WorldNormal);
+	}
+
+	return -camera_vector() + WorldNormal * math::dot(WorldNormal, camera_vector()) * 2.0;
+}
+
+export float3 reflection_vector()
+[[
+    anno::description("Reflection Vector"),
+    anno::noinline()
+]]
+{
+    float3 normal = state::transform_normal(state::coordinate_internal,state::coordinate_world,state::normal());
+	return reflection_custom_world_normal(normal, false);
+}
+
+export float dither_temporalAA(float AlphaThreshold = 0.5f, float Random = 1.0f [[anno::unused()]])
+[[
+    anno::description("Dither TemporalAA"),
+    anno::noinline()
+]]
+{
+	return AlphaThreshold;
+}
+

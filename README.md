@@ -273,15 +273,6 @@ Here's a brief overview of some key tools:
 
 - **Testing (`./repo.sh test` or `.\repo.bat test`):** Facilitates the execution of test suites for your extensions, ensuring code quality and functionality.
 
-  - By default The repository is set up to test without invoking the application window. To run tests with the application window open, a configuration section needs to be added into the `repo.toml` file:
-  ```
-  [repo_test.suites."alltests"]
-  args = [
-  "--/exts/omni.kit.test/pyCoverageEnabled=1", # Enable test coverage in report
-  "--", # every parameter after will be passed directly to each extension tests as parameters
-  ]
-  ```
-
 - **Packaging (`./repo.sh package` or `.\repo.bat package`):** Aids in packaging your application for distribution, making it easier to share or deploy in cloud environments.
 
 ## Governing Terms

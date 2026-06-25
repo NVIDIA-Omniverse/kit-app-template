@@ -1,0 +1,144 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = "{{ application_display_name }}"
+version = "{{ version }}"
+description = """This application presents an interactive experience authored with OpenUSD. The application can be hosted on RTX hardware and streamed to other devices. Messaging supports bi-directional communication between this application and the client that incorporates the stream"""
+keywords = ["app"]  # Extension Manager keyword for filtering.
+template_name = "omni.usd_viewer"
+
+[dependencies]
+"omni.anim.curve.core" = {}
+"omni.anim.timeline" = {}
+"omni.graph.action" = {}
+"omni.graph.nodes" = {}
+"omni.graph.scriptnode" = {}
+"omni.graph.ui_nodes" = {}
+"omni.hydra.rtx" = {}
+"omni.hydra.usdrt_delegate" = {}
+"omni.kit.manipulator.camera" = {}
+"omni.kit.manipulator.selection" = {}
+"omni.kit.renderer.core" = {}
+"omni.kit.sequencer.core" = {}
+"omni.kit.uiapp" = {}
+"omni.kit.viewport.utility" = {}
+"omni.kit.viewport.window" = {}
+"omni.no_code_ui.bundle" = {}
+"omni.ujitso.client" = {}
+"omni.usd_viewer.samples" = {}
+"usdrt.scenegraph" = {}
+"{{ setup_extension_name }}" = { order = 1000 }
+
+
+[settings.persistent.app]
+viewport.autoFrame.mode = "first_open"  # Auto frame the first time the viewport is opened
+viewport.defaults.tickRate = 60  # Lock to 60fps
+viewport.noPadding = true  # Remove default frame around viewport
+
+[settings.persistent.exts]
+"omni.kit.window.sequencer".useSequencerCamera = true  # Sequencer Camera Sync ON
+
+[settings.persistent]
+metricsAssembler.showUnitsOverlay = false
+omnigraph.useSchemaPrims = true
+omnigraph.disablePrimNodes = false
+rtx.mdltranslator.distillMaterial = true  # Render Preferences - Material Distilling ON
+rtx-transient.resourcemanager.enableTextureStreaming = true  # Texture Streaming
+
+[settings.app]
+titleVersion = "{{ version }}"
+content.emptyStageOnStart = true  # Ensure creation of an empty stage on application startup.
+fastShutdown = true  # Skip long full shutdown and exit quickly
+livestream.allowResize = 1
+livestream.skipCapture = 1  # livestream skipCapture ON for local streaming
+name = "{{ application_display_name }}"
+renderer.resolution.width = 1920
+renderer.resolution.height = 1080
+
+[settings.app.environment]
+name = "{{ application_display_name }}"
+
+[settings.app.usdrt.population.utils]
+mergeInstances = false
+mergeMaterials = false
+
+[settings.app.viewport.defaults]
+fillViewport = true
+guide.grid.visible = false
+guide.axis.visible = false
+hud.visible = false
+scene.cameras.visible = false
+scene.lights.visible = false
+
+[settings.app.exts.folders]
+'++' = [  # Search paths for extensions.
+    "${app}/../exts",
+    "${app}/../extscache/"
+]
+
+[settings.app.file]
+ignoreUnsavedOnExit = true  # enable quitting without confirmation
+
+[settings.app.font]
+file = "${fonts}/OpenSans-SemiBold.ttf"
+size = 16
+
+[settings.app.layout]  # this is a custom setting used in our app setup to choose the Layout
+name = "default"
+
+[settings.app."omni.graph.scriptnode"]
+opt_in = true
+
+[settings.app.window]
+title = "{{ application_display_name }}"
+width = 1920
+height = 1080
+x = -1
+y = -1
+
+[settings.crashreporter.data]
+experience = "{{ application_display_name }}"
+
+[settings.exts]
+"omni.kit.renderer.core".present.enabled = true  # Enable the present thread
+"omni.kit.renderer.core".present.presentAfterRendering = true  # Ensure the present thread waits for the rendering to complete
+"omni.kit.window.viewport".showContextMenu = false  # Disable context menu, viewer not editor.
+
+[settings]
+crashreporter.compressDumpFiles = true
+renderer.enabled = "rtx"  # enable rtx renderer
+# By default rtx is setup to be mgpu but in some context you might want to run on
+# a single gpu if so set this setting to false
+renderer.multiGpu.enabled = true
+rendergraph.maxFramesInFlight = 2
+rtx-transient.dlssg.enabled=false  # Disable DLSS otherwise it can push the framerate above the locked limit
+telemetry.disableInternalSessionCheck = true
+telemetry.enableAnonymousAppName = true
+telemetry.enableAnonymousData = true
+privacy.externalBuild = true
+
+[settings.exts."omni.appwindow"]
+listenF11 = false
+listenF7 = false
+
+# Tests
+################################
+[[test]]
+
+dependencies = [
+    "{{ setup_extension_name }}.tests"
+]
+
+args = [
+	"--/app/window/width=480",
+    "--/app/window/height=480",
+    "--/app/extensions/registryEnabled=0", # Make sure we can run without registry and everything is precached
+]

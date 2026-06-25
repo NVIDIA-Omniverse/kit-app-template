@@ -1,0 +1,121 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+[package]
+title = "{{ application_display_name }}"
+version = "{{ version }}"
+description = """A foundation for a base editor application."""
+keywords = ["app"]  # That makes it browsable in UI with "app" filter
+template_name = "kit_base_editor"
+
+
+[dependencies]
+"omni.activity.profiler" = {} # For showing RTX loading progress
+"omni.activity.pump" = {} # For showing RTX loading progress
+"omni.anim.curve.core" = {} # Runtime support for animcurves
+"omni.graph.action" = {} # Action graph runtime
+"omni.graph.core" = {} # Omni Graph runtime
+"omni.graph.nodes" = {} # Action graph nodes
+"omni.graph.scriptnode" = {} # Scriptnode support
+"omni.graph.ui_nodes" = {} # Action graph ui nodes
+"omni.hydra.engine.stats" = {}  # Load the stats HUD (resolution, fps, etc..)
+"omni.hydra.rtx" = {}  # Viewport renderer
+"omni.hydra.usdrt_delegate" = {}  # Necessary since FabricSceneDelegate is True
+"omni.kit.developer.bundle" = {}
+"omni.kit.mainwindow" = {}  # Main uiapp
+"omni.kit.manipulator.camera" = {}  # Load the camera-manipulator (navigation)
+"omni.kit.manipulator.prim" = {}  # Load the prim-manipulator (translate, rotate, scale)
+"omni.kit.manipulator.selection" = {}  # Load the selection-manipulator (selectable prims)
+"omni.kit.material.library" = {} # Create and assign materials.
+"omni.kit.menu.common" = { order = 1000 } # Common menu library. Loads last so omni.kit.activity.ui can be available.
+"omni.kit.menu.create" = {} # Create menu
+"omni.kit.menu.edit" = {}  # Edit menu
+"omni.kit.menu.file" = {}  # File menu
+"omni.kit.primitive.mesh" = {} # Primitive mesh
+"omni.kit.property.bundle" = {} # all the property editors
+"omni.kit.raycast.query" = {} # RTX Raycast Query
+"omni.kit.stage_template.core" = {}  # For creating new empty stages
+"omni.kit.telemetry" = {} # Telemetry
+"omni.kit.tool.asset_importer" = {} # Add Asset Importer functionality.
+"omni.kit.tool.collect" = {} # USD Collect tool
+"omni.kit.viewport.legacy_gizmos" = {}  # Load the legacy grid and gizmo drawing for now
+"omni.kit.viewport.menubar.camera" = {}  # Load the view-from-camera menu
+"omni.kit.viewport.menubar.display" = {}  # Load the display type menu
+"omni.kit.viewport.menubar.lighting" = {}  # Load the viewport settings menu
+"omni.kit.viewport.menubar.render" = {}  # Load the renderer selection menu
+"omni.kit.viewport.menubar.settings" = {}  # Load the viewport settings menu
+"omni.kit.viewport.ready" = {} # Show RTX loading information during startup
+"omni.kit.viewport.scene_camera_model" = {} # Sync camera to scene UI
+"omni.kit.viewport.window" = {}  # Load the actual ViewportWindow extension
+"omni.kit.widget.cache_indicator" = {}  # Displays the status of Hub Cache
+"omni.kit.window.console" = {}  # Console/log
+"omni.kit.window.content_browser" = {} # Add content browser to UI
+"omni.kit.window.property" = {} # Property editor window
+"omni.kit.window.stage" = {}  # Stage tree
+"omni.kit.window.status_bar" = {}  # Status Bar
+"omni.kit.window.toolbar" = {}  # Manipular Toolbar
+"omni.physx.stageupdate" = {} # Physics runtime support - will pull in physx dependencies.
+"omni.rtx.settings.core" = {} # RTX Settings
+"omni.uiaudio" = {} # for audio playback.
+"omni.usd.metrics.assembler.ui" = {}
+"omni.usd.schema.metrics.assembler" = {}
+"omni.warp.core" = {} # Warp support
+
+
+[settings.persistent.app]
+viewport.autoFrame.mode = "first_open"  # Auto frame the first time the viewport is opened
+
+
+[settings]
+crashreporter.compressDumpFiles = true
+exts."omni.kit.material.library".ui_show_list = ["OmniPBR", "OmniGlass", "OmniSurface", "USD Preview Surface", "OpenPBR Surface"]
+exts."omni.rtx.window.settings".window_menu = "Window" # Where to put the render settings menuitem
+exts."omni.kit.viewport.menubar.lighting".defaultRigIgnorePattern = "" # Allows auto light rig with anon layers
+exts."omni.kit.viewport.window".windowMenu.entryCount = 1
+exts."omni.kit.viewport.window".windowMenu.label="" # Put Viewport menuitem under Window menu
+renderer.gpuEnumeration.glInterop.enabled = false # Improves startup speed.
+renderer.asyncInit = true # Don't block while renderer inits
+rtx.ecoMode.enabled = true
+rtx.hydra.mdlMaterialWarmup = true # start loading the MDL shaders needed before any delegate is actually created.
+telemetry.disableInternalSessionCheck = true
+telemetry.enableAnonymousAppName = true
+telemetry.enableAnonymousData = true
+privacy.externalBuild = true
+
+
+[settings.app]
+content.emptyStageOnStart = true
+font.file = "${fonts}/OpenSans-SemiBold.ttf"
+font.size = 16
+hangDetector.enabled = true
+hangDetector.timeout = 120
+renderer.skipWhileMinimized = true
+window.title = "{{ application_display_name }}"
+
+
+[settings.app.environment]
+name = "{{ application_display_name }}"
+
+
+[settings.app.exts]
+folders.'++' = [  # Search paths for extensions.
+	"${app}/../exts",
+	"${app}/../extscache/"
+]
+
+
+[settings.app.viewport.defaults]
+fillViewport = true  # default to fill viewport
+
+
+[[test]]
+args = [
+	"--/app/file/ignoreUnsavedOnExit=true"
+]

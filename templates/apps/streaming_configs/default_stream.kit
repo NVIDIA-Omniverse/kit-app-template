@@ -34,11 +34,23 @@ rtx.verifyDriverVersion.enabled = false
 [settings.app.extensions]
 registryEnabled = true
 supportedTargets.platform = []  # Skip checking supported platform/config when building
+# AUTOREMOVE: BEGIN
+# OPME-65690 Exclude the developer bundle from public made KAT apps that go to cloud services. Keep it enabled for internal use.
+excluded = [
+    "omni.kit.widget.cache_indicator",
+]
+# AUTOREMOVE: END
 
+# AUTOREMOVE: BEGIN
+_ = """
+# AUTOREMOVE: END
 exclude = [
     "omni.kit.developer.bundle",
     "omni.kit.widget.cache_indicator",
 ]
+# AUTOREMOVE: BEGIN
+"""
+# AUTOREMOVE: END
 
 [settings.app.exts]
 folders.'++' = [  # Search paths for extensions.

@@ -1,0 +1,73 @@
+mdl 1.3;
+
+import ::df::*;
+import ::state::*;
+import ::math::*;
+import ::tex::*;
+import ::anno::*;
+import ::base::*;
+
+using .::DrivesimPBR_Model import *;
+
+float3 tangent_space_normal(
+    float3 normal = float3(0.0,0.0,1.0),
+    float3 tangent_u = state::texture_tangent_u(0),
+	float3 tangent_v = state::texture_tangent_v(0)
+)
+[[
+    anno::description("Interprets the vector in tangent space"),
+    anno::noinline()
+]]
+{
+    return math::normalize(
+        tangent_u * normal.x +
+        tangent_v * normal.y +
+        state::normal() * (normal.z));
+}
+
+export material OmniUe4Base(
+    float3 base_color = float3(0.0, 0.0, 0.0),
+    float metallic = 0.0,
+    float roughness = 0.5,
+    float specular = 0.5,
+    float3 normal = float3(0.0, 0.0, 1.0),
+    uniform float clearcoat_weight = 0.0,
+    uniform float clearcoat_roughness = 0.0,
+    float3 clearcoat_normal = float3(0.0, 0.0, 1.0),
+    float3 emissive_color = float3(0.0, 0.0, 0.0),
+    float3 displacement = float3(0.0, 0.0, 0.0),
+    uniform float opacity = 1.0,
+    uniform bool is_tangent_space_normal = true,
+    uniform bool two_sided = false,
+    uniform bool is_unlit = false
+)
+[[
+	anno::author("NVIDIA CORPORATION"), 
+	anno::key_words(string[]("omni", "UE4", "omniverse", "lit", "clearcoat", "generic"))
+]]
+= let {
+    uniform bool enable_clearcoat = clearcoat_weight > 0.0 ? true : false;
+    // bool enable_emission = (emissive_color.x > 0.0 || emissive_color.y > 0.0 || emissive_color.z > 0.0) ? true : false;
+    uniform bool enable_opacity = opacity < 1.0 ? true : false;
+
+    float3 final_normal = math::normalize(normal);
+	float3 the_normal =  is_unlit ? state::normal() : 
+							(is_tangent_space_normal ? tangent_space_normal(
+                                            normal:         final_normal,
+                                            tangent_u:      state::texture_tangent_u(0),
+                                            tangent_v:      state::texture_tangent_v(0)
+                            ) : final_normal);
+} in DrivesimPBR_Model(
+    diffuse_color: base_color,
+    roughness: roughness,
+    metallic: metallic,
+    specular: specular,
+    normal: the_normal,
+    enable_clearcoat: enable_clearcoat,
+    clearcoat_weight: clearcoat_weight,
+    clearcoat_reflection_roughness: clearcoat_roughness,
+    clearcoat_normal: clearcoat_normal,
+    enable_emission: false, // xxxnsubtil: no emission in road_base.mdl
+    enable_opacity: enable_opacity,
+    alpha: opacity
+);

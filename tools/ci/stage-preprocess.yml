@@ -1,0 +1,44 @@
+# Preprocessing stage for checkbox parsing and pipeline preparation
+stages:
+  - preprocess
+
+prepare-conditional-pipelines:
+  stage: preprocess
+  extends:
+    - .runner-utility-linux-x86_64
+  variables:
+    JSON_FILE: "tools/ci/shared/checkbox.json"
+    TEXT: "$CI_MERGE_REQUEST_DESCRIPTION"
+  script:
+    # Extract MR information using the utility
+    - !reference [.get-mr-info, script]
+    
+    # Parse checkboxes using the utility
+    - !reference [.parse-checkbox-mr, script]
+    
+    # Prepare conditional pipelines
+    - chmod +x tools/ci/prepare-pipelines.sh
+    - tools/ci/prepare-pipelines.sh
+    
+    # Display results for debugging
+    - echo "=== Checkbox Configuration ==="
+    - cat CHECKBOXES.env || echo "No CHECKBOXES.env found"
+    - echo "=== Pipeline Configuration ==="
+    - cat PIPELINE_CONFIG.env || echo "No PIPELINE_CONFIG.env found"
+
+  artifacts:
+    when: always
+    paths:
+      - "*.txt"
+      - "CHECKBOXES.env"
+      - "generated-pipelines/"
+    expire_in: 1 day
+    reports:
+      dotenv:
+        - CHECKBOXES.env
+        - PIPELINE_CONFIG.env
+
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_PROTECTED == "true" 

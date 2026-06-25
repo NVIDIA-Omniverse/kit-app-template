@@ -31,7 +31,6 @@ template_name = "omni.usd_explorer"
 "omni.kit.collaboration.telemetry" = {}
 "omni.kit.collaboration.viewport.camera" = {}
 "omni.kit.context_menu" = {}
-"omni.kit.converter.cad" = { order = 1000 }
 "omni.kit.developer.bundle" = {}
 "omni.kit.manipulator.camera" = {} # Manipulator for the Viewport
 "omni.kit.manipulator.prim" = {}
@@ -85,7 +84,6 @@ template_name = "omni.usd_explorer"
 "omni.kit.window.file" = {}
 "omni.kit.window.filepicker" = {}
 "omni.kit.window.material" = {}  # Material Management and browsing
-"omni.kit.window.modifier.titlebar" = {}
 "omni.kit.window.preferences" = { order = 1000 } # Execute last so the menu is in the correct place
 "omni.kit.window.property" = {}
 "omni.kit.window.section" = {}
@@ -102,6 +100,8 @@ template_name = "omni.usd_explorer"
 "omni.timeline.live_session" = {}
 "omni.usd.metrics.assembler.ui" = {}
 "omni.usd.schema.metrics.assembler" = {}
+"omni.kit.converter.cad" = {order = 1000} # allow other deps like asset_importer to load first
+"omni.kit.window.modifier.titlebar" = {}
 "omni.warp.core" = {}
 "usdrt.scenegraph" = {}
 "{{ setup_extension_name }}" = { order = 10000 }  # This is your application setup Extensions. order = 10000 makes it run last
@@ -626,10 +626,17 @@ useUniformsReindexing = true
 enable = true
 
 [settings]
+# AUTOREMOVE: BEGIN
+# Ensure that externally built apps are keeping telemetry anonymized.
+_ = """
+# AUTOREMOVE: END
 telemetry.disableInternalSessionCheck = true
 telemetry.enableAnonymousAppName = true
 telemetry.enableAnonymousData = true
 privacy.externalBuild = true
+# AUTOREMOVE: BEGIN
+"""
+# AUTOREMOVE: END
 
 
 [[test]]

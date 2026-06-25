@@ -1,0 +1,275 @@
+[
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "dock_id": 3,
+                "height": 742.0,
+                "position_x": 0.0,
+                "position_y": 26.0,
+                "selected_in_dock": false,
+                "title": "USD Explorer Toolbar",
+                "visible": true,
+                "width": 44.0
+              }
+            ],
+            "dock_id": 3,
+            "position": "RIGHT"
+          },
+          {
+            "children": [
+              {
+                "dock_id": 4,
+                "dock_tab_bar_enabled": true,
+                "dock_tab_bar_visible": false,
+                "height": 742.0,
+                "position_x": 46.0,
+                "position_y": 26.0,
+                "selected_in_dock": true,
+                "title": "Viewport",
+                "visible": true,
+                "width": 1135.0
+              }
+            ],
+            "dock_id": 4,
+            "position": "LEFT"
+          }
+        ],
+        "dock_id": 1,
+        "position": "LEFT"
+      },
+      {
+        "children": [
+          {
+            "dock_id": 2,
+            "dock_tab_bar_enabled": true,
+            "dock_tab_bar_visible": true,
+            "height": 742.0,
+            "position_x": 1183.0,
+            "position_y": 26.0,
+            "selected_in_dock": true,
+            "title": "Markup Manager",
+            "visible": false,
+            "width": 517.0
+          }
+        ],
+        "dock_id": 2,
+        "position": "RIGHT"
+      }
+    ],
+    "dock_id": 3358485147
+  },
+  {
+    "dock_id": 0,
+    "height": 742.0,
+    "position_x": 1184.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Waypoint Manager",
+    "visible": false,
+    "width": 516.0
+  },
+  {
+    "dock_id": 0,
+    "height": 371.0,
+    "position_x": 1185.0,
+    "position_y": 397.0,
+    "selected_in_dock": false,
+    "title": "Property",
+    "visible": false,
+    "width": 515.0
+  },
+  {
+    "dock_id": 0,
+    "height": 742.0,
+    "position_x": 1185.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Render Settings",
+    "visible": false,
+    "width": 515.0
+  },
+  {
+    "dock_id": 0,
+    "height": 204.0,
+    "position_x": 0.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Console",
+    "visible": false,
+    "width": 1183.0
+  },
+  {
+    "dock_id": 0,
+    "height": 369.0,
+    "position_x": 0.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Layer",
+    "visible": false,
+    "width": 515.0
+  },
+  {
+    "dock_id": 0,
+    "height": 369.0,
+    "position_x": 0.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Stage",
+    "visible": false,
+    "width": 515.0
+  },
+  {
+    "dock_id": 0,
+    "height": 204.0,
+    "position_x": 0.0,
+    "position_y": 564.0,
+    "selected_in_dock": false,
+    "title": "Content",
+    "visible": false,
+    "width": 1183.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Preferences",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Screenshot Directory",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 60.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Changing directory ...",
+    "visible": false,
+    "width": 300.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Options",
+    "visible": false,
+    "width": 220.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Template",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Filename (Local Files Only)",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Measure",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Add Attribute...",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Markup Export Directory",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Markup Export",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Statistics",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 114.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "omni.ui.scene 1560346058432",
+    "visible": false,
+    "width": 210.8000030517578
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Rename waypoint",
+    "visible": false,
+    "width": 0.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Rename markup",
+    "visible": false,
+    "width": 0.0
+  }
+]

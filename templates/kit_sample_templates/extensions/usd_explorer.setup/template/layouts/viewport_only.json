@@ -1,0 +1,315 @@
+[
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "dock_tab_bar_enabled": true,
+                "dock_tab_bar_visible": false,
+                "height": 742.0,
+                "position_x": 46.0,
+                "position_y": 26.0,
+                "selected_in_dock": true,
+                "title": "Viewport",
+                "visible": true,
+                "width": 1135.0,
+                "doc_id": 5
+              }
+            ],
+            "dock_id": 3,
+            "position": "LEFT"
+          }
+        ],
+        "dock_id": 1,
+        "position": "LEFT"
+      },
+      {
+        "dock_id": 2,
+        "position": "RIGHT"
+      }
+    ],
+    "dock_id": 3358485147
+  },
+  {
+    "dock_id": 0,
+    "height": 204.0,
+    "position_x": 0.0,
+    "position_y": 564.0,
+    "selected_in_dock": false,
+    "title": "Console",
+    "visible": false,
+    "width": 1700.0
+  },
+  {
+    "dock_id": 0,
+    "height": 204.0,
+    "position_x": 0.0,
+    "position_y": 564.0,
+    "selected_in_dock": false,
+    "title": "Content",
+    "visible": false,
+    "width": 1700.0
+  },
+  {
+    "dock_id": 0,
+    "height": 371.0,
+    "position_x": 1187.0,
+    "position_y": 397.0,
+    "selected_in_dock": false,
+    "title": "Property",
+    "visible": false,
+    "width": 513.0
+  },
+  {
+    "dock_id": 0,
+    "height": 536.0,
+    "position_x": 0.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Main ToolBar",
+    "visible": false,
+    "width": 44.0
+  },
+  {
+    "dock_id": 0,
+    "height": 369.0,
+    "position_x": 1187.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Markup Manager",
+    "visible": false,
+    "width": 513.0
+  },
+  {
+    "dock_id": 0,
+    "height": 742.0,
+    "position_x": 0.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Render Settings",
+    "visible": false,
+    "width": 1700.0
+  },
+  {
+    "dock_id": 0,
+    "height": 742.0,
+    "position_x": 1187.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Waypoint Manager",
+    "visible": false,
+    "width": 513.0
+  },
+  {
+    "dock_id": 0,
+    "height": 369.0,
+    "position_x": 0.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Stage",
+    "visible": false,
+    "width": 513.0
+  },
+  {
+    "dock_id": 0,
+    "height": 369.0,
+    "position_x": 0.0,
+    "position_y": 26.0,
+    "selected_in_dock": false,
+    "title": "Layer",
+    "visible": false,
+    "width": 513.0
+  },
+  {
+    "dock_id": 0,
+    "height": 32.0,
+    "position_x": 834.0,
+    "position_y": 384.0,
+    "selected_in_dock": false,
+    "title": "NVIDIA Assets",
+    "visible": false,
+    "width": 32.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Add Attribute...",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Preferences",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Screenshot Directory",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 60.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Changing directory ...",
+    "visible": false,
+    "width": 300.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Options",
+    "visible": false,
+    "width": 220.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Template",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Filename (Local Files Only)",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 800.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "OmniGraph Node Description Editor",
+    "visible": false,
+    "width": 600.0
+  },
+  {
+    "dock_id": 0,
+    "height": 500.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "OmniGraph Toolkit",
+    "visible": false,
+    "width": 800.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Select Markup Export Directory",
+    "visible": false,
+    "width": 1000.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Markup Export",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Measure",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 600.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Statistics",
+    "visible": false,
+    "width": 400.0
+  },
+  {
+    "dock_id": 0,
+    "height": 114.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "omni.ui.scene 2389297972960",
+    "visible": false,
+    "width": 210.8000030517578
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Rename waypoint",
+    "visible": false,
+    "width": 0.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Rename markup",
+    "visible": false,
+    "width": 0.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Playlist",
+    "visible": false,
+    "width": 0.0
+  },
+  {
+    "dock_id": 0,
+    "height": 0.0,
+    "position_x": 3.4028234663852886e+38,
+    "position_y": 3.4028234663852886e+38,
+    "selected_in_dock": false,
+    "title": "Materials",
+    "visible": false,
+    "width": 0.0
+  }
+]

@@ -20,6 +20,9 @@ template_name = "omni.nvcf_streaming_configuration"
 "omni.services.livestream.session" = {}  # Livestream session extension
 "omni.ujitso.client" = {} # Caching
 "omni.cloud.open_stage" = {}  # Nucleus Connection
+# AUTOREMOVE: BEGIN
+"omni.web.deeplink" = {}  # Portal deeplink support (configured per deployment via NVDA_KIT_ARGS)
+# AUTOREMOVE: END
 
 
 [settings.app]
@@ -44,11 +47,28 @@ rtx-transient.scenedb.instanceBudget=1000000
 [settings.app.extensions]
 registryEnabled = true
 supportedTargets.platform = []  # Skip checking supported platform/config when building
+# AUTOREMOVE: BEGIN
+# OPME-65690 Exclude the developer bundle from public made KAT apps that go to cloud services. Keep it enabled for internal use.
+excluded = [
+    "omni.kit.widget.cache_indicator",
+]
+# Use integ registries for internal builds to match bundled Kit SDK versions.
+registries = [
+    { name = "kit/stage/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/integ/${kit_version_major}.0/7f196a45/shared"},
+    { name = "kit/stage/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/integ/${kit_version_major}.0/7f196a45/sdk/${kit_version_short}/${kit_git_hash}"},
+]
+# AUTOREMOVE: END
 
+# AUTOREMOVE: BEGIN
+_ = """
+# AUTOREMOVE: END
 exclude = [
     "omni.kit.developer.bundle",
     "omni.kit.widget.cache_indicator",
 ]
+# AUTOREMOVE: BEGIN
+"""
+# AUTOREMOVE: END
 
 [settings.app.exts]
 folders.'++' = [  # Search paths for extensions.
@@ -60,6 +80,12 @@ folders.'++' = [  # Search paths for extensions.
 [settings.app.file]
 ignoreUnsavedOnExit = true
 
+# AUTOREMOVE: BEGIN
+[settings.crashreporter]
+devOnlyOverridePrivacyAndForceUpload = true
+product = "{{ application_display_name }}"
+version = "{{ version }}"
+# AUTOREMOVE: END
 
 [settings.exts."omni.kit.window.filepicker"]
 show_only_collections = ["bookmarks", "omniverse", "s3", "add_new", "azure", "custom"]

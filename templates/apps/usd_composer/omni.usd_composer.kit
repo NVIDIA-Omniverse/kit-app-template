@@ -50,7 +50,6 @@ template_name = "omni.usd_composer"
 "omni.kit.collaboration.telemetry" = {}
 "omni.kit.collaboration.viewport.camera" = {}
 "omni.kit.context_menu" = {}
-"omni.kit.converter.cad" = {order = 1000}
 "omni.kit.developer.bundle" = {}
 "omni.kit.graph.delegate.default" = {}
 "omni.kit.hotkeys.window" = {}
@@ -121,7 +120,6 @@ template_name = "omni.usd_composer"
 "omni.kit.window.filepicker" = {}
 "omni.kit.window.material" = {}
 "omni.kit.window.material_graph" = {}
-"omni.kit.window.modifier.titlebar" = {}
 "omni.kit.window.movie_capture" = {}
 "omni.kit.window.preferences" = { order = 1000 } # so the menu is in the correct place
 "omni.kit.window.property" = {}
@@ -144,6 +142,8 @@ template_name = "omni.usd_composer"
 "omni.stats" = {}
 "omni.usd.metrics.assembler.ui" = {}
 "omni.usd.schema.metrics.assembler" = {}
+"omni.kit.converter.cad" = {order = 1000} # allow other deps like asset_importer to load first
+"omni.kit.window.modifier.titlebar" = {}
 "omni.warp" = {}
 "omni.videoencoding" = {}
 "{{ setup_extension_name }}" = { order = 1000 } # we are running that at the end
@@ -335,7 +335,14 @@ plugins.'carb.profiler-cpu.plugin'.filePath = "${shared_documents}/create_profil
 renderer.active = "rtx" # RTX As the default renderer always
 renderer.enabled = "rtx"  # iray, pxr
 structuredLog.enable = true
+# AUTOREMOVE: BEGIN
+# Ensure that externally built apps are keeping telemetry anonymized.
+_ = """
+# AUTOREMOVE: END
 telemetry.disableInternalSessionCheck = true
 telemetry.enableAnonymousAppName = true
 telemetry.enableAnonymousData = true
 privacy.externalBuild = true
+# AUTOREMOVE: BEGIN
+"""
+# AUTOREMOVE: END

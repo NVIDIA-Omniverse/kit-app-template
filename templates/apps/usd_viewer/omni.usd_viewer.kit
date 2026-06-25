@@ -27,6 +27,7 @@ template_name = "omni.usd_viewer"
 "omni.kit.manipulator.camera" = {}
 "omni.kit.manipulator.selection" = {}
 "omni.kit.renderer.core" = {}
+"omni.kit.renderer.ready" = {}
 "omni.kit.sequencer.core" = {}
 "omni.kit.uiapp" = {}
 "omni.kit.viewport.utility" = {}
@@ -120,10 +121,17 @@ renderer.enabled = "rtx"  # enable rtx renderer
 renderer.multiGpu.enabled = true
 rendergraph.maxFramesInFlight = 2
 rtx-transient.dlssg.enabled=false  # Disable DLSS otherwise it can push the framerate above the locked limit
+# AUTOREMOVE: BEGIN
+# Ensure that externally built apps are keeping telemetry anonymized.
+_ = """
+# AUTOREMOVE: END
 telemetry.disableInternalSessionCheck = true
 telemetry.enableAnonymousAppName = true
 telemetry.enableAnonymousData = true
 privacy.externalBuild = true
+# AUTOREMOVE: BEGIN
+"""
+# AUTOREMOVE: END
 
 [settings.exts."omni.appwindow"]
 listenF11 = false

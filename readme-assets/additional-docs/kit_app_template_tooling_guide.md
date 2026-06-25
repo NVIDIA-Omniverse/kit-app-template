@@ -169,7 +169,7 @@ Select and run a built .kit file from the `source/apps` directory:
 Additional launch options:
 - **`-d` or `--dev-bundle`:** By default, the templates in the Kit App Template repository include `omni.kit.developer.bundle` in their `.kit` file definitions. If you want to exclude it from your application definition, you can still enable it at launch by using the `-d` or `--dev-bundle` flags. This approach prevents the developer bundle extensions from being packaged and sent to customers, while allowing you to use them during development.
 
-- **`-p` or `--package`:** Launches a packaged application from a specified path.
+- **`-p` or `--package`:** *(Deprecated — will be removed in a future release.)* Launches a packaged application from a specified path. `repo launch` is intended as a developer tool; launching from a package archive does not serve a development workflow. To run a packaged application, decompress the archive and launch the extracted application directly. See [Packaging An Application](../../docs/packaging_app.md) for details.
 
     **Linux:**
     ```bash
