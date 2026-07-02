@@ -335,14 +335,7 @@ plugins.'carb.profiler-cpu.plugin'.filePath = "${shared_documents}/create_profil
 renderer.active = "rtx" # RTX As the default renderer always
 renderer.enabled = "rtx"  # iray, pxr
 structuredLog.enable = true
-# AUTOREMOVE: BEGIN
-# Ensure that externally built apps are keeping telemetry anonymized.
-_ = """
-# AUTOREMOVE: END
 telemetry.disableInternalSessionCheck = true
 telemetry.enableAnonymousAppName = true
 telemetry.enableAnonymousData = true
 privacy.externalBuild = true
-# AUTOREMOVE: BEGIN
-"""
-# AUTOREMOVE: END
