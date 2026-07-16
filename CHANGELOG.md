@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [110.1.2] - 2026-07-15
+
+### Fixed
+
+- Fixed `repo build` failing after creating a new application from a template (USD Viewer, USD Explorer, Kit Base Editor, or any renamed application) due to a leftover sample-application reference in `premake5.lua` and `repo.toml`. Re-clone or pull the latest `110.1.2` to get the fix.
 
 ## [110.1.2] - 2026-07-06
 
