@@ -23,6 +23,7 @@ repository = "https://github.com/NVIDIA-Omniverse/kit-app-template"  # URL of th
 
 
 [dependencies]
+"omni.hydra.usdrt_delegate" = {}
 "omni.kit.commands" = {}
 "omni.services.core" = {}
 "omni.services.transport.server.http" = {}

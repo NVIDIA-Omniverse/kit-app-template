@@ -4,6 +4,10 @@
   <img src="readme-assets/kit_app_template_banner.png" width=100% />
 </p>
 
+## :memo: Feature Branch Information
+**This repository is based on a Feature Branch of the Omniverse Kit SDK.** Feature Branches are regularly updated and best suited for testing and prototyping.
+For stable, production-oriented development, please use the [Production Branch of the Kit SDK on NVIDIA GPU Cloud (NGC)](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/omniverse/collections/omniverse_enterprise_25h1).
+
 [Omniverse Release Information](https://docs.omniverse.nvidia.com/dev-overview/latest/omniverse-releases.html#)
 
 
@@ -69,6 +73,8 @@ Ensure your system is set up with the following to work with Omniverse Applicati
 ### Required Software Dependencies
 
 - [**Git**](https://git-scm.com/downloads): For version control and repository management
+
+- [**Git LFS**](https://git-lfs.com/): For managing large files within the repository
 
 - **(Windows - C++ Only) Microsoft Visual Studio (2019 or 2022)**: You can install the latest version from [Visual Studio Downloads](https://visualstudio.microsoft.com/downloads/). Ensure that the **Desktop development with C++** workload is selected.  [Additional information on Windows development configuration](readme-assets/additional-docs/windows_developer_configuration.md)
 
@@ -247,6 +253,8 @@ The Omniverse Platform supports streaming Kit-based applications directly to a w
 ### NVIDIA-Managed
 - **NVIDIA Cloud Functions (NVCF):** Offloads hardware, streaming, and network complexities for secure, large scale deployments.
 
+- **Graphics Delivery Network (GDN):** Streams high-fidelity 3D content worldwide with just a shared URL.
+
 [Configuring and packaging streaming-ready Kit applications](readme-assets/additional-docs/kit_app_streaming_config.md)
 
 ### Deploying to NVIDIA DGX Cloud (DGXC)
@@ -271,7 +279,7 @@ Here's a brief overview of some key tools:
 
 - **Launch (`./repo.sh launch`or`.\repo.bat launch`):** Starts your compiled application or extension.
 
-- **Testing (`./repo.sh test` or `.\repo.bat test`):** Facilitates the execution of test suites for your extensions, ensuring code quality and functionality.
+- **Testing (`./repo.sh test` or `.\repo.bat test`):** Facilitates the execution of test suites for your extensions, ensuring code quality and functionality. See [Testing Applications and Extensions](readme-assets/additional-docs/testing_apps_and_extensions.md) for a detailed guide.
 
 - **Packaging (`./repo.sh package` or `.\repo.bat package`):** Aids in packaging your application for distribution, making it easier to share or deploy in cloud environments.
 

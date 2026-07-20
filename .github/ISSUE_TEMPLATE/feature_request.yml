@@ -1,0 +1,54 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+name: Feature Request
+description: Suggest an idea for this project
+title: "[FEATURE]: "
+labels: ["feature request"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+         Thanks for taking the time to help Kit App Template and fill out this feature request!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: |
+        Describe the proposed feature
+      placeholder: |
+        Feature description and problem or pain point being addressed
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case or Scenarios
+      description: Describe how this feature would be used
+      placeholder: e.g., User performing action A, would accomplish B, with benefit C.
+
+  - type: textarea
+    id: implementation_ideas
+    attributes:
+      label: Possible Implementation Ideas
+      description: If you have any suggestions on how this feature might be implemented, please share them here.
+      placeholder: Implementation ideas
+
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context or Recommendations
+      description: Provide any other context or recommendations here.
+      placeholder: Any other relevant information.

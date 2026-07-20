@@ -17,6 +17,14 @@ project_ext_plugin(ext, "{{ extension_name }}.plugin")
     add_files("impl", "plugins/"..plugin_name)
     includedirs { "plugins/"..plugin_name }
 
+    -- Carbonite's SharedMemory implementation can trigger a GCC
+    -- -Wmaybe-uninitialized warning when IEventDispatcher::observeEvent() is
+    -- instantiated in optimized builds. Keep the warning visible, but do not
+    -- promote this external-header warning to an error.
+    filter { "system:linux" }
+        disablewarnings { "error=maybe-uninitialized" }
+    filter {}
+
 -- To write C++ tests, we have to create a shared library with tests to be loaded
 -- project_ext_tests(ext, ext.id..".tests")
     -- dependson { ext.id..".plugin" }

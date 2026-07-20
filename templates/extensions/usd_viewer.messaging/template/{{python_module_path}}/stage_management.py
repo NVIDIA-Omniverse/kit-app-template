@@ -8,6 +8,8 @@
 # without an express license agreement from NVIDIA CORPORATION or
 # its affiliates is strictly prohibited.
 
+import traceback
+
 from pxr import UsdGeom, Usd
 
 import carb
@@ -245,9 +247,20 @@ class StageManager:
         Adds the provided primitives to the set of selectable objects in the viewport.
         Sends 'makePrimsPickableResponse' back to streamer with
         current success status.
+
+        An empty or missing "paths" key is treated as a clean no-op so a client
+        sending `{"type": "makePrimsPickable", "payload": {}}` cannot cause an
+        UnboundLocalError. Any unexpected exception is logged server-side with
+        its full traceback and reported to the client only as a generic message
+        so internal details (file paths, variable names, stack frames) are not
+        leaked to the streaming client.
         """
         # Add the provided paths to the set of pickable prims.
         ctx = omni.usd.get_context()
+        # Initialize `paths` BEFORE the try/conditional so a missing or empty
+        # "paths" key falls through as a no-op instead of raising
+        # UnboundLocalError when the `for path in paths:` loop is reached.
+        paths = []
         try:
             if "paths" in event.payload:
                 if isinstance(event.payload["paths"], carb.dictionary.Item):
@@ -257,8 +270,14 @@ class StageManager:
 
             for path in paths:
                 ctx.set_pickable(path, True)
-        except Exception as e:
-            payload = {"result": "error", "error": str(e)}
+        except Exception:
+            # Log full server-side detail, but return a generic message to the
+            # client to avoid leaking internal variable names, file paths or
+            # stack frames over the streaming WebSocket.
+            carb.log_error(
+                f"makePrimsPickable handler failed: {traceback.format_exc()}"
+            )
+            payload = {"result": "error", "error": "Failed to update pickable prims"}
         else:
             payload = {"result": "success", "error": ""}
 

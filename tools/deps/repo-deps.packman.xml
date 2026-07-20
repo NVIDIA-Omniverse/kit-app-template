@@ -1,23 +1,29 @@
 <project toolsVersion="5.0">
   <dependency name="repo_man" linkPath="../../_repo/deps/repo_man">
-    <package name="repo_man" version="2.6.5"/>
+    <package name="repo_man" version="2.9.3"/>
   </dependency>
   <dependency name="repo_build" linkPath="../../_repo/deps/repo_build">
-    <package name="repo_build" version="1.30.0"/>
+    <package name="repo_build" version="1.34.3"/>
   </dependency>
   <dependency name="repo_kit_tools" linkPath="../../_repo/deps/repo_kit_tools">
-    <package name="repo_kit_tools" version="1.20.3"/>
+    <package name="repo_kit_tools" version="1.21.2"/>
   </dependency>
   <dependency name="repo_test" linkPath="../../_repo/deps/repo_test">
-    <package name="repo_test" version="2.49.2" />
+    <package name="repo_test" version="2.50.3" />
   </dependency>
   <dependency name="repo_package" linkPath="../../_repo/deps/repo_package">
-    <package name="repo_package" version="6.4.1" />
+    <package name="repo_package" version="6.5.2" />
   </dependency>
   <dependency name="repo_kit_template" linkPath="../../_repo/deps/repo_kit_template">
-    <package name="repo_kit_template" version="2.3.5" />
+    <package name="repo_kit_template" version="2.4.1" />
   </dependency>
   <dependency name="repo_usd" linkPath="../../_repo/deps/repo_usd">
-    <package name="repo_usd" version="5.0.33" />
+    <package name="repo_usd" version="5.0.36" />
+  </dependency>
+  <dependency name="kit_core_templates" linkPath="../../_repo/deps/kit_core_templates">
+    <package name="kit_core_templates" version="110.2.0+feature.11994.96415c1d.gl" />
+  </dependency>
+  <dependency name="kit_sample_templates" linkPath="../../_repo/deps/kit_sample_templates">
+    <package name="kit_sample_templates" version="110.2.0+feature.11994.96415c1d.gl" />
   </dependency>
 </project>
