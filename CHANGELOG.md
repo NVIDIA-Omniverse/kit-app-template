@@ -2,7 +2,13 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [109.0.6] - 2026-06-09
+## [109.0.7] - 2026-07-22
+
+### Changed
+- Update to `Kit 109.0.7`
+  - [Kit 109.0.7 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_7.html)
+
+## [109.0.6] - 2026-06-08
 
 ### Added
 - Added the `omni.kit.renderer.ready` extension to the USD Viewer template
@@ -39,7 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated to `Kit 109.0.2`
   - [Kit 109.0.2 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_2.html)
-
+  
 ## [109.0.1] - 2025-12-04
 
 ### Added
@@ -68,7 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [109.0.0] - 2025-11-18
 
 ### Added
-- Added new Livestream extensions `omni.kit.livestream.aov` and `omni.services.livestream.webrtc`
+- Added new Livestream extensions `omni.kit.livestream.aov` and `omni.services.livestream.webrtc` 
 
 ### Changed
 - Updated to `Kit 109.0.0`
@@ -103,7 +109,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Removed omni.services.transport.server.http.port overrides.  Aligned all template applications to use default ports.
 - Updated repository documentation to reflect changes in streaming changes.
 - Updated crash reporter settings to compress crash reports.
-- Update Windows `omni.kit.window.modifier.titlebar` extension version
+- Update Windows `omni.kit.window.modifier.titlebar` extension version 
 - Update repo tooling to most recent versions
 - Updated application icon images for Composer and Explorer templates
 - Enabled testing for USD Viewer Template messaging extension
@@ -124,7 +130,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [107.2.0] - 2025-05-05
 
-### Added
+### Added 
 - Added tooltip information to the VSCode debug extensions to clarify usage.
 - Added tooling checks for path whitespace and OneDrive paths to improve developer experience.
 

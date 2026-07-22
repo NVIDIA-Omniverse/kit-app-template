@@ -101,7 +101,7 @@ main() {
             if [ $exit_code -eq 0 ]; then
                 return 0
             fi
-
+            
             if [ $TRIES -lt $MAX_TRIES ]; then
                 echo "Attempt $TRIES failed. Retrying in $DELAY seconds ..."
                 sleep $DELAY
@@ -174,7 +174,7 @@ main() {
             echo "Unpacking python"
             if [ "$PYTHON_CONTAINER" == "zip" ]; then
                 unzip -q "$PYTHON_PACKAGE_TMP" -d "$PYTHON_INSTALL_FOLDER" || return 1
-            else
+            else  
                 tar -xf "$PYTHON_PACKAGE_TMP" -C "$PYTHON_INSTALL_FOLDER" || return 1
             fi
             rm "$PYTHON_PACKAGE_TMP" || return 1
@@ -230,7 +230,7 @@ main() {
             fi
         done < "$PM_VAR_PATH"
     fi
-
+        
     # Return success
     return 0
 }

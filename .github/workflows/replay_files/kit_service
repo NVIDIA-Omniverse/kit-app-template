@@ -1,0 +1,9 @@
+[kit_service]
+application_name = "my_company.my_service"
+application_display_name = "My Service"
+version = "0.1.0"
+
+[kit_service.extensions.kit_service_setup]
+extension_name = "my_company.my_service_setup_extension"
+extension_display_name = "My Service Setup Extension"
+version = "0.1.0"

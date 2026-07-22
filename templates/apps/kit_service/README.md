@@ -123,6 +123,8 @@ Applications and their associated extensions can be tested using the `repo test`
 ### Customization
 You can customize your Service Setup extension by adding new endpoints to, modifying existing ones, or adding new functionality to `service.py` or `extension.py`. If you would like to create a reusable component that might be used in other Omniverse services or applications, it is recommended that you create a new extension.
 
+When adapting an existing extension for a headless service, keep the service execution path limited to the dependencies it requires. Prefer separating reusable headless logic from UI, viewport, rendering, and other application-specific functionality. If separation is impractical, dependencies that the service can operate without may be declared optional, provided their imports and initialization are also guarded. See [Adapting Existing Extensions for Headless Services](../../../docs/extending_services.md#adapting-existing-extensions-for-headless-services) for guidance and examples.
+
 #### Create Custom Extension
 
 **Linux:**

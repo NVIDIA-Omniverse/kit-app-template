@@ -1,0 +1,4 @@
+[basic_python_ui_extension]
+extension_name = "snake.extension.with.ui"
+extension_display_name = "MOAR SNAKES"
+version = "5.5.5"
