@@ -2,17 +2,11 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [110.1.2] - 2026-07-15
+## [110.1.3] - 2026-07-24
 
-### Fixed
-
-- Fixed `repo build` failing after creating a new application from a template (USD Viewer, USD Explorer, Kit Base Editor, or any renamed application) due to a leftover sample-application reference in `premake5.lua` and `repo.toml`. Re-clone or pull the latest `110.1.2` to get the fix.
-
-## [110.1.2] - 2026-07-06
-
-### Fixed
-
-- Fixed an incomplete initial 110.1.2 GitHub publish that could cause first-time setup (`repo template new`) and builds to fail on a fresh clone. Re-clone or pull the latest `110.1.2` / `main` to get the corrected files.
+### Changed
+- Update to `Kit 110.1.3`
+  - [Kit 110.1.3 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_1_3.html)
 
 ## [110.1.2] - 2026-06-24
 
@@ -153,7 +147,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Removed omni.services.transport.server.http.port overrides.  Aligned all template applications to use default ports.
 - Updated repository documentation to reflect changes in streaming changes.
 - Updated crash reporter settings to compress crash reports.
-- Update Windows `omni.kit.window.modifier.titlebar` extension version
+- Update Windows `omni.kit.window.modifier.titlebar` extension version 
 - Update repo tooling to most recent versions
 - Updated application icon images for Composer and Explorer templates
 - Enabled testing for USD Viewer Template messaging extension
@@ -422,3 +416,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Top level build .bat/.sh scripts in favor of using `repo build` directly
 - Predefined `define_app` declarations from `premake5.lua` in favor of developer defined applications
 - Predefined source/apps in favor of templates for developers to build from
+

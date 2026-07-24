@@ -1,0 +1,77 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+#
+# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+# property and proprietary rights in and to this material, related
+# documentation and any modifications thereto. Any use, reproduction,
+# disclosure or distribution of this material and related documentation
+# without an express license agreement from NVIDIA CORPORATION or
+# its affiliates is strictly prohibited.
+
+name: Bug Report
+description: File a bug report for the repository
+title: "[BUG]: "
+labels: ["bug"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to help Kit App Template and fill out this bug report!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: |
+        Describe the bug in detail
+      placeholder: |
+        Expected Behavior vs. Actual Behavior:
+    validations:
+      required: true
+
+  - type: textarea
+    id: component
+    attributes:
+      label: Component
+      description: Which component (Tool/Template/Extension) is showing the bug?
+      placeholder: "e.g., Kit Base Editor Template / repo launch tool / Kit SDK"
+
+  - type: textarea
+    id: system-details
+    attributes:
+      label: System Details
+      description: |
+        Provide details about your system
+      placeholder: |
+        OS / CPU / GPU / GPU Driver Version
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Reproduction Steps
+      description: What are the steps to reproduce the bug?
+      placeholder: |
+        1. Step 1...
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Include the relevant log files:
+        - **repo.log:** Found in `_repo/repo.log` if the issue is with tooling.
+        - **kit.log:** Found in `_build/{OS}/release/logs/.../kit_{...}log` if the issue is with App, Extension, or Kit SDK.
+      placeholder: Paste the log content here or attach the log files.
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Provide any other context or information here.
+      placeholder: Any other information that might be helpful

@@ -45,7 +45,6 @@ Answer `yes` to enable streaming for your application. You can then pick from th
 
 - **NVCF Streaming:** Required for applications deployed on NVIDIA DGX Cloud via NVIDIA Cloud Functions. Adds [`omni.services.livestream.session`](https://docs.omniverse.nvidia.com/kit/docs/omni.services.livestream.session/latest/Overview.html) which implements NVCF-specific health endpoints and session management. See the [DGXC Deployment Guide](dgxc_nvcf_deployment.md) for configuration details.
 
-
 After creating your application, you'll find two `.kit` files in the `/source/apps/` directory:
 - `{app_name}.kit`: The main application configuration file.
 - `{app_name}_{streaming_config}.kit`: The streaming configuration file.
@@ -78,7 +77,8 @@ After you have created and customized your application, build it using the follo
 
 ## Packaging Your Application
 
-From a **Linux** development environment, run the following command to containerize your application for streaming:
+- **Omniverse Kit App Streaming** & **Omniverse on NVCF**
+  From a **Linux** development environment, run the following command to containerize your application for streaming:
 
   ```bash
   ./repo.sh package_container --image-tag [container_image_name:container_image_tag]

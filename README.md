@@ -271,7 +271,7 @@ Here's a brief overview of some key tools:
 
 - **Launch (`./repo.sh launch`or`.\repo.bat launch`):** Starts your compiled application or extension.
 
-- **Testing (`./repo.sh test` or `.\repo.bat test`):** Facilitates the execution of test suites for your extensions, ensuring code quality and functionality.
+- **Testing (`./repo.sh test` or `.\repo.bat test`):** Facilitates the execution of test suites for your extensions, ensuring code quality and functionality. See [Testing Applications and Extensions](readme-assets/additional-docs/testing_apps_and_extensions.md) for a detailed guide.
 
 - **Packaging (`./repo.sh package` or `.\repo.bat package`):** Aids in packaging your application for distribution, making it easier to share or deploy in cloud environments.
 
