@@ -20,7 +20,7 @@ Choose a template from the options below, then follow the instructions in the te
 An **application layer** is a separate `.kit` configuration file that extends your base application for a specific deployment scenario. Instead of modifying your main application, layers let you create variants optimized for different use cases:
 
 - **Base application** (`my_app.kit`): Your core application with all features and UI
-- **Streaming layer** (`my_app_streaming.kit`): Inherits from base, adds streaming extensions and settings
+- **Streaming layer** (`my_app_{streaming_config}.kit`): Inherits from base, adds streaming extensions and settings
 
 This approach keeps your base application clean while enabling different deployment modes (local desktop, cloud streaming, etc.) from the same codebase.
 
