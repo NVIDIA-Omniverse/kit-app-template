@@ -90,7 +90,7 @@ Note that the build step will build all applications contained in the `source` d
 .\repo.bat build
 ```
 
- If you experience issues related to build, please see the [Usage and Troubleshooting](readme-assets/additional-docs/usage_and_troubleshooting.md) section for additional information.
+ If you experience issues related to build, please see the [Usage and Troubleshooting](../../../readme-assets/additional-docs/usage_and_troubleshooting.md) section for additional information.
 
 #### Launch your application:
 

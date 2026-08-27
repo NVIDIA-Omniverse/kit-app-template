@@ -2,6 +2,15 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [109.0.8] - 2026-08-26
+
+### Changed
+- Update to `Kit 109.0.8`
+  - [Kit 109.0.8 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/109_0_8.html)
+
+### Fixed
+- Fixed `makePrimsPickable` in the USD Viewer messaging extension raising an error when sent an empty payload, and stopped internal exception details from being returned to the streaming client
+
 ## [109.0.7] - 2026-07-22
 
 ### Changed
