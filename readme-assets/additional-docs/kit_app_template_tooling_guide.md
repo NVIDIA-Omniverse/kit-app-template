@@ -169,7 +169,7 @@ Select and run a built .kit file from the `source/apps` directory:
 Additional launch options:
 - **`-d` or `--dev-bundle`:** By default, the templates in the Kit App Template repository include `omni.kit.developer.bundle` in their `.kit` file definitions. If you want to exclude it from your application definition, you can still enable it at launch by using the `-d` or `--dev-bundle` flags. This approach prevents the developer bundle extensions from being packaged and sent to customers, while allowing you to use them during development.
 
-- **`-p` or `--package`:** *(Deprecated — will be removed in a future release.)* Launches a packaged application from a specified path. `repo launch` is intended as a developer tool; launching from a package archive does not serve a development workflow. To run a packaged application, decompress the archive and launch the extracted application directly. See [Packaging An Application](../../docs/packaging_app.md) for details.
+- **`-p` or `--package`:** *(Deprecated — will be removed in a future release.)* Launches a packaged application from a specified path. `repo launch` is intended as a developer tool; launching from a package archive does not serve a development workflow. To run a packaged application, decompress the archive and launch the extracted application directly. See [Packaging An Application](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/packaging_app.html) for details.
 
     **Linux:**
     ```bash
@@ -284,7 +284,7 @@ The tool performs these steps:
 1. **Creates a fat package** - Stages all dependencies into a temp directory
 2. **Trims unused extensions** - Removes disabled extensions to minimize image size
 3. **Splits into Docker layers** - Base layer (kit kernel + extscache) and app layer for faster rebuilds
-4. **Builds the container** - Uses a configurable base image (default: `nvcr.io/nvidia/omniverse/ov-base-ubuntu-22`)
+4. **Builds the container** - Uses a configurable base image (default: `nvcr.io/nvidia/omniverse/ov-base-ubuntu22-x86_64`)
 
 The container entrypoint supports runtime configuration via environment variables (`NVDA_KIT_ARGS`, `NVDA_KIT_NUCLEUS`).
 

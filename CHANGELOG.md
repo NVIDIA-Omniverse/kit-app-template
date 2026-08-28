@@ -2,6 +2,20 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [110.3.0] - 2026-08-28
+
+### Changed
+- Updated to `Kit 110.3.0`
+  - [Kit 110.3 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_3.html)
+  - [Kit 110.3 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_3_highlights.html)
+- `repo package_container` now defaults to the `nvcr.io/nvidia/omniverse/ov-base-ubuntu22-x86_64:1.0.0` base image, picking up OpenSSL security updates
+  - Projects that previously ran `package_container` keep their generated `tools/containers/Dockerfile` and its older base image. Delete that file and re-run to pick up the new default
+
+### Added
+- Added the `kit-upgrade` agent skill (`.skills/kit-upgrade/`) for upgrading a project across the Kit 106 to 110 migration path
+  - Scans the project and reports breaking changes, removed extensions, deprecated APIs and configuration changes with `file:line` references and suggested fixes
+  - Includes `install.sh` and `install.bat` to install the skill into an existing project
+
 ## [110.2.0] - 2026-07-20
 
 ### Changed

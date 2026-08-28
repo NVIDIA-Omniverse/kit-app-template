@@ -210,6 +210,37 @@ class TestCheckDirectDepsInLock:
         )
         assert errors == []
 
+    def test_untagged_dep_satisfied_by_skipped_tagged_implementation(self):
+        errors = _check_direct_deps_in_lock(
+            all_direct={"omni.services.core": "1.11.2"},
+            all_resolved=[("omni.services.core", "1.11.2")],
+            ext_to_team_files={"omni.services.core": ["team_kit_samples"]},
+            deps_map={"omni.services.core": ["omni.kit.loop"]},
+            skipped_names={"omni.kit.loop-default"},
+        )
+        assert errors == []
+
+    def test_untagged_dep_satisfied_by_resolved_tagged_implementation(self):
+        errors = _check_direct_deps_in_lock(
+            all_direct={"omni.a": "1.0.0"},
+            all_resolved=[("omni.a", "1.0.0"), ("omni.provider-default", "2.0.0")],
+            ext_to_team_files={"omni.a": ["team_test"]},
+            deps_map={"omni.a": ["omni.provider"]},
+            skipped_names=set(),
+        )
+        assert errors == []
+
+    def test_explicit_tag_not_satisfied_by_different_tag(self):
+        errors = _check_direct_deps_in_lock(
+            all_direct={"omni.a": "1.0.0"},
+            all_resolved=[("omni.a", "1.0.0")],
+            ext_to_team_files={"omni.a": ["team_test"]},
+            deps_map={"omni.a": ["omni.provider-default"]},
+            skipped_names={"omni.provider-custom"},
+        )
+        assert len(errors) == 1
+        assert "omni.provider-default" in errors[0]
+
     def test_no_deps_map(self):
         errors = _check_direct_deps_in_lock(
             all_direct={"omni.a": "1.0.0"},
@@ -244,6 +275,19 @@ class TestWarnMissingOptionalDeps:
             optional_deps_map={"omni.a": ["omni.kit.window.viewport"]},
             skipped_names={"omni.kit.window.viewport"},
         )
+
+        assert capsys.readouterr().out == ""
+
+    def test_no_warnings_when_untagged_optional_dep_has_tagged_implementation(self, capsys):
+        _warn_missing_optional_deps(
+            all_direct={"omni.a": "1.0.0"},
+            all_resolved=[("omni.a", "1.0.0")],
+            ext_to_team_files={"omni.a": ["team_test"]},
+            optional_deps_map={"omni.a": ["omni.provider"]},
+            skipped_names={"omni.provider-default"},
+        )
+
+        assert capsys.readouterr().out == ""
 
     def test_no_crash_when_no_optional_deps(self):
         _warn_missing_optional_deps(
