@@ -73,7 +73,7 @@ Note that the build step will build all applications contained in the `source` d
 .\repo.bat build
 ```
 
- If you experience issues related to build, please see the [Usage and Troubleshooting](readme-assets/additional-docs/usage_and_troubleshooting.md) section for additional information.
+ If you experience issues related to build, please see the [Usage and Troubleshooting](../../../readme-assets/additional-docs/usage_and_troubleshooting.md) section for additional information.
 
 #### Launch your application:
 
@@ -189,7 +189,7 @@ This will bundle your application into a distributable format, ready for deploym
 
 #### Launching a Package
 
-> :warning: **Deprecated:** `launch --package` is deprecated and will be removed in a future release. To run a packaged application, decompress the archive and launch the extracted application directly. See [Packaging An Application](../../../docs/packaging_app.md) for details.
+> :warning: **Deprecated:** `launch --package` is deprecated and will be removed in a future release. To run a packaged application, decompress the archive and launch the extracted application directly. See [Packaging An Application](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/packaging_app.html) for details.
 
 Applications packaged using the `package` command can be launched using the `launch` command:
 

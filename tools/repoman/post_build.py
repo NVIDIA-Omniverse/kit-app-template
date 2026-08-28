@@ -14,6 +14,7 @@ import toml
 from omni.repo.man import change_cwd, get_token, process_args_to_cmd, resolve_tokens, run_process
 from omni.repo.man.fileutils import rmtree
 from omni.repo.man.utils import call_with_retry
+from packman_config import strip_packman_config_to_cloudfront_download
 
 logger = logging.getLogger(__name__)
 
@@ -155,14 +156,7 @@ def update_kit_core_json(config: dict):
 def public_packman_config(dev_dir: str):
     """Update packman config for public. (remove urm)"""
     packman_config = os.path.join(dev_dir, "tools", "packman", "config.packman.xml")
-    with open(packman_config, "w") as f:
-        f.write("""
-<config remotes="cloudfront">
-    <remote2 name="cloudfront">
-        <transport actions="download" protocol="https" packageLocation="d4i3qtqj3r0z5.cloudfront.net/${name}@${version}" />
-    </remote2>
-</config>
-""")
+    strip_packman_config_to_cloudfront_download(Path(packman_config))
 
 
 def precache_airgap_extensions(dev_dir):

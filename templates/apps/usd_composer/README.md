@@ -88,7 +88,7 @@ Note that the build step will build all applications contained in the `source` d
 .\repo.bat build
 ```
 
- If you experience issues related to build, please see the [Usage and Troubleshooting](readme-assets/additional-docs/usage_and_troubleshooting.md) section for additional information.
+ If you experience issues related to build, please see the [Usage and Troubleshooting](../../../readme-assets/additional-docs/usage_and_troubleshooting.md) section for additional information.
 
 #### Launch your application:
 
@@ -136,7 +136,7 @@ Applications and their associated extensions can be tested using the `repo test`
 
     - To permanently add the extension to the application, you will need to add the extension to the `.kit` file. For example, adding the Layer View extension would require adding `omni.kit.widget.layers` to the dependencies section of the `.kit` file.
 
-- For additional information on the Developer Bundle Extensions, refer to the [Developer Bundle Extensions](../../readme-assets/additional-docs/developer_bundle_extensions.md) documentation.
+- For additional information on the Developer Bundle Extensions, refer to the [Developer Bundle Extensions](../../../readme-assets/additional-docs/developer_bundle_extensions.md) documentation.
 
 
 #### Create Custom Extension
@@ -202,7 +202,7 @@ This will bundle your application into a distributable format, ready for deploym
 
 #### Launching a Package
 
-> :warning: **Deprecated:** `launch --package` is deprecated and will be removed in a future release. To run a packaged application, decompress the archive and launch the extracted application directly. See [Packaging An Application](../../../docs/packaging_app.md) for details.
+> :warning: **Deprecated:** `launch --package` is deprecated and will be removed in a future release. To run a packaged application, decompress the archive and launch the extracted application directly. See [Packaging An Application](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/packaging_app.html) for details.
 
 Applications packaged using the `package` command can be launched using the `launch` command:
 

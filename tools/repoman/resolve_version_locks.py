@@ -781,6 +781,19 @@ def _resolve_dependencies(
     return all_resolved, used_fallback, deps_map, skipped_names, optional_deps_map
 
 
+def _dependency_names_with_tag_aliases(extension_names: Set[str]) -> Set[str]:
+    """Return extension names plus their untagged aliases for dependency checks.
+
+    Kit extension tags select interchangeable implementations of a base extension
+    contract (for example, ``omni.kit.loop-default`` satisfies a dependency on
+    ``omni.kit.loop``). Keep the tagged names so an explicitly tagged dependency
+    still requires the requested implementation.
+    """
+    names = set(extension_names)
+    names.update(name.split("-", 1)[0] for name in extension_names if "-" in name)
+    return names
+
+
 def _check_direct_deps_in_lock(
     all_direct: Dict[str, str],
     all_resolved: List[Tuple[str, str]],
@@ -800,8 +813,8 @@ def _check_direct_deps_in_lock(
     """
     if not deps_map:
         return []
-    resolved_names = set(name for name, _ in all_resolved)
-    skipped = skipped_names or set()
+    resolved_names = _dependency_names_with_tag_aliases({name for name, _ in all_resolved})
+    skipped = _dependency_names_with_tag_aliases(skipped_names or set())
     errors: List[str] = []
     for direct_ext in all_direct:
         deps = deps_map.get(direct_ext, [])
@@ -829,8 +842,8 @@ def _warn_missing_optional_deps(
     """
     if not optional_deps_map:
         return
-    resolved_names = set(name for name, _ in all_resolved)
-    skipped = skipped_names or set()
+    resolved_names = _dependency_names_with_tag_aliases({name for name, _ in all_resolved})
+    skipped = _dependency_names_with_tag_aliases(skipped_names or set())
     warnings: List[str] = []
     for direct_ext in all_direct:
         optional_deps = optional_deps_map.get(direct_ext, [])
