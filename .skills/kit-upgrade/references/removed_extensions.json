@@ -1,0 +1,235 @@
+[
+  {
+    "extension": "omni.kvdb",
+    "status": "removed",
+    "version": "110",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Silently removed. Causes exit code 55 dependency solver failure. Search the entire project root including templates/ and launcher-configs/ directories."
+  },
+  {
+    "extension": "omni.localcache",
+    "status": "removed",
+    "version": "110",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Silently removed. Same failure class as omni.kvdb. Search the entire project root including templates/ and launcher-configs/ directories."
+  },
+  {
+    "extension": "omni.genproc.core",
+    "status": "removed",
+    "version": "110",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit",
+      ".py"
+    ],
+    "notes": "Deprecated. Migrate procedural generation workflows. Search the entire project root including templates/ and launcher-configs/ directories."
+  },
+  {
+    "extension": "omni.kit.extpath.git",
+    "status": "removed",
+    "version": "108",
+    "replacement": null,
+    "search_in": [
+      "extension.toml"
+    ],
+    "notes": "Git URL extension search path. Fully deleted. Was deprecated in 107."
+  },
+  {
+    "extension": "omni.hydra.iray.shadercache.d3d12",
+    "status": "removed",
+    "version": "110",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Silently removed alongside Iray deprecation. No explicit removal notice."
+  },
+  {
+    "extension": "omni.hydra.iray.shadercache.vulkan",
+    "status": "removed",
+    "version": "110",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Silently removed alongside Iray deprecation. No explicit removal notice."
+  },
+  {
+    "extension": "omni.kit.viewport.iray",
+    "status": "removed",
+    "version": "110",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Was Sample in Kit 107. Silently removed. Not in deprecated list."
+  },
+  {
+    "extension": "omni.command.usd",
+    "status": "deprecated",
+    "version": "106",
+    "replacement": "omni.usd",
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Deprecated since Kit 106.0."
+  },
+  {
+    "extension": "omni.debugdraw",
+    "status": "deprecated",
+    "version": "106",
+    "replacement": "omni.ui.scene",
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Deprecated since Kit 106.0."
+  },
+  {
+    "extension": "omni.hydra.iray",
+    "status": "deprecated",
+    "version": "106",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Deprecated since Kit 106.0. Iray renderer."
+  },
+  {
+    "extension": "omni.iray.settings.core",
+    "status": "deprecated",
+    "version": "106",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Deprecated since Kit 106.0."
+  },
+  {
+    "extension": "omni.kit.autocapture",
+    "status": "deprecated",
+    "version": "106",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Deprecated since Kit 106.0."
+  },
+  {
+    "extension": "omni.kit.manipulator.viewport",
+    "status": "deprecated",
+    "version": "106",
+    "replacement": "omni.kit.manipulator.prim",
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Deprecated since Kit 106.0."
+  },
+  {
+    "extension": "omni.kit.viewport_widgets_manager",
+    "status": "deprecated",
+    "version": "106",
+    "replacement": "omni.ui.scene",
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Deprecated. No version recorded in official docs."
+  },
+  {
+    "extension": "omni.hydra.scene_api",
+    "status": "deprecated",
+    "version": "108",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit",
+      ".py"
+    ],
+    "notes": "Deprecated since Kit 108.0. Removal pending."
+  },
+  {
+    "extension": "omni.surface_instancer",
+    "status": "deprecated",
+    "version": "pre-106",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Confirmed deprecated. Docs still live. Active customer confusion."
+  },
+  {
+    "extension": "omni.renderer_capture",
+    "status": "deprecated",
+    "version": "110",
+    "replacement": "omni.kit.capture",
+    "search_in": [
+      "extension.toml",
+      ".kit",
+      ".py"
+    ],
+    "notes": "Deprecated in Kit 110."
+  },
+  {
+    "extension": "omni.kit.widget.nucleus_connector",
+    "status": "deprecated",
+    "version": "110",
+    "replacement": "omni.kit.widget.connection_manager",
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Compatibility shim. Will be removed."
+  },
+  {
+    "extension": "omni.kit.viewport.legacy_gizmos",
+    "status": "deprecated",
+    "version": "110",
+    "replacement": null,
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Deprecated in Kit 110. Still operational but emits deprecation warnings. Commonly appears in both source/apps/ and templates/ .kit files — scan the full project root. No direct replacement announced; plan migration away from legacy gizmos rendering path."
+  },
+  {
+    "extension": "omni.kit.livestream",
+    "status": "removed",
+    "version": "108",
+    "replacement": "omni.kit.livestream.app + omni.kit.livestream.aov + omni.kit.livestream.core",
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Monolithic livestream extension split into focused modules in Kit 108. Replace with the three new extensions. Settings paths also changed \u2014 see config_changes.json."
+  },
+  {
+    "extension": "omni.services.livestream.nvcf",
+    "status": "removed",
+    "version": "108",
+    "replacement": "omni.services.livestream.session",
+    "search_in": [
+      "extension.toml",
+      ".kit"
+    ],
+    "notes": "Session management extension renamed in Kit 108. Replace dependency declaration and update any code referencing the old extension name."
+  }
+]

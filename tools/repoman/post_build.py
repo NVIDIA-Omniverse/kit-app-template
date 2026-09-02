@@ -4,6 +4,7 @@ import functools
 import json
 import logging
 import os
+import re
 import shutil
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -376,6 +377,42 @@ def _rename_packman_xml(deps_dir: Path):
         packman_xml.rename(packman_xml.parent / new_name)
 
 
+AIRGAP_OVERVIEW_SRC = "${root}/source/docs/KIT_AIRGAP_OVERVIEW.md"
+AIRGAP_OVERVIEW_NAME = "KIT_AIRGAP_OVERVIEW.md"
+
+# Markdown links pointing at sibling NGC resources, e.g. [Kit Extension Registry](../resources/kit-extensions-registry).
+# These only resolve in the NGC catalog page; inside the package they are dead links.
+_NGC_RESOURCE_LINK = re.compile(r"\[([^\]]+)\]\(\.\./resources/[^)]*\)")
+
+
+def _stage_airgap_overview(base_dir: str):
+    """Copy the air-gap overview doc into the package root.
+
+    KIT_OVERVIEW.md is staged by premake for every build, but it only describes the
+    generic new_project/build/launch flow. Air-gapped users additionally need the
+    extension-registry setup, without which `repo build` fails in precache_exts with
+    no indication of the cause. That guidance already exists in KIT_AIRGAP_OVERVIEW.md
+    but was previously only published as the NGC resource overview, so it never
+    reached anyone working from the extracted package.
+
+    The doc is authored for the NGC catalog page, so two things are normalized here:
+    the ${resource_suffix} token (resolved at publish time, not build time) and the
+    ../resources/ links to sibling NGC resources, which are dead inside the package.
+    """
+    src = Path(process_path(AIRGAP_OVERVIEW_SRC))
+    if not src.exists():
+        logger.warning(f"Air-gap overview not found, skipping: {src}")
+        return
+
+    content = src.read_text(encoding="utf-8")
+    content = content.replace("${resource_suffix}", "")
+    content = _NGC_RESOURCE_LINK.sub(r"\1 (available on NGC)", content)
+
+    dest = Path(base_dir) / AIRGAP_OVERVIEW_NAME
+    dest.write_text(content, encoding="utf-8")
+    logger.info(f"Staged air-gap overview to {dest}")
+
+
 def _stage_base_project(config: dict):
     """
     Stage the base_project into the build directory.
@@ -596,6 +633,7 @@ def run_repo_tool(options: argparse.Namespace, config: Dict):
 
     # If airgap precache the pre-built applications
     if options.airgap:
+        _stage_airgap_overview(base_dir)
         write_repo_cache_json(dev_dir, base_dir)
         precache_airgap_extensions(dev_dir)
         airgap_download_deps(dev_dir, stage_build=False)

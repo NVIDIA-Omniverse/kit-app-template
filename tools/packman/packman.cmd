@@ -2,9 +2,9 @@
 :: Reset errorlevel status (don't inherit from caller) 
 @call :ECHO_AND_RESET_ERROR
 
-set PM_PACKMAN_VERSION=8.3.0
-set PM_PYTHON_VERSION=3.12.13-nv3-windows-x86_64
-set PM_PACKMAN_COMMON_SHA256=1ae6974274ed61cafbe6a830e56bb8e17040d5c98323f2931eff25bc2884d539
+set PM_PACKMAN_VERSION=8.4.0
+set PM_PYTHON_VERSION=3.12.13-nv6-windows-x86_64
+set PM_PACKMAN_COMMON_SHA256=53ee62acf0c8552b5c25c760e95ff47c4f8c295e5372e7dad8de090f03ddebdf
 
 :: You can remove this section if you do your own manual configuration of the dev machines
 call :CONFIGURE

@@ -2,7 +2,20 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [110.1.3] - 2026-07-24
+## [110.1.4] - 2026-09-02
+
+### Changed
+- Update to `Kit 110.1.4`
+  - [Kit 110.1.4 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_1_4.html)
+- `repo package` now excludes build-time content from the fat package, so packaged applications and the containers built from them no longer carry the packman cache, the linked-in Kit SDK's development tree, or this project's own build tooling
+  - Reduces package size and keeps build-only dependency manifests out of container security scans
+
+### Added
+- Added the `kit-upgrade` agent skill (`.skills/kit-upgrade/`) for upgrading a project across the Kit 106 to 110 migration path
+  - Scans the project and reports breaking changes, removed extensions, deprecated APIs and configuration changes with `file:line` references and suggested fixes
+  - Includes `install.sh` and `install.bat` to install the skill into an existing project
+
+## [110.1.3] - 2026-07-22
 
 ### Changed
 - Update to `Kit 110.1.3`
