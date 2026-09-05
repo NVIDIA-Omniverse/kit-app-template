@@ -4,7 +4,7 @@
 
 Kit SDK templates and tooling enable the creation streaming-ready Omniverse Kit applications and aid in the packaging/containerization in preparation for deployment. This document outlines how to set up, configure, and package Kit applications for a streaming deployment.
 
-:warning: **Important :** Creation of containerized streaming applications must be done from a Linux environment.
+:warning: **Important:** Creation of containerized streaming applications must be done from a Linux environment.
 
 ## Create and Configure an Application
 
