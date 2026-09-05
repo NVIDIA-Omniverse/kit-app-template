@@ -84,7 +84,7 @@ After you have created and customized your application, build it using the follo
   ./repo.sh package_container --image-tag [container_image_name:container_image_tag]
   ```
 
-  :warning: **Note**
+  :warning: **Note:**
   When prompted to select a `.kit` file, choose the `{app_name}_{streaming_config}.kit` file.
 
 ## Testing Locally
