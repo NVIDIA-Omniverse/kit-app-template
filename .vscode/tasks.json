@@ -1,125 +1,29 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "tasks": [
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
         {
-            "label": "New Template",
-            "type": "shell",
-            "command": "${workspaceRoot}${/}repo.sh",
-            "windows": {
-                "command": "${workspaceRoot}${/}repo.bat"
+            "name": "Python: Remote Attach",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 3000
             },
-            "args": [
-                "template",
-                "new"
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "${workspaceFolder}"
+                }
             ],
-            "group": "none",
-            "presentation": {
-                "reveal": "always",
-                "focus": true
-            }
-        },
-        {
-            "label": "Build",
-            "type": "shell",
-            "command": "${workspaceRoot}${/}repo.sh",
-            "windows": {
-                "command": "${workspaceRoot}${/}repo.bat"
-            },
-            "args": [
-                "build"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "reveal": "always",
-                "focus": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Launch",
-            "type": "shell",
-            "command": "${workspaceRoot}${/}repo.sh",
-            "windows": {
-                "command": "${workspaceRoot}${/}repo.bat"
-            },
-            "args": [
-                "launch"
-            ],
-            "group": "none",
-            "presentation": {
-                "reveal": "always",
-                "focus": true
-            }
-        },
-        {
-            "label": "Launch (Developer Mode)",
-            "type": "shell",
-            "command": "${workspaceRoot}${/}repo.sh",
-            "windows": {
-                "command": "${workspaceRoot}${/}repo.bat"
-            },
-            "args": [
-                "launch",
-                "-d"
-            ],
-            "group": "none",
-            "presentation": {
-                "reveal": "always",
-                "focus": true
-            }
-        },
-        {
-            "label": "Run Unit Tests",
-            "type": "shell",
-            "command": "${workspaceRoot}${/}repo.sh",
-            "windows": {
-                "command": "${workspaceRoot}${/}repo.bat"
-            },
-            "args": [
-                "test",
-            ],
-            "group": "none",
-            "presentation": {
-                "reveal": "always",
-                "focus": false
-            }
-        },
-        {
-            "label": "Package",
-            "type": "shell",
-            "command": "${workspaceRoot}${/}repo.sh",
-            "windows": {
-                "command": "${workspaceRoot}${/}repo.bat"
-            },
-            "args": [
-                "package"
-            ],
-            "group": "none",
-            "presentation": {
-                "reveal": "always",
-                "focus": false
-            }
-        },
-        {
-            "label": "Build All Templates",
-            "type": "shell",
-            "command": "${workspaceRoot}${/}tools${/}packman${/}python.sh",
-            "windows": {
-                "command": "${workspaceRoot}${/}tools${/}packman${/}python.bat"
-            },
-            "args": [
-                "${workspaceRoot}${/}.vscode${/}template_builder.py",
-            ],
-            "group": "none",
-            "presentation": {
-                "reveal": "always",
-                "focus": false
-            }
+            "justMyCode": true,
+            "subProcess": true,
+            "runtimeArgs" : [
+                "--preserve-symlinks",
+                "--preserve-symlinks-main"
+            ]
         }
     ]
 }
