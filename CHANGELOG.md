@@ -3,7 +3,6 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [110.4.0] - 2026-10-08
-
 ### Changed
 - Updated to `Kit 110.4.0`
   - [Kit 110.4 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_4.html)
