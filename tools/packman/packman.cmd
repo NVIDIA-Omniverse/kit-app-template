@@ -1,12 +1,13 @@
-:: RUN_PM_MODULE must be at fixed byte 766 [x]
-:: Reset errorlevel status (don't inherit from caller) 
+:: SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+:: SPDX-License-Identifier: Apache-2.0
+:: pad [xxxx]
 @call :ECHO_AND_RESET_ERROR
 
-set PM_PACKMAN_VERSION=8.3.0
-set PM_PYTHON_VERSION=3.12.13-nv3-windows-x86_64
-set PM_PACKMAN_COMMON_SHA256=1ae6974274ed61cafbe6a830e56bb8e17040d5c98323f2931eff25bc2884d539
+set PM_PACKMAN_VERSION=8.6.1
+set PM_PYTHON_VERSION=3.12.14-nv3-windows-x86_64
+set PM_PACKMAN_COMMON_SHA256=b4ab5ac9266e5a0520ec27561c0751dbe557fbaf6240926af25c499b8f99f499
 
-:: You can remove this section if you do your own manual configuration of the dev machines
+:: Optional configuration for local dev
 call :CONFIGURE
 if %errorlevel% neq 0 ( exit /b %errorlevel% )
 
@@ -24,8 +25,9 @@ if "%1"=="install" goto :SET_VAR_PATH
 if %errorlevel% neq 0 ( exit /b %errorlevel% )
 
 :: Marshall environment variables into the current environment if they have been generated and remove temporary file
+if not defined PM_VAR_PATH_ARG goto :eof
 if exist "%PM_VAR_PATH%" (
-	for /F "usebackq tokens=*" %%A in ("%PM_VAR_PATH%") do set "%%A"
+	for /F "usebackq tokens=*" %%A in (`findstr /R /X "PM_[A-Za-z0-9_]*=.*" "%PM_VAR_PATH%"`) do set "%%A"
 )
 if %errorlevel% neq 0 ( goto :VAR_ERROR )
 

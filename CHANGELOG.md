@@ -2,6 +2,15 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [110.4.0] - 2026-10-08
+
+### Changed
+- Updated to `Kit 110.4.0`
+  - [Kit 110.4 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_4.html)
+  - [Kit 110.4 Release Highlights](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_4_highlights.html)
+- `repo package` now excludes build-time content from the fat package, so packaged applications and the containers built from them no longer carry the packman cache, the linked-in Kit SDK's development tree, or this project's own build tooling
+  - Reduces package size and keeps build-only dependency manifests out of container security scans
+
 ## [110.3.0] - 2026-08-28
 
 ### Changed

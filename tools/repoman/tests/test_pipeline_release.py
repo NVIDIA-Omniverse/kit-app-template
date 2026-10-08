@@ -363,11 +363,35 @@ def test_apply_workspace_release_inputs_patches_checked_in_rc_app_versions(tmp_p
     assert 'version = "110.2.0"' in (root / "source" / "apps" / "omni.app.editor.base.kit").read_text()
 
 
-def test_manual_rc_publish_rejects_internal_kit_kernel_version(tmp_path):
+@pytest.mark.parametrize("qualifier", ["", "+feature", "+production"])
+def test_manual_rc_publish_preserves_simplified_public_kernel(tmp_path, qualifier):
+    kernel = f"110.2.0{qualifier}.${{platform_target_abi}}.${{config}}"
+    root = make_root(tmp_path, version="110.2.0-rc.1", kit_kernel_version=kernel)
+
+    inputs = pipeline_release.apply_workspace_release_inputs(root, {"KIT_SDK_PUBLIC_PUBLISH": "true"})
+
+    assert inputs.release_version == "110.2.0-rc.1"
+    assert inputs.record_release_tag is True
+    assert inputs.next_release_version == "110.2.0-rc.2"
+    assert pipeline_release.read_kit_kernel_package_version(root) == kernel
+
+
+@pytest.mark.parametrize(
+    "kernel",
+    [
+        "110.2.0+master.293874.016f63ce.gl.${platform_target_abi}.${config}",
+        "110.2.0+feature.293874.016f63ce.gl.${platform_target_abi}.${config}",
+        "110.2.0+production.293874.016f63ce.gl.${platform_target_abi}.${config}",
+        "110.2.0+experimental.${platform_target_abi}.${config}",
+        "110.3.0+feature.${platform_target_abi}.${config}",
+        "110.2.0+feature.windows-x86_64.release",
+    ],
+)
+def test_manual_rc_publish_rejects_internal_kit_kernel_version(tmp_path, kernel):
     root = make_root(
         tmp_path,
         version="110.2.0-rc.1",
-        kit_kernel_version="110.2.0+master.293874.016f63ce.gl.${platform_target_abi}.${config}",
+        kit_kernel_version=kernel,
     )
 
     with pytest.raises(ValueError, match="RC publishes require .* public kit-kernel version"):
@@ -1055,7 +1079,7 @@ def test_check_release_auth_rc_rejects_conflicting_existing_tag(monkeypatch, tmp
 
     def fake_gitlab_request(method, url, env, data=None, expected_statuses=(200,)):
         if method == "GET" and "/repository/tags/" in url:
-            return {"target": "other"}
+            return {"target": "tag-object", "commit": {"id": "other"}}
         return {}
 
     monkeypatch.setattr(pipeline_release, "_gitlab_request", fake_gitlab_request)
@@ -1128,6 +1152,41 @@ def test_record_successful_rc_release_tags_publish_commit_before_bump(monkeypatc
         ("create-tag", "kit-sdk-public/v110.2.0-rc.4", "abc"),
         ("bump-branch", "110.2.0-rc.5", root),
     ]
+
+
+@pytest.mark.parametrize("target", ["abc", "annotated-tag-object"])
+@pytest.mark.parametrize("commit", ["abc", "other", None])
+@pytest.mark.parametrize("operation", ["preflight", "record"])
+def test_existing_release_tag_uses_resolved_commit(monkeypatch, tmp_path, target, commit, operation):
+    inputs = pipeline_release.ReleaseInputs(
+        release_version="110.4.0-rc.1",
+        base_version="110.4.0",
+        qualifier="rc",
+        number=1,
+        kit_kernel_version=None,
+        release_tag="kit-sdk-public/v110.4.0-rc.1",
+        record_release_tag=True,
+    )
+    calls = []
+
+    def request(method, url, env, **kwargs):
+        calls.append(method)
+        assert method == "GET"
+        return {"target": target, "commit": {"id": commit}}
+
+    monkeypatch.setattr(pipeline_release, "_gitlab_request", request)
+    env = {"CI_PROJECT_ID": "42", "CI_COMMIT_SHA": "abc", "KIT_SDK_PUBLIC_API_TOKEN": "token"}
+    action = (
+        pipeline_release.check_release_tag_auth
+        if operation == "preflight"
+        else pipeline_release.record_successful_release
+    )
+    if commit == "abc":
+        action(inputs, tmp_path, env)
+    else:
+        with pytest.raises(RuntimeError, match="already exists"):
+            action(inputs, tmp_path, env)
+    assert calls == ["GET"] * (2 if operation == "preflight" else 1)
 
 
 def test_check_release_auth_write_probe_creates_and_deletes_temp_tag(monkeypatch, tmp_path):

@@ -9,6 +9,25 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
+@pytest.mark.parametrize(
+    "job,override,config,expected",
+    [
+        ("deploy-ngc-staging", "kit-dev", "kit-dev", "ove-staging"),
+        ("deploy-ngc", "ove-staging", "ove-staging", "kit-dev"),
+        ("deploy-ngc-staging", None, None, "ove-staging"),
+        ("other", "custom", "configured", "custom"),
+        ("other", None, "configured", "configured"),
+        ("other", None, None, "kit-dev"),
+    ],
+)
+def test_ngc_deploy_destination(monkeypatch, job, override, config, expected):
+    publish = load_publish_module(monkeypatch)
+    env = {"CI_JOB_NAME": job}
+    if override is not None:
+        env["NGC_TEAM"] = override
+    assert publish.resolve_ngc_team(env, config) == expected
+
+
 def load_publish_module(monkeypatch):
     omni = types.ModuleType("omni")
     repo = types.ModuleType("omni.repo")
@@ -38,6 +57,72 @@ def load_publish_module(monkeypatch):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def test_staging_publish_routes_all_consumers_to_staging(monkeypatch, tmp_path):
+    publish = load_publish_module(monkeypatch)
+    packages = tmp_path / "packages"
+    packages.mkdir()
+    for name in ("kit-sdk-public", "kit-sdk-airgap"):
+        (packages / f"{name}@110.4.0-rc.1+feature.7300.abc.gl.windows-x86_64.release.def.zip").touch()
+    dotenv = tmp_path / "publish.env"
+    monkeypatch.setattr(
+        publish.os,
+        "environ",
+        {
+            "CI_JOB_NAME": "deploy-ngc-staging",
+            "CI_COMMIT_REF_NAME": "feature/110.4",
+            "NGC_TEAM": "kit-dev",
+            "PUBLISH_DOTENV_PATH": str(dotenv),
+            "DRY_RUN": "false",
+        },
+    )
+    release = publish.pipeline_release
+    monkeypatch.setattr(release, "apply_workspace_release_inputs", lambda: None, raising=False)
+    monkeypatch.setattr(release, "release_requested", lambda env: False, raising=False)
+    monkeypatch.setattr(
+        release,
+        "resolve_publish_context",
+        lambda *args: types.SimpleNamespace(use_build_metadata_version=False),
+        raising=False,
+    )
+    monkeypatch.setattr(release, "check_release_auth", lambda *args, **kwargs: None, raising=False)
+    monkeypatch.setattr(release, "record_successful_release", lambda *args, **kwargs: None, raising=False)
+    monkeypatch.setattr(publish, "resolve_tokens", lambda value: value.replace("${root}", str(REPO_ROOT)))
+    errors = types.ModuleType("ngcbase.errors")
+    errors.ResourceAlreadyExistsException = type("ResourceAlreadyExistsException", (Exception,), {})
+    monkeypatch.setitem(sys.modules, "ngcbase.errors", errors)
+    clients, uploads, kernels = [], [], []
+
+    def configure(**kwargs):
+        clients.append(kwargs)
+        return object()
+
+    def stage_kernel(*args, **kwargs):
+        kernels.append(kwargs)
+        return 0
+
+    monkeypatch.setattr(publish, "configure_client", configure)
+    monkeypatch.setattr(publish, "upload_resource", lambda **kwargs: uploads.append(kwargs))
+    monkeypatch.setattr(publish.stage_kit_kernel, "run_repo_tool", stage_kernel, raising=False)
+    publish.main(
+        types.SimpleNamespace(
+            merged_tool_config={
+                "repo": {"folders": {"packages": str(packages)}},
+                "repo_ngc": {"org_name": "test-org", "team_name": "kit-dev", "ngc_api_key_envvars": []},
+            }
+        )
+    )
+
+    assert len(clients) == 1
+    assert clients[0]["team_name"] == "ove-staging"
+    assert len(uploads) == 2
+    assert {upload["resource_name"] for upload in uploads} == {"kit-sdk-windows", "kit-sdk-airgap-windows"}
+    assert all(upload["team_name"] == "ove-staging" for upload in uploads)
+    assert len(kernels) == 1
+    assert kernels[0]["team_name"] == "ove-staging"
+    metadata = dict(line.split("=", 1) for line in dotenv.read_text().splitlines())
+    assert metadata["PUBLISH_NGC_TEAM"] == "ove-staging"
 
 
 @pytest.mark.parametrize(

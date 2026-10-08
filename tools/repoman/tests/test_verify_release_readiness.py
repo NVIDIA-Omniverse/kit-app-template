@@ -1,5 +1,8 @@
 """Tests for release-readiness pure-logic helpers."""
 
+from pathlib import Path
+
+import toml
 import verify_release_readiness
 
 
@@ -53,109 +56,58 @@ def test_validate_deploy_exts_branch_compatibility_rejects_wrong_minor(monkeypat
     assert "110.1" in errors[0]
 
 
-def test_validate_stage_registry_mapping_accepts_single_namespace(monkeypatch):
-    monkeypatch.setattr(verify_release_readiness, "get_kit_kernel_version", lambda: "110.3.0")
-
-    errors = verify_release_readiness.validate_stage_registry_mapping(
+def test_validate_stage_registry_compatibility_accepts_matching_minor():
+    errors = verify_release_readiness.validate_stage_registry_compatibility(
         {
+            "repo_deploy_exts": {"pipeline_repo": {"branch": {"integ-110.4": {}}}},
             "registry_mapping": {
                 "stage": {
                     "registries": [
                         {
-                            "name": "kit/stage/default",
-                            "url": "https://example.com/exts/kit/integ/110.3/b473892b/shared",
-                        },
-                        {
                             "name": "kit/stage/sdk",
-                            "url": ("https://example.com/exts/kit/integ/110.3/b473892b/" "sdk/110.3/${kit_git_hash}"),
-                        },
-                    ],
-                },
+                            "url": "https://example.test/exts/kit/integ/${kit_version_short}/slug/sdk",
+                        }
+                    ]
+                }
             },
-        }
+        },
+        "110.4.0",
     )
 
     assert errors == []
 
 
-def test_validate_stage_registry_mapping_accepts_kit_version_short_token(monkeypatch):
-    monkeypatch.setattr(verify_release_readiness, "get_kit_kernel_version", lambda: "110.3.0")
-
-    errors = verify_release_readiness.validate_stage_registry_mapping(
+def test_validate_stage_registry_compatibility_rejects_stale_minor():
+    errors = verify_release_readiness.validate_stage_registry_compatibility(
         {
+            "repo_deploy_exts": {"pipeline_repo": {"branch": {"integ-110.4": {}}}},
             "registry_mapping": {
                 "stage": {
                     "registries": [
                         {
-                            "name": "kit/stage/default",
-                            "url": "https://example.com/exts/kit/integ/${kit_version_short}/b473892b/shared",
-                        },
-                        {
                             "name": "kit/stage/sdk",
-                            "url": (
-                                "https://example.com/exts/kit/integ/${kit_version_short}/b473892b/"
-                                "sdk/${kit_version_short}/${kit_git_hash}"
-                            ),
-                        },
-                    ],
-                },
+                            "url": "https://example.test/exts/kit/integ/110.0/old-slug/sdk",
+                        }
+                    ]
+                }
             },
-        }
+        },
+        "110.5.0",
     )
 
-    assert errors == []
+    assert len(errors) == 1
+    assert "kit/stage/sdk" in errors[0]
+    assert "110.0" in errors[0]
+    assert "integ-110.4" in errors[0]
 
 
-def test_validate_stage_registry_mapping_rejects_mismatched_namespace_versions(monkeypatch):
-    monkeypatch.setattr(verify_release_readiness, "get_kit_kernel_version", lambda: "110.3.0")
+def test_repo_stage_registry_matches_deploy_exts_branch():
+    repo_root = Path(__file__).resolve().parents[3]
+    config = toml.load(repo_root / "repo.toml")
 
-    errors = verify_release_readiness.validate_stage_registry_mapping(
-        {
-            "registry_mapping": {
-                "stage": {
-                    "registries": [
-                        {
-                            "name": "kit/stage/default",
-                            "url": "https://example.com/exts/kit/integ/110.2/b473892b/shared",
-                        },
-                        {
-                            "name": "kit/stage/sdk",
-                            "url": ("https://example.com/exts/kit/integ/110.2/b473892b/" "sdk/110.2/${kit_git_hash}"),
-                        },
-                    ],
-                },
-            },
-        }
+    deploy_errors = verify_release_readiness.validate_deploy_exts_branch_compatibility(config)
+    registry_errors = verify_release_readiness.validate_stage_registry_compatibility(
+        config, verify_release_readiness.get_kit_kernel_version()
     )
 
-    assert errors
-    assert "110.2" in errors[0]
-    assert "110.3" in errors[0]
-
-
-def test_validate_stage_registry_mapping_rejects_mixed_namespaces(monkeypatch):
-    monkeypatch.setattr(verify_release_readiness, "get_kit_kernel_version", lambda: "110.3.0")
-
-    errors = verify_release_readiness.validate_stage_registry_mapping(
-        {
-            "registry_mapping": {
-                "stage": {
-                    "registries": [
-                        {
-                            "name": "kit/stage/default",
-                            "url": "https://example.com/exts/kit/integ/110.3/b473892b/shared",
-                        },
-                        {
-                            "name": "kit/stage/sdk",
-                            "url": ("https://example.com/exts/kit/integ/110.3/1bc075a1/" "sdk/110.3/${kit_git_hash}"),
-                        },
-                    ],
-                },
-            },
-        }
-    )
-
-    assert errors
-    assert "multiple" in errors[0]
-    assert "1bc075a1" in errors[0]
-    assert "b473892b" in errors[0]
+    assert deploy_errors + registry_errors == []

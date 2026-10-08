@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ET
 from functools import lru_cache
 from pathlib import Path
 from typing import Callable, Dict, List, Tuple
+from urllib.parse import urlparse
 
 import omni.repo.man
 import toml
@@ -72,6 +73,45 @@ def version_scope_matches_kit(scope: str, kit_version: str) -> bool:
     scope_parts = scope.split(".")
     kit_parts = kit_version.split(".")
     return kit_parts[: len(scope_parts)] == scope_parts
+
+
+def validate_stage_registry_compatibility(config: Dict, kit_kernel_version: str) -> List[str]:
+    """Validate that stage registry URLs target the configured integ release scope."""
+    integ_branches = [branch for branch in get_repo_deploy_exts_branches(config) if branch.startswith("integ-")]
+    integ_scopes = extract_version_scopes_from_branches(integ_branches)
+    stage_registries = config.get("registry_mapping", {}).get("stage", {}).get("registries", [])
+    if not integ_scopes or not stage_registries:
+        return []
+
+    version_parts = kit_kernel_version.split(".")
+    tokens = {
+        "${kit_version_major}": version_parts[0],
+        "${kit_version_short}": ".".join(version_parts[:2]),
+    }
+    validation_errors = []
+
+    for registry in stage_registries:
+        url = registry["url"]
+        for token, value in tokens.items():
+            url = url.replace(token, value)
+
+        path_parts = urlparse(url).path.strip("/").split("/")
+        try:
+            integ_index = path_parts.index("integ")
+            registry_scope = path_parts[integ_index + 1]
+        except (ValueError, IndexError):
+            validation_errors.append(
+                f"Stage registry '{registry['name']}' must use an integ registry URL, got '{registry['url']}'"
+            )
+            continue
+
+        if not any(version_scope_matches_kit(scope, registry_scope) for scope in integ_scopes):
+            validation_errors.append(
+                f"Stage registry '{registry['name']}' targets integ scope '{registry_scope}', but repo_deploy_exts "
+                f"targets {integ_branches}. Update registry_mapping.stage in repo.toml to use the same release scope."
+            )
+
+    return validation_errors
 
 
 def is_release_candidate() -> bool:
@@ -289,72 +329,6 @@ def validate_deploy_exts_branch_compatibility(config: Dict) -> List[str]:
     return validation_errors
 
 
-def _get_kit_version_short() -> str:
-    kit_version = get_kit_kernel_version()
-    version_parts = kit_version.split(".")
-    return f"{version_parts[0]}.{version_parts[1]}"
-
-
-def _resolve_stage_registry_name_tokens(url: str, kit_version_short: str) -> str:
-    """Resolve repo.toml stage registry tokens that are needed for namespace comparison."""
-    return url.replace("${kit_version_short}", kit_version_short)
-
-
-def extract_stage_registry_names(config: Dict, kit_version_short: str) -> List[str]:
-    """Extract kit/integ registry namespaces from [registry_mapping.stage] URLs."""
-    stage_mapping = config.get("registry_mapping", {}).get("stage", {})
-    registries = stage_mapping.get("registries", [])
-    registry_names = []
-
-    for registry in registries:
-        url = _resolve_stage_registry_name_tokens(registry.get("url", ""), kit_version_short)
-        match = re.search(r"/exts/(kit/integ/[^/]+/[a-f0-9]{8})(?:/|$)", url)
-        if match:
-            registry_names.append(match.group(1))
-
-    return sorted(set(registry_names))
-
-
-def validate_stage_registry_mapping(config: Dict) -> List[str]:
-    """
-    Validate that stage registry URLs resolve to one private integ registry namespace.
-
-    The namespace hash is authored only in [registry_mapping.stage]. This check makes sure
-    the stage shared and sdk URLs stay internally consistent and target the current Kit
-    version scope.
-    """
-    validation_errors = []
-    kit_version_short = _get_kit_version_short()
-
-    print_log("=== Checking stage registry mapping ===")
-    print_log(f"Expected stage registry version scope: {kit_version_short}")
-
-    actual = extract_stage_registry_names(config, kit_version_short)
-    print_log(f"Configured stage registry names: {actual}")
-
-    if not actual:
-        validation_errors.append(
-            "Could not find any kit/integ registry namespaces in [registry_mapping.stage]. "
-            "Please update repo.toml stage registry URLs."
-        )
-    elif len(actual) > 1:
-        validation_errors.append(
-            f"Stage registry URLs use multiple kit/integ namespaces: {actual}. "
-            "Update [registry_mapping.stage] so all stage registries use the same namespace."
-        )
-    else:
-        version_match = re.match(r"kit/integ/([^/]+)/[a-f0-9]{8}$", actual[0])
-        if not version_match or version_match.group(1) != kit_version_short:
-            validation_errors.append(
-                f"Stage registry URLs use {actual[0]!r}, but kit-kernel version scope is {kit_version_short!r}. "
-                "Update [registry_mapping.stage] to match the kit-kernel version."
-            )
-        else:
-            print_log(f"PASS: Stage registry URLs use {actual[0]}")
-
-    return validation_errors
-
-
 def check_registry_reachability_validation() -> List[str]:
     """
     Check if all configured registries are reachable.
@@ -433,20 +407,22 @@ def run_verify_release_readiness(options: argparse.Namespace, config: Dict):
         # Run deploy_exts branch compatibility check - hard failure on error
         deploy_exts_errors = validate_deploy_exts_branch_compatibility(config)
 
-        # Run stage registry mapping check - hard failure on error
-        stage_registry_errors = validate_stage_registry_mapping(config)
+        print_log("\n=== Checking stage registry vs deploy_exts compatibility ===")
+        stage_registry_errors = validate_stage_registry_compatibility(config, get_kit_kernel_version())
+        if not stage_registry_errors:
+            print_log("PASS: Stage registry URLs match the configured integ branch scope")
 
         # Run registry reachability check - warning only on error
         registry_errors = check_registry_reachability_validation()
 
-        # Handle hard validation errors
-        hard_errors = deploy_exts_errors + stage_registry_errors
-        if hard_errors:
-            print_log("\n=== Release Readiness Errors ===")
-            for i, error in enumerate(hard_errors, 1):
+        # Handle release configuration errors (hard failure)
+        release_configuration_errors = deploy_exts_errors + stage_registry_errors
+        if release_configuration_errors:
+            print_log("\n=== Release Configuration Errors ===")
+            for i, error in enumerate(release_configuration_errors, 1):
                 print_log(f"{i}. {error}")
-            logger.error("Release readiness validation failed")
-            raise omni.repo.man.RepoToolError("Release readiness validation failed")
+            logger.error("Release configuration validation failed")
+            raise omni.repo.man.RepoToolError("Release configuration validation failed")
 
         # Handle registry errors (warning only - don't fail the job)
         if registry_errors:
