@@ -329,6 +329,72 @@ def validate_deploy_exts_branch_compatibility(config: Dict) -> List[str]:
     return validation_errors
 
 
+def _get_kit_version_short() -> str:
+    kit_version = get_kit_kernel_version()
+    version_parts = kit_version.split(".")
+    return f"{version_parts[0]}.{version_parts[1]}"
+
+
+def _resolve_stage_registry_name_tokens(url: str, kit_version_short: str) -> str:
+    """Resolve repo.toml stage registry tokens that are needed for namespace comparison."""
+    return url.replace("${kit_version_short}", kit_version_short)
+
+
+def extract_stage_registry_names(config: Dict, kit_version_short: str) -> List[str]:
+    """Extract kit/integ registry namespaces from [registry_mapping.stage] URLs."""
+    stage_mapping = config.get("registry_mapping", {}).get("stage", {})
+    registries = stage_mapping.get("registries", [])
+    registry_names = []
+
+    for registry in registries:
+        url = _resolve_stage_registry_name_tokens(registry.get("url", ""), kit_version_short)
+        match = re.search(r"/exts/(kit/integ/[^/]+/[a-f0-9]{8})(?:/|$)", url)
+        if match:
+            registry_names.append(match.group(1))
+
+    return sorted(set(registry_names))
+
+
+def validate_stage_registry_mapping(config: Dict) -> List[str]:
+    """
+    Validate that stage registry URLs resolve to one private integ registry namespace.
+
+    The namespace hash is authored only in [registry_mapping.stage]. This check makes sure
+    the stage shared and sdk URLs stay internally consistent and target the current Kit
+    version scope.
+    """
+    validation_errors = []
+    kit_version_short = _get_kit_version_short()
+
+    print_log("=== Checking stage registry mapping ===")
+    print_log(f"Expected stage registry version scope: {kit_version_short}")
+
+    actual = extract_stage_registry_names(config, kit_version_short)
+    print_log(f"Configured stage registry names: {actual}")
+
+    if not actual:
+        validation_errors.append(
+            "Could not find any kit/integ registry namespaces in [registry_mapping.stage]. "
+            "Please update repo.toml stage registry URLs."
+        )
+    elif len(actual) > 1:
+        validation_errors.append(
+            f"Stage registry URLs use multiple kit/integ namespaces: {actual}. "
+            "Update [registry_mapping.stage] so all stage registries use the same namespace."
+        )
+    else:
+        version_match = re.match(r"kit/integ/([^/]+)/[a-f0-9]{8}$", actual[0])
+        if not version_match or version_match.group(1) != kit_version_short:
+            validation_errors.append(
+                f"Stage registry URLs use {actual[0]!r}, but kit-kernel version scope is {kit_version_short!r}. "
+                "Update [registry_mapping.stage] to match the kit-kernel version."
+            )
+        else:
+            print_log(f"PASS: Stage registry URLs use {actual[0]}")
+
+    return validation_errors
+
+
 def check_registry_reachability_validation() -> List[str]:
     """
     Check if all configured registries are reachable.
