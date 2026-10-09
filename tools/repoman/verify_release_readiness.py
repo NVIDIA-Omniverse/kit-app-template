@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ET
 from functools import lru_cache
 from pathlib import Path
 from typing import Callable, Dict, List, Tuple
+from urllib.parse import urlparse
 
 import omni.repo.man
 import toml
@@ -72,6 +73,45 @@ def version_scope_matches_kit(scope: str, kit_version: str) -> bool:
     scope_parts = scope.split(".")
     kit_parts = kit_version.split(".")
     return kit_parts[: len(scope_parts)] == scope_parts
+
+
+def validate_stage_registry_compatibility(config: Dict, kit_kernel_version: str) -> List[str]:
+    """Validate that stage registry URLs target the configured integ release scope."""
+    integ_branches = [branch for branch in get_repo_deploy_exts_branches(config) if branch.startswith("integ-")]
+    integ_scopes = extract_version_scopes_from_branches(integ_branches)
+    stage_registries = config.get("registry_mapping", {}).get("stage", {}).get("registries", [])
+    if not integ_scopes or not stage_registries:
+        return []
+
+    version_parts = kit_kernel_version.split(".")
+    tokens = {
+        "${kit_version_major}": version_parts[0],
+        "${kit_version_short}": ".".join(version_parts[:2]),
+    }
+    validation_errors = []
+
+    for registry in stage_registries:
+        url = registry["url"]
+        for token, value in tokens.items():
+            url = url.replace(token, value)
+
+        path_parts = urlparse(url).path.strip("/").split("/")
+        try:
+            integ_index = path_parts.index("integ")
+            registry_scope = path_parts[integ_index + 1]
+        except (ValueError, IndexError):
+            validation_errors.append(
+                f"Stage registry '{registry['name']}' must use an integ registry URL, got '{registry['url']}'"
+            )
+            continue
+
+        if not any(version_scope_matches_kit(scope, registry_scope) for scope in integ_scopes):
+            validation_errors.append(
+                f"Stage registry '{registry['name']}' targets integ scope '{registry_scope}', but repo_deploy_exts "
+                f"targets {integ_branches}. Update registry_mapping.stage in repo.toml to use the same release scope."
+            )
+
+    return validation_errors
 
 
 def is_release_candidate() -> bool:
@@ -433,20 +473,22 @@ def run_verify_release_readiness(options: argparse.Namespace, config: Dict):
         # Run deploy_exts branch compatibility check - hard failure on error
         deploy_exts_errors = validate_deploy_exts_branch_compatibility(config)
 
-        # Run stage registry mapping check - hard failure on error
-        stage_registry_errors = validate_stage_registry_mapping(config)
+        print_log("\n=== Checking stage registry vs deploy_exts compatibility ===")
+        stage_registry_errors = validate_stage_registry_compatibility(config, get_kit_kernel_version())
+        if not stage_registry_errors:
+            print_log("PASS: Stage registry URLs match the configured integ branch scope")
 
         # Run registry reachability check - warning only on error
         registry_errors = check_registry_reachability_validation()
 
-        # Handle hard validation errors
-        hard_errors = deploy_exts_errors + stage_registry_errors
-        if hard_errors:
-            print_log("\n=== Release Readiness Errors ===")
-            for i, error in enumerate(hard_errors, 1):
+        # Handle release configuration errors (hard failure)
+        release_configuration_errors = deploy_exts_errors + stage_registry_errors
+        if release_configuration_errors:
+            print_log("\n=== Release Configuration Errors ===")
+            for i, error in enumerate(release_configuration_errors, 1):
                 print_log(f"{i}. {error}")
-            logger.error("Release readiness validation failed")
-            raise omni.repo.man.RepoToolError("Release readiness validation failed")
+            logger.error("Release configuration validation failed")
+            raise omni.repo.man.RepoToolError("Release configuration validation failed")
 
         # Handle registry errors (warning only - don't fail the job)
         if registry_errors:

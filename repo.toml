@@ -158,6 +158,30 @@ files = [
     ["**"],
 ]
 files_exclude = [
+    # Build-time content that is not used at runtime. Excluding it keeps the
+    # packaged app - and any container built from it - free of build tooling,
+    # which otherwise shows up in security scans because scanners parse
+    # dependency manifests regardless of whether the code is reachable.
+    #
+    # Note the "**/" prefixes: the "_*/**" and "cache/**" patterns below are
+    # root-anchored and do not match nested paths.
+
+    # Packman cache. In air-gapped projects the Kit SDK is linked in as "kit/",
+    # so the SDK's cache appears as "kit/_cache" (~956 MB of repo_* tools,
+    # premake, 7zz, and debug/multi-python carb_sdk builds).
+    ["**/_cache/**"],
+
+    # Build-time content inside the linked-in Kit SDK.
+    ["kit/dev/**"],           # templates, GSL headers, repoman, packman bootstrap
+    ["kit/base_project/**"],  # the full kit-app-template
+    ["kit/kit-gcov"],         # coverage-instrumented binary
+
+    # Build-time content from this project.
+    ["dev/**"],               # repo.sh, repoman, packman client, deps XMLs
+    ["compile_commands.json"],
+    ["pull_kit_sdk${shell_ext}"],
+    ["tests-*${shell_ext}"],
+
     ["_*/**"],
     [".*/**"],
     ["**/*.pdb"],
