@@ -162,3 +162,74 @@ class MessagingTest(AsyncTestCase):
         await self._app.next_update_async()
 
         self.assertTrue(all(outgoing.values()))
+
+    async def test_make_prims_pickable_empty_payload(self):
+        """
+        Regression test for OMPE-90584 / NVBug 6100326.
+
+        A streaming client sending `makePrimsPickable` with an empty payload
+        (or one that omits the "paths" key entirely) must not cause an
+        UnboundLocalError, and the corresponding `makePrimsPickableResponse`
+        must not leak a raw Python exception message back to the client.
+
+        Before the fix, `paths` was assigned only inside the
+        `if "paths" in event.payload:` branch and then used unconditionally by
+        `for path in paths:`. An empty payload skipped the branch, raising
+        UnboundLocalError, and the broad `except Exception as e: ... str(e)`
+        leaked the message to the client.
+        """
+        # Captured responses for the cases we send.
+        responses: List[dict] = []
+
+        def on_response(event: Event) -> None:
+            if event.event_name == "makePrimsPickableResponse":
+                # carb may give us a Dictionary-like payload; copy it into a
+                # plain dict so the test assertions work regardless of the
+                # eventdispatcher backend.
+                payload = event.payload
+                if hasattr(payload, "get_dict"):
+                    payload = payload.get_dict()
+                responses.append(dict(payload))
+
+        subscription = self._ed.observe_event(
+            observer_name="MessagingTest:makePrimsPickableResponse:empty",
+            event_name="makePrimsPickableResponse",
+            on_event=on_response,
+        )
+        await self._app.next_update_async()
+
+        # 1. Completely empty payload — the exact case from the bug report.
+        self._ed.dispatch_event("makePrimsPickable", payload={})
+        await self._app.next_update_async()
+
+        # 2. Payload missing the "paths" key but with other unrelated keys.
+        self._ed.dispatch_event("makePrimsPickable", payload={"unrelated": True})
+        await self._app.next_update_async()
+
+        # 3. Explicit empty list — should also be a clean no-op.
+        self._ed.dispatch_event("makePrimsPickable", payload={"paths": []})
+        await self._app.next_update_async()
+
+        # Keep subscription alive until after the assertions.
+        self.assertEqual(len(responses), 3, f"expected 3 responses, got {responses}")
+        for i, payload in enumerate(responses):
+            error_str = str(payload.get("error", ""))
+            # The historical leak: raw UnboundLocalError text.
+            self.assertNotIn(
+                "referenced before assignment",
+                error_str,
+                f"response {i} leaked raw exception text: {payload}",
+            )
+            self.assertNotIn(
+                "local variable",
+                error_str,
+                f"response {i} leaked raw exception text: {payload}",
+            )
+            # Empty/missing "paths" must be treated as a no-op success.
+            self.assertEqual(
+                payload.get("result"),
+                "success",
+                f"response {i} unexpected result: {payload}",
+            )
+
+        del subscription

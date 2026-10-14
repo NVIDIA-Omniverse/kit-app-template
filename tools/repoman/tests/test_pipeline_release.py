@@ -10,7 +10,12 @@ sys.path.insert(0, str(REPO_ROOT / "tools" / "ci"))
 import pipeline_release
 
 
-def make_root(tmp_path: Path, version: str = "110.2.0-dev.4", kit_app_version: str | None = None) -> Path:
+def make_root(
+    tmp_path: Path,
+    version: str = "110.2.0-dev.4",
+    kit_app_version: str | None = None,
+    kit_kernel_version: str = "110.2.0+master.1.abc.gl.${platform_target_abi}.${config}",
+) -> Path:
     root = tmp_path
     (root / "tools" / "deps").mkdir(parents=True)
     (root / "source" / "apps").mkdir(parents=True)
@@ -18,7 +23,7 @@ def make_root(tmp_path: Path, version: str = "110.2.0-dev.4", kit_app_version: s
     (root / "tools" / "deps" / "kit-sdk.packman.xml").write_text(
         '<project toolsVersion="5.0">\n'
         '  <dependency name="kit_sdk_${config}">\n'
-        '    <package name="kit-kernel" version="110.2.0+master.1.abc.gl.${platform_target_abi}.${config}"/>\n'
+        f'    <package name="kit-kernel" version="{kit_kernel_version}"/>\n'
         "  </dependency>\n"
         "</project>\n"
     )
@@ -164,59 +169,135 @@ def test_upstream_kit_publish_uses_checked_in_branch_version(monkeypatch, tmp_pa
     assert inputs.release_tag is None
 
 
-def test_manual_web_pipeline_defaults_to_rc(monkeypatch, tmp_path):
-    root = make_root(tmp_path, version="110.2.0-stage.7")
-    monkeypatch.setattr(pipeline_release, "list_release_tags", lambda *args: ["kit-sdk-public/v110.2.0-rc.3"])
+def test_manual_rc_publish_uses_checked_in_rc_version(tmp_path):
+    root = make_root(
+        tmp_path,
+        version="110.2.0-rc.4",
+        kit_kernel_version="110.2.0.${platform_target_abi}.${config}",
+    )
 
     inputs = pipeline_release.resolve_release_inputs(
         root,
         {
             "CI_PIPELINE_SOURCE": "web",
             "KIT_SDK_PUBLIC_PUBLISH": "true",
-            "KIT_SDK_PUBLIC_RELEASE_BASE_VERSION": "110.2.0",
         },
     )
 
     assert inputs.release_version == "110.2.0-rc.4"
     assert inputs.record_release_tag is True
-    assert inputs.bump_branch_after_publish is False
+    assert inputs.bump_branch_after_publish is True
     assert inputs.release_tag == "kit-sdk-public/v110.2.0-rc.4"
+    assert inputs.next_release_version == "110.2.0-rc.5"
+    assert inputs.kit_kernel_version is None
 
 
-def test_version_qualifier_only_supports_rc(tmp_path):
+def test_publish_rejects_pipeline_synthesized_rc_inputs(tmp_path):
     root = make_root(tmp_path, version="110.2.0-stage.7")
 
-    with pytest.raises(ValueError, match="only supports rc"):
+    with pytest.raises(ValueError, match="Pipeline-synthesized RC releases are no longer supported"):
         pipeline_release.resolve_release_inputs(
             root,
             {
                 "KIT_SDK_PUBLIC_PUBLISH": "true",
-                "KIT_SDK_PUBLIC_VERSION_QUALIFIER": "stage",
+                "KIT_SDK_PUBLIC_VERSION_QUALIFIER": "rc",
             },
         )
 
 
-def test_apply_workspace_release_inputs_patches_files(tmp_path):
-    root = make_root(tmp_path)
+def test_upstream_kit_publish_skips_checked_in_rc_mode(capsys, tmp_path):
+    root = make_root(
+        tmp_path,
+        version="110.2.0-rc.4",
+        kit_kernel_version="110.2.0.${platform_target_abi}.${config}",
+    )
+
+    inputs = pipeline_release.resolve_release_inputs(
+        root,
+        {
+            "KIT_SDK_PUBLIC_PUBLISH": "true",
+            "UPSTREAM_KIT_PUBLISH": "true",
+            "KIT_KERNEL_VERSION": "110.2.0+master.293874.016f63ce.gl",
+        },
+    )
+
+    assert inputs is None
+    captured = capsys.readouterr()
+    assert "RC manual mode" in captured.out
+    assert "upstream Kit publish handoff is skipped" in captured.out
+
+
+def test_apply_workspace_release_inputs_patches_checked_in_rc_app_versions(tmp_path):
+    root = make_root(
+        tmp_path,
+        version="110.2.0-rc.1",
+        kit_kernel_version="110.2.0.${platform_target_abi}.${config}",
+    )
 
     inputs = pipeline_release.apply_workspace_release_inputs(
         root,
         {
             "KIT_SDK_PUBLIC_PUBLISH": "true",
-            "KIT_SDK_PUBLIC_RELEASE_VERSION": "110.2.0-rc.1",
-            "KIT_KERNEL_VERSION": "110.2.0+master.293874.016f63ce.gl",
         },
     )
 
     assert inputs.release_version == "110.2.0-rc.1"
     assert inputs.record_release_tag is True
-    assert inputs.bump_branch_after_publish is False
+    assert inputs.bump_branch_after_publish is True
+    assert inputs.next_release_version == "110.2.0-rc.2"
     assert (root / "VERSION.md").read_text() == "110.2.0-rc.1\n"
     assert (
-        'version="110.2.0+master.293874.016f63ce.gl.${platform_target_abi}.${config}"'
+        'version="110.2.0.${platform_target_abi}.${config}"'
         in (root / "tools" / "deps" / "kit-sdk.packman.xml").read_text()
     )
     assert 'version = "110.2.0"' in (root / "source" / "apps" / "omni.app.editor.base.kit").read_text()
+
+
+def test_manual_rc_publish_rejects_internal_kit_kernel_version(tmp_path):
+    root = make_root(
+        tmp_path,
+        version="110.2.0-rc.1",
+        kit_kernel_version="110.2.0+master.293874.016f63ce.gl.${platform_target_abi}.${config}",
+    )
+
+    with pytest.raises(ValueError, match="RC publishes require .* public kit-kernel version"):
+        pipeline_release.resolve_release_inputs(root, {"KIT_SDK_PUBLIC_PUBLISH": "true"})
+
+
+def test_manual_rc_publish_accepts_public_production_kit_kernel_alias(tmp_path):
+    root = make_root(
+        tmp_path,
+        version="110.1.4-rc.2",
+        kit_kernel_version="110.1.4+production.${platform_target_abi}.${config}",
+    )
+
+    inputs = pipeline_release.resolve_release_inputs(
+        root,
+        {
+            "CI_COMMIT_REF_NAME": "production/110.1",
+            "KIT_SDK_PUBLIC_PUBLISH": "true",
+        },
+    )
+
+    assert inputs.release_version == "110.1.4-rc.2"
+    assert inputs.kit_kernel_version is None
+
+
+def test_manual_rc_publish_rejects_wrong_release_lane_alias(tmp_path):
+    root = make_root(
+        tmp_path,
+        version="110.1.4-rc.2",
+        kit_kernel_version="110.1.4+feature.${platform_target_abi}.${config}",
+    )
+
+    with pytest.raises(ValueError, match=r"110\.1\.4\+production"):
+        pipeline_release.resolve_release_inputs(
+            root,
+            {
+                "CI_COMMIT_REF_NAME": "production/110.1",
+                "KIT_SDK_PUBLIC_PUBLISH": "true",
+            },
+        )
 
 
 def test_apply_workspace_release_inputs_patches_dev_app_kit_version(tmp_path):
@@ -259,13 +340,11 @@ def test_apply_workspace_release_inputs_dry_run_does_not_patch_files(tmp_path):
         root,
         {
             "KIT_SDK_PUBLIC_PUBLISH": "true",
-            "KIT_SDK_PUBLIC_RELEASE_VERSION": "110.2.0-rc.1",
-            "KIT_KERNEL_VERSION": "110.2.0+master.293874.016f63ce.gl",
         },
         dry_run=True,
     )
 
-    assert inputs.release_version == "110.2.0-rc.1"
+    assert inputs.release_version == "110.2.0-dev.4"
     assert (root / "VERSION.md").read_text() == original_version
     assert (root / "tools" / "deps" / "kit-sdk.packman.xml").read_text() == original_packman_xml
     assert (root / "source" / "apps" / "omni.app.editor.base.kit").read_text() == original_base_kit
@@ -672,6 +751,68 @@ def test_check_release_auth_rc_rejects_conflicting_existing_tag(monkeypatch, tmp
         )
 
 
+def test_record_successful_rc_release_tags_publish_commit_before_bump(monkeypatch, tmp_path):
+    root = make_root(
+        tmp_path,
+        version="110.2.0-rc.4",
+        kit_kernel_version="110.2.0.${platform_target_abi}.${config}",
+    )
+    inputs = pipeline_release.ReleaseInputs(
+        release_version="110.2.0-rc.4",
+        base_version="110.2.0",
+        qualifier="rc",
+        number=4,
+        kit_kernel_version=None,
+        release_tag="kit-sdk-public/v110.2.0-rc.4",
+        next_release_version="110.2.0-rc.5",
+        bump_branch_after_publish=True,
+        record_release_tag=True,
+    )
+    context = pipeline_release.PublishContext(
+        branch="production/110.2",
+        current_commit="abc",
+        remote_commit="abc",
+        is_canonical=True,
+        reason="canonical publish",
+    )
+    events = []
+
+    def fake_gitlab_request(method, url, env, data=None, expected_statuses=(200,)):
+        if method == "GET" and "/repository/tags/" in url:
+            events.append(("check-tag", url))
+            raise RuntimeError("GitLab API GET failed with HTTP 404: tag not found")
+        if method == "POST" and url.endswith("/repository/tags"):
+            events.append(("create-tag", data["tag_name"], data["ref"]))
+            return {}
+        return {}
+
+    def fake_bump_branch_version_after_publish(release_inputs, release_root, env):
+        events.append(("bump-branch", release_inputs.next_release_version, release_root))
+
+    monkeypatch.setattr(pipeline_release, "_gitlab_request", fake_gitlab_request)
+    monkeypatch.setattr(
+        pipeline_release,
+        "bump_branch_version_after_publish",
+        fake_bump_branch_version_after_publish,
+    )
+
+    pipeline_release.record_successful_release(
+        inputs,
+        root,
+        {"CI_PROJECT_ID": "42", "CI_COMMIT_SHA": "abc", "KIT_SDK_PUBLIC_API_TOKEN": "token"},
+        publish_context=context,
+    )
+
+    assert events == [
+        (
+            "check-tag",
+            "https://gitlab-master.nvidia.com/api/v4/projects/42/repository/tags/kit-sdk-public%2Fv110.2.0-rc.4",
+        ),
+        ("create-tag", "kit-sdk-public/v110.2.0-rc.4", "abc"),
+        ("bump-branch", "110.2.0-rc.5", root),
+    ]
+
+
 def test_check_release_auth_write_probe_creates_and_deletes_temp_tag(monkeypatch, tmp_path):
     inputs = pipeline_release.ReleaseInputs(
         release_version="110.2.0-rc.4",
@@ -739,7 +880,8 @@ def test_record_successful_release_accepts_annotated_tag_at_same_commit(monkeypa
     assert [method for method, _ in calls] == ["GET"]
 
 
-def test_record_successful_release_warns_when_tag_creation_fails(monkeypatch, tmp_path, capsys):
+@pytest.mark.parametrize("failure", ["create", "lookup", "conflict", "missing_commit", "missing_project"])
+def test_record_successful_release_fails_when_tag_not_recorded(monkeypatch, tmp_path, failure):
     inputs = pipeline_release.ReleaseInputs(
         release_version="110.2.0-rc.4",
         base_version="110.2.0",
@@ -748,21 +890,31 @@ def test_record_successful_release_warns_when_tag_creation_fails(monkeypatch, tm
         kit_kernel_version="110.2.0",
         release_tag="kit-sdk-public/v110.2.0-rc.4",
         record_release_tag=True,
+        bump_branch_after_publish=True,
+        next_release_version="110.2.0-rc.5",
     )
 
     def fake_gitlab_request(method, url, env, data=None, expected_statuses=(200,)):
         if method == "GET":
+            if failure == "lookup":
+                raise RuntimeError("GitLab API GET failed with HTTP 403: forbidden")
+            if failure == "conflict":
+                return {"target": "tag-object", "commit": {"id": "other"}}
             raise RuntimeError("GitLab API GET failed with HTTP 404: {}")
         raise RuntimeError("GitLab API POST failed with HTTP 403: forbidden")
 
     monkeypatch.setattr(pipeline_release, "_gitlab_request", fake_gitlab_request)
 
-    pipeline_release.record_successful_release(
-        inputs,
-        tmp_path,
-        {"CI_PROJECT_ID": "42", "CI_COMMIT_SHA": "abc", "KIT_SDK_PUBLIC_API_TOKEN": "token"},
+    monkeypatch.setattr(
+        pipeline_release,
+        "bump_branch_version_after_publish",
+        lambda *args: pytest.fail("must not bump after tag failure"),
     )
-
-    output = capsys.readouterr().out
-    assert "WARNING: RELEASE PUBLISHED, BUT TAG kit-sdk-public/v110.2.0-rc.4 WAS NOT RECORDED" in output
-    assert "GitLab API POST failed with HTTP 403: forbidden" in output
+    env = {"CI_PROJECT_ID": "42", "CI_COMMIT_SHA": "abc", "KIT_SDK_PUBLIC_API_TOKEN": "token"}
+    if failure == "missing_commit":
+        del env["CI_COMMIT_SHA"]
+    if failure == "missing_project":
+        del env["CI_PROJECT_ID"]
+    context = type("Context", (), {"bump_branch_after_publish": True})()
+    with pytest.raises(RuntimeError, match="retry the failed job in the same pipeline"):
+        pipeline_release.record_successful_release(inputs, tmp_path, env, publish_context=context)

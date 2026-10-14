@@ -228,7 +228,7 @@ The archive pattern is configurable in `repo.toml`:
 archive_pattern = "${root}/_build/packages/*.zip"
 ```
 
-> **Note:** Package testing is intended for the "fat" package type, which already contains the Kit Kernel and all extensions, so no additional download is required to run the tests. See [Packaging An Application](../../docs/packaging_app.md) for how to create a package.
+> **Note:** Package testing is intended for the "fat" package type, which already contains the Kit Kernel and all extensions, so no additional download is required to run the tests. See [Packaging An Application](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/packaging_app.html) for how to create a package.
 
 ---
 
@@ -240,7 +240,7 @@ archive_pattern = "${root}/_build/packages/*.zip"
 
 ## Additional Resources
 
-- [Packaging An Application](../../docs/packaging_app.md)
+- [Packaging An Application](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/packaging_app.html)
 - [Kit SDK Tooling Guide](kit_app_template_tooling_guide.md)
 - [Kit SDK Companion Tutorial](https://docs.omniverse.nvidia.com/kit/docs/kit-app-template/latest/docs/intro.html)
 - [Python `unittest` documentation](https://docs.python.org/3/library/unittest.html)

@@ -2,6 +2,19 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [110.1.5] - 2026-10-14
+
+### Changed
+- Update to `Kit 110.1.5`
+  - [Kit 110.1.5 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_1_5.html)
+
+### Added
+- Added the `kit-app-containerize` agent skill (`.skills/kit-app-containerize/`) for preparing and containerizing a Kit application, including the streaming layer for Kit App Streaming or NVCF
+  - Works from an existing application or a new one from the template, resolves the Kit version and image tag, and reports build, image inspection and runtime validation results separately
+
+### Fixed
+- Fixed `makePrimsPickable` in the USD Viewer messaging extension raising an error when sent an empty payload, and stopped internal exception details from being returned to the streaming client
+
 ## [110.1.4] - 2026-09-02
 
 ### Changed

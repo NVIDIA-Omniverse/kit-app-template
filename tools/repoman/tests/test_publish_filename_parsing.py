@@ -61,3 +61,37 @@ def test_get_package_version_part_strips_platform_config_and_kit_hash(monkeypatc
         == "110.2.0-dev.0+ompe-92313-release-pipeline.5087.ed7e918d.gl"
     )
     assert publish.get_package_version_part(file_name, platform) == "110.2.0-dev.0"
+
+
+def test_resolve_ngc_team_prefers_publish_job_destination(monkeypatch):
+    publish = load_publish_module(monkeypatch)
+    monkeypatch.setenv("KIT_SDK_PUBLIC_NGC_PUBLISH_TEAM", "ove-staging")
+    monkeypatch.setenv("NGC_TEAM", "kit-dev")
+
+    assert publish.resolve_ngc_team({"repo_ngc": {"team_name": "configured-team"}}) == (
+        "ove-staging",
+        "environment variable KIT_SDK_PUBLIC_NGC_PUBLISH_TEAM",
+    )
+
+
+@pytest.mark.parametrize(
+    ("environment_team", "config", "expected"),
+    [
+        (
+            "pipeline-team",
+            {"repo_ngc": {"team_name": "configured-team"}},
+            ("pipeline-team", "environment variable NGC_TEAM"),
+        ),
+        (None, {"repo_ngc": {"team_name": "configured-team"}}, ("configured-team", "config [repo_ngc.team_name]")),
+        (None, {}, ("kit-dev", "default")),
+    ],
+)
+def test_resolve_ngc_team_preserves_existing_fallbacks(monkeypatch, environment_team, config, expected):
+    publish = load_publish_module(monkeypatch)
+    monkeypatch.delenv("KIT_SDK_PUBLIC_NGC_PUBLISH_TEAM", raising=False)
+    if environment_team:
+        monkeypatch.setenv("NGC_TEAM", environment_team)
+    else:
+        monkeypatch.delenv("NGC_TEAM", raising=False)
+
+    assert publish.resolve_ngc_team(config) == expected
