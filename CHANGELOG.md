@@ -2,7 +2,18 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [110.4.1] - 2026-10-28
+
+### Changed
+- Updated to `Kit 110.4.1`
+  - [Kit 110.4.1 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_4_1.html)
+
+### Added
+- Added the `kit-app-containerize` agent skill (`.skills/kit-app-containerize/`) for preparing and containerizing a Kit application, including the streaming layer for Kit App Streaming or NVCF
+  - Works from an existing application or a new one from the template, resolves the Kit version and image tag, and reports build, image inspection and runtime validation results separately
+
 ## [110.4.0] - 2026-10-08
+
 ### Changed
 - Updated to `Kit 110.4.0`
   - [Kit 110.4 Release Notes](https://docs.omniverse.nvidia.com/dev-guide/latest/release-notes/110_4.html)
