@@ -6,7 +6,7 @@
     <package name="repo_build" version="1.30.0"/>
   </dependency>
   <dependency name="repo_kit_tools" linkPath="../../_repo/deps/repo_kit_tools">
-    <package name="repo_kit_tools" version="1.21.4"/>
+    <package name="repo_kit_tools" version="1.22.1"/>
   </dependency>
   <dependency name="repo_test" linkPath="../../_repo/deps/repo_test">
     <package name="repo_test" version="2.50.4" />
@@ -21,9 +21,9 @@
     <package name="repo_usd" version="5.0.33" />
   </dependency>
   <dependency name="kit_core_templates" linkPath="../../_repo/deps/kit_core_templates">
-    <package name="kit_core_templates" version="110.4.0+feature.12163.dba6fe6d.gl" />
+    <package name="kit_core_templates" version="110.4.1+production.12200.ef617ab0.gl" />
   </dependency>
   <dependency name="kit_sample_templates" linkPath="../../_repo/deps/kit_sample_templates">
-    <package name="kit_sample_templates" version="110.4.0+feature.12163.dba6fe6d.gl" />
+    <package name="kit_sample_templates" version="110.4.1+production.12200.ef617ab0.gl" />
   </dependency>
 </project>
